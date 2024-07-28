@@ -4,6 +4,7 @@ import random
 reliefs = [SUNKEN, RAISED, GROOVE, RIDGE, FLAT]
 
 #print(random.choice([1, 2]))
+print('566')
 class ButtonsApp(Tk):
     def __init__(self):
         super().__init__()
