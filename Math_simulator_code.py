@@ -1,7 +1,7 @@
 import sqlite3
 from random import sample, choice
 
-db = sqlite3.connect('База данных математического тренажёра.db')
+db = sqlite3.connect('Math_simulator_database.db')
 c = db.cursor()
 
 # Создание базы данных
