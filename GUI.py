@@ -16,7 +16,7 @@ class App(ctk.CTk):
         self.hallo_label.pack(side="top", pady=60)
         self.go_button = ctk.CTkButton(self.main_frame, command=self.goto_info, text="Начать", fg_color="#009900",
                                        height=100, width=400, font=("Arial", 70, "bold"), border_width=3,
-                                       border_color="#006600", corner_radius=5, text_color="#FFFFFF")
+                                       border_color="#006600", corner_radius=5, text_color="#FFFFFF", hover_color="#007D00")
         self.go_button.pack(side="bottom", pady=150)
 
     def goto_info(self):
@@ -47,17 +47,47 @@ class InfoFrame(ctk.CTkFrame):
 
         self.name_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.name_frame.grid(row=1, column=0, sticky="nsew", padx=30, pady=5)
+        self.name_label = ctk.CTkLabel(self.name_frame, text="Напишите свое имя", font=("Arial", 30),
+                                       text_color="#737373")
+        self.name_label.pack(anchor="nw", padx=10, pady=8)
+        self.name_entry = ctk.CTkEntry(self.name_frame, font=("Arial", 35), width=500, height=60,
+                                       fg_color="#FFFFFF",text_color="#212121", border_color="#818c81")
+        self.name_entry.pack(anchor="nw", padx=10)
 
         self.type_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.type_frame.grid(row=2, column=0, sticky="nsew", padx=30, pady=5)
+        self.type_label = ctk.CTkLabel(self.type_frame, text="Выберете тип задач", font=("Arial", 30),
+                                       text_color="#737373")
+        self.type_label.pack(anchor="nw", padx=10, pady=8)
+        self.name_combobox = ctk.CTkComboBox(self.type_frame, hover=True, font=("Arial", 35), width=450, height=60,
+                                             fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
+                                             button_color="#818c81", button_hover_color="#000", dropdown_fg_color="#FFF",
+                                             dropdown_font=("Arial", 15), dropdown_hover_color="#dee3de",
+                                             dropdown_text_color="#212121", state="readonly", values=["Квадратные уравнения", "Задачи"])
+        self.name_combobox.pack(anchor="nw", padx=10)
 
         self.count_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.count_frame.grid(row=3, column=0, sticky="nsew", padx=30, pady=5)
+        self.count_label = ctk.CTkLabel(self.count_frame, text="Установите количество задач", font=("Arial", 30),
+                                       text_color="#737373")
+        self.count_label.pack(anchor="nw", padx=10, pady=8)
+        self.count_entry = ctk.CTkEntry(self.count_frame, font=("Arial", 35), width=60, height=60,
+                                       fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
+        self.count_entry.pack(anchor="nw", padx=10)
+        self.count_slider = ctk.CTkSlider(self.count_frame, width=500, height=60, border_width=2,
+                                          fg_color="#FFFFFF", border_color="#818c81", progress_color="#6fbd6f",
+                                          button_color="#306130", hover=False, from_=1, to=10,
+                                          command=self.slider_event)
+        self.count_slider.pack(expand=True, anchor="center", padx=10)
 
         self.go_button = ctk.CTkButton(self, command=self.goto_training, text="Приступить к выполнению", fg_color="#009900",
                                        height=70, width=430, font=("Arial", 30, "bold"), border_width=3,
-                                       border_color="#006600", corner_radius=5, text_color="#FFFFFF")
+                                       border_color="#006600", corner_radius=5,
+                                       text_color="#FFFFFF", hover_color="#007D00")
         self.go_button.grid(row=4, column=0, sticky="ne", padx=30, pady=28)
+
+    def slider_event(self, value):
+        pass
 
     def goto_training(self):
         #self.main_frame.destroy()
