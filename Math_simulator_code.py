@@ -8,12 +8,12 @@ c = db.cursor()
 c.execute('PRAGMA foreign_keys = ON;')
 c.execute('''CREATE TABLE IF NOT EXISTS student (
 student_id INTEGER PRIMARY KEY AUTOINCREMENT,
-name_student VARCHAR(50)
+name_student TEXT
 );''')
 c.execute('''CREATE TABLE IF NOT EXISTS max_score (
 max_score_id INTEGER PRIMARY KEY AUTOINCREMENT,
 student_id INTEGER NOT NULL,
-max_result INTEGER,
+max_result REAL,
 FOREIGN KEY (student_id)
 REFERENCES student(student_id)
 ON DELETE CASCADE
@@ -21,11 +21,52 @@ ON DELETE CASCADE
 c.execute('''CREATE TABLE IF NOT EXISTS score (
 score_id INTEGER PRIMARY KEY AUTOINCREMENT,
 student_id INTEGER NOT NULL,
-result INTEGER,
+result REAL,
 FOREIGN KEY (student_id)
 REFERENCES student(student_id)
 ON DELETE CASCADE
 );''')
+
+#  Changing data types without losing fields
+# c.executescript('''
+# ALTER TABLE max_score
+# RENAME TO max_score1;
+# ALTER TABLE student
+# RENAME TO student1;
+# ALTER TABLE score
+# RENAME TO score1;
+#
+# CREATE TABLE IF NOT EXISTS student (
+# student_id INTEGER PRIMARY KEY AUTOINCREMENT,
+# name_student TEXT
+# );
+# INSERT INTO student
+# SELECT * FROM student1;
+#
+# CREATE TABLE IF NOT EXISTS max_score (
+# max_score_id INTEGER PRIMARY KEY AUTOINCREMENT,
+# student_id INTEGER NOT NULL,
+# max_result REAL,
+# FOREIGN KEY (student_id)
+# REFERENCES student(student_id)
+# ON DELETE CASCADE
+# );
+# INSERT INTO max_score
+# SELECT * FROM max_score1;
+#
+# CREATE TABLE IF NOT EXISTS score (
+# score_id INTEGER PRIMARY KEY AUTOINCREMENT,
+# student_id INTEGER NOT NULL,
+# result REAL,
+# FOREIGN KEY (student_id)
+# REFERENCES student(student_id)
+# ON DELETE CASCADE
+# );
+# INSERT INTO score
+# SELECT * FROM score1;
+# DROP TABLE student1;
+# DROP TABLE max_score1;
+# DROP TABLE score1;''')
 
 # Код математического тренажера
 
