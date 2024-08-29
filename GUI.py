@@ -1,5 +1,5 @@
 import customtkinter as ctk
-#import Math_simulator_code as ms_code
+import Math_simulator_code as ms_code
 
 class App(ctk.CTk):
     def __init__(self):
@@ -110,7 +110,8 @@ class InfoFrame(ctk.CTkFrame):
             self.name_entry.configure(fg_color="#d9ffdf")
 
     def combobox_selected(self, event):
-        self.info_label.configure(fg_color="#65bf65", text="Все поля заполнены")
+        if self.name_entry.get() != "":
+            self.info_label.configure(fg_color="#65bf65", text="Все поля заполнены")
         self.combobox_error.configure(text="")
         self.type_combobox.configure(fg_color="#d9ffdf")
 
