@@ -66,19 +66,20 @@ class InfoFrame(ctk.CTkFrame):
                                              fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
                                              button_color="#818c81", button_hover_color="#000", dropdown_fg_color="#FFF",
                                              dropdown_font=("Arial", 15), dropdown_hover_color="#dee3de",
-                                             dropdown_text_color="#212121", state="readonly", values=["Квадратные уравнения", "Задачи"],
+                                             dropdown_text_color="#212121", state="readonly",
+                                             values=list(ms_code.types_tasks.keys()),
                                              command=self.combobox_selected)
         self.type_combobox.pack(side="left", anchor="nw", padx=10)
-        self.combobox_error = ctk.CTkLabel(self.type_frame, text="",
+        self.type_error = ctk.CTkLabel(self.type_frame, text="",
                                        font=("Arial", 20), text_color="#ff5757")
-        self.combobox_error.pack(side="left", anchor="nw", padx=10, pady=7)
+        self.type_error.pack(side="left", anchor="nw", padx=10, pady=7)
 
         self.count_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.count_frame.grid(row=3, column=0, sticky="nsew", padx=30, pady=5)
         self.count_label = ctk.CTkLabel(self.count_frame, text="Установите количество задач", font=("Arial", 30),
                                        text_color="#737373")
         self.count_label.pack(anchor="nw", padx=10, pady=8)
-        var = ctk.IntVar(value=4)
+        var = ctk.IntVar(value=1)
         self.count_entry = ctk.CTkEntry(self.count_frame, font=("Arial", 40), width=100, height=60,
                                         fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
                                         textvariable=var, state="disabled", justify="center")
@@ -87,7 +88,8 @@ class InfoFrame(ctk.CTkFrame):
         self.count_slider = ctk.CTkSlider(self.count_frame, width=500, height=60, border_width=2,
                                           fg_color="#FFFFFF", border_color="#818c81", progress_color="#6fbd6f",
                                           button_color="#306130", hover=False, from_=1, to=10, number_of_steps=9,
-                                          variable=var)
+                                          variable=var, state="disabled")
+        self.count_slider.bind("<Button-1>", self.disabled_count_slider)
         self.count_slider.pack(side="left", anchor="n", padx=10)
 
         self.go_button = ctk.CTkButton(self, command=self.goto_training, text="Приступить к выполнению", fg_color="#009900",
@@ -97,10 +99,11 @@ class InfoFrame(ctk.CTkFrame):
         self.go_button.grid(row=4, column=0, sticky="ne", padx=30, pady=[15, 28])
 
     def get_name(self, event):
+        global name
         name = self.name_entry.get().strip()
         print(name)
         if len(name) == 0:
-            self.name_error.configure(text="Имя не должно быть пустым.\nПожалуйста, напишите ещё раз")
+            self.name_error.configure(text="Имя не должно быть пустым\nПожалуйста, напишите ещё раз")
             self.name_entry.configure(fg_color="#ffc9c9")
             self.info_label.configure(fg_color="#ff9191", text="Заполните все поля")
         else:
@@ -110,17 +113,24 @@ class InfoFrame(ctk.CTkFrame):
             self.name_entry.configure(fg_color="#d9ffdf")
 
     def combobox_selected(self, event):
-        if self.name_entry.get() != "":
+        if self.name_entry.get().strip() != "":
             self.info_label.configure(fg_color="#65bf65", text="Все поля заполнены")
-        self.combobox_error.configure(text="")
+        self.type_error.configure(text="")
         self.type_combobox.configure(fg_color="#d9ffdf")
+        self.count_slider.configure(state="normal", to=len(ms_code.types_tasks[self.type_combobox.get()]),
+                                    number_of_steps=len(ms_code.types_tasks[self.type_combobox.get()]) - 1)
+        var.set(value=1)
+        self.count_slider.unbind("<Button-1>")
+
+    def disabled_count_slider(self, event):
+        self.type_error.configure(text="Сначала надо выбрать тип задач\nПожалуйста, выберете его здесь")
 
     def goto_training(self):
         if self.name_entry.get() == "":
-            self.name_error.configure(text="Имя не должно быть пустым.\nПожалуйста, напишите ещё раз")
+            self.name_error.configure(text="Имя не должно быть пустым\nПожалуйста, напишите ещё раз")
             self.name_entry.configure(fg_color="#ffc9c9")
         if self.type_combobox.get() == "":
-            self.combobox_error.configure(text="Тип задач не должен быть пустым.\nПожалуйста, выберете его из списка")
+            self.type_error.configure(text="Тип задач не должен быть пустым\nПожалуйста, выберете его из списка")
             self.type_combobox.configure(fg_color="#ffc9c9")
 
 
