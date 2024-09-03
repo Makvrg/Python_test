@@ -29,7 +29,7 @@ def create_database():
     );''')
     db.commit()
     db.close()
-create_database()
+
 def table_editor():
     c.executescript('''
     ALTER TABLE max_score
@@ -74,7 +74,7 @@ def table_editor():
     db.close()
 
 # Константы, функции
-types_tasks = {"Линейные уравнения": {"x + 1 = 1": "0",
+general_task_list = {"Линейные уравнения": {"x + 1 = 1": "0",
                                       "x - 5 = 9": "14",
                                       "2x + 1 = 1": "0",
                                       "4x - 1 = 1": "0.5",
