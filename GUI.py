@@ -145,17 +145,28 @@ class InfoFrame(ctk.CTkFrame):
             gv.officer_task_list = dict(sample(list(gv.general_task_list[gv.tasks_type].items()), gv.count_tasks))
             gv.sergeant_task_list = list(gv.officer_task_list.keys())
             self.destroy()
-            task_frame = TaskFrame(app, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
+            self.task_frame = TaskFrame(app, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
 
 
 class TaskFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
-        print(gv.officer_task_list)
+
+        self.task_progress = ctk.CTkProgressBar(self, height=30, corner_radius=30, border_width=4, fg_color="#d9ffdf", progress_color="#1bc21b")
+        self.task_progress.pack(anchor="n", fill="x", padx=25, pady=25)
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
     app = App()
     app.protocol('WM_DELETE_WINDOW', finish)
+    app.main_frame.destroy()
+    task_frame = TaskFrame(app, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
     app.mainloop()

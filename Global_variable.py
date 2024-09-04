@@ -19,3 +19,4 @@ general_task_list = {"Линейные уравнения": {"x + 1 = 1": "0",
                }
 officer_task_list = None
 sergeant_task_list = None
+exercise = None
