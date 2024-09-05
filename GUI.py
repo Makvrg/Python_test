@@ -153,12 +153,42 @@ class TaskFrame(ctk.CTkFrame):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
-        self.task_progress = ctk.CTkProgressBar(self, height=30, corner_radius=30, border_width=4, fg_color="#d9ffdf", progress_color="#1bc21b")
-        self.task_progress.pack(anchor="n", fill="x", padx=25, pady=25)
+        self.pr_var = ctk.DoubleVar(value=0.0)
+        self.task_progress = ctk.CTkProgressBar(self, height=30, corner_radius=30, border_width=3, fg_color="#d9ffdf",
+                                                progress_color="#1bc21b", border_color="#818c81",
+                                                variable=self.pr_var)
+        self.task_progress.pack(anchor="n", fill="x", padx=25, pady=20)
+
+        self.exercise_label = ctk.CTkLabel(self, text=gv.exercise["Линейные уравнения"], height=45,
+                                           width=390, font=("Arial", 35, "bold"), text_color="#000000")
+        self.exercise_label.pack(anchor="center", padx=20, pady=15)
+
+        self.task_label = ctk.CTkLabel(self, height=45, width=390, text="n",
+                                       font=("Arial", 40, "bold"), text_color="#000000")
+        self.task_label.pack(anchor="center", padx=20, pady=35)
+
+        self.name_entry = ctk.CTkEntry(self.name_frame, font=("Arial", 35), width=500, height=60,
+                                       fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
+        self.name_entry.bind("<KeyRelease>", self.get_name)
+        self.name_entry.pack(side="left", anchor="nw", padx=10)
+
+        for i in range(gv.count_tasks):
+            self.task_label = ctk.CTkLabel(self, text=gv.sergeant_task_list[i], height=45,
+                                           width=390, font=("Arial", 40, "bold"), text_color="#000000")
 
 
-
-
+    def get_answer(self, event):
+        self.answer = self.name_entry.get().strip()  # save username for table column "name_student"
+        print(gv.name)
+        if len(gv.name) == 0:
+            self.name_error.configure(text="Имя не должно быть пустым\nПожалуйста, напишите ещё раз")
+            self.name_entry.configure(fg_color="#ffc9c9")
+            self.info_label.configure(fg_color="#ff9191", text="Заполните все поля")
+        else:
+            if self.type_combobox.get() != "":
+                self.info_label.configure(fg_color="#65bf65", text="Все поля заполнены")
+            self.name_error.configure(text="")
+            self.name_entry.configure(fg_color="#d9ffdf")
 
 
 
@@ -167,6 +197,6 @@ class TaskFrame(ctk.CTkFrame):
 if __name__ == "__main__":
     app = App()
     app.protocol('WM_DELETE_WINDOW', finish)
-    app.main_frame.destroy()
-    task_frame = TaskFrame(app, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
+    #app.main_frame.destroy()
+    #task_frame = TaskFrame(app, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
     app.mainloop()
