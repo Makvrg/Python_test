@@ -61,6 +61,8 @@ class InfoFrame(ctk.CTkFrame):
                                        fg_color="#FFFFFF",text_color="#212121", border_color="#818c81")
         self.name_entry.bind("<KeyRelease>", self.get_name)
         self.name_entry.pack(side="left", anchor="nw", padx=10)
+        self.name_entry.insert(0, "Максим")
+
         self.name_error = ctk.CTkLabel(self.name_frame, text="",
                                        font=("Arial", 20), text_color="#ff5757")
         self.name_error.pack(side="left", anchor="nw", padx=10, pady=7)
@@ -78,6 +80,8 @@ class InfoFrame(ctk.CTkFrame):
                                              values=list(gv.general_task_list.keys()),
                                              command=self.combobox_selected)
         self.type_combobox.pack(side="left", anchor="nw", padx=10)
+        self.type_combobox.set(value="Квадратные уравнения")
+
         self.type_error = ctk.CTkLabel(self.type_frame, text="",
                                        font=("Arial", 20), text_color="#ff5757")
         self.type_error.pack(side="left", anchor="nw", padx=10, pady=7)
@@ -153,31 +157,53 @@ class TaskFrame(ctk.CTkFrame):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
+        # Grid configuration
+        self.rowconfigure(index=0, weight=1)
+        self.rowconfigure(index=1, weight=2)
+        self.rowconfigure(index=2, weight=100)
+        self.rowconfigure(index=3, weight=2)
+        self.columnconfigure(index=0, weight=1)
+        self.columnconfigure(index=1, weight=1)
+
         self.pr_var = ctk.DoubleVar(value=0.0)
         self.task_progress = ctk.CTkProgressBar(self, height=30, corner_radius=30, border_width=3, fg_color="#d9ffdf",
                                                 progress_color="#1bc21b", border_color="#818c81",
                                                 variable=self.pr_var)
-        self.task_progress.pack(anchor="n", fill="x", padx=25, pady=20)
+        self.task_progress.grid(row=0, column=0, columnspan=2, sticky="ew", padx=25, pady=20)
 
-        self.exercise_label = ctk.CTkLabel(self, text=gv.exercise["Линейные уравнения"], height=45,
+        self.exercise_label = ctk.CTkLabel(self, text=gv.exercise[gv.tasks_type], height=45,
                                            width=390, font=("Arial", 35, "bold"), text_color="#000000")
-        self.exercise_label.pack(anchor="center", padx=20, pady=15)
+        self.exercise_label.grid(row=1, column=0, columnspan=2, sticky="w", padx=28)
 
-        self.task_label = ctk.CTkLabel(self, height=45, width=390, text="n",
+        self.task_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=300)
+        self.task_frame.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30)
+        self.task_label = ctk.CTkLabel(self.task_frame, height=45, width=390, text="n",
                                        font=("Arial", 40, "bold"), text_color="#000000")
-        self.task_label.pack(anchor="center", padx=20, pady=35)
+        self.task_label.pack(anchor="center", padx=20, pady=[50, 30])
 
-        self.name_entry = ctk.CTkEntry(self.name_frame, font=("Arial", 35), width=500, height=60,
+        self.task_entry = ctk.CTkEntry(self.task_frame, font=("Arial", 40), width=550, height=70,
                                        fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
-        self.name_entry.bind("<KeyRelease>", self.get_name)
-        self.name_entry.pack(side="left", anchor="nw", padx=10)
+        self.task_entry.pack(anchor="s", expand=True, padx=30, pady=[50, 150])
+
+        self.previous_button = ctk.CTkButton(self, command=self.previous_task, text="Назад",
+                                         fg_color="#009900",
+                                         height=70, width=430, font=("Arial", 30, "bold"), border_width=3,
+                                         border_color="#006600", corner_radius=5,
+                                         text_color="#FFFFFF", hover_color="#007D00")
+        self.previous_button.grid(row=3, column=0, padx=30, pady=[15, 28])
+
+        self.next_button = ctk.CTkButton(self, command=self.next_task, text="Дальше",
+                                       fg_color="#009900",
+                                       height=70, width=430, font=("Arial", 30, "bold"), border_width=3,
+                                       border_color="#006600", corner_radius=5,
+                                       text_color="#FFFFFF", hover_color="#007D00")
+        self.next_button.grid(row=3, column=1, padx=30, pady=[15, 28])
 
         for i in range(gv.count_tasks):
-            self.task_label = ctk.CTkLabel(self, text=gv.sergeant_task_list[i], height=45,
-                                           width=390, font=("Arial", 40, "bold"), text_color="#000000")
+            self.task_label.configure(text=gv.sergeant_task_list[i])
 
 
-    def get_answer(self, event):
+    def get_answer(self):
         self.answer = self.name_entry.get().strip()  # save username for table column "name_student"
         print(gv.name)
         if len(gv.name) == 0:
@@ -190,7 +216,11 @@ class TaskFrame(ctk.CTkFrame):
             self.name_error.configure(text="")
             self.name_entry.configure(fg_color="#d9ffdf")
 
+    def next_task(self):
+        pass
 
+    def previous_task(self):
+        pass
 
 
 
