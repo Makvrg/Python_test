@@ -2,6 +2,7 @@ import customtkinter as ctk
 import Math_simulator_code as ms_code
 import Global_variable as gv
 from random import sample, choice
+from PIL import Image
 
 def finish():
     app.destroy() # Ручное закрытие окна и всего приложения
@@ -183,19 +184,27 @@ class TaskFrame(ctk.CTkFrame):
                                          border_color="#818c81", width=100,
                                          justify="center")
         self.number_entry.insert(0, "1 / " + str(gv.count_tasks))
+        self.number_entry.configure(state="disabled")
         self.number_entry.pack(anchor="nw", padx=20, pady=[20, 10])
         self.task_label = ctk.CTkLabel(self.task_frame, height=45, width=390, text="",
                                        font=("Arial", 45, "bold"), text_color="#000000")
         self.task_label.pack(anchor="center", padx=20, pady=[0, 30])
 
+        self.answer_info = ctk.CTkLabel(self.task_frame, width=390, text=gv.explanation,
+                                       font=("Arial", 13, "bold"), text_color="#000000")
+        self.answer_info.pack(expand=True, anchor="s", padx=20)
+
         self.task_entry = ctk.CTkEntry(self.task_frame, font=("Arial", 40), width=600, height=70,
-                                       fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
-        self.task_entry.pack(side="left", anchor="center", expand=True, padx=[5, 5], pady=[50, 110])
-        self.save_button = ctk.CTkButton(self.task_frame, command=self.save_answer, text="_/",
+                                       fg_color="#FFFFFF", text_color="#212121",
+                                       border_color="#818c81")
+        self.task_entry.pack(side="left", anchor="e", expand=True, padx=[26, 5], pady=[0, 110])
+
+        self.save_photo = ctk.CTkImage(dark_image=Image.open("save9.1.png"), size=(60, 59))
+        self.save_button = ctk.CTkButton(self.task_frame, command=self.save_answer, height=70, width=80,
                                          fg_color="#009900", font=("Arial", 40, "bold"), border_width=3,
-                                         border_color="#006600", corner_radius=5,
-                                         text_color="#FFFFFF", hover_color="#007D00")
-        self.save_button.pack(expand=True, side="left", anchor="center", padx=[5, 30], pady=[50, 110])
+                                         border_color="#006600", corner_radius=5, text="",
+                                         hover_color="#007D00", image=self.save_photo)
+        self.save_button.pack(expand=True, side="left", anchor="w", padx=[5, 30], pady=[50, 110])
 
         self.previous_button = ctk.CTkButton(self, command=self.previous_task, text="Назад",
                                              fg_color="#009900",
