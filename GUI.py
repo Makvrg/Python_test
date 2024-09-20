@@ -59,7 +59,7 @@ class InfoFrame(ctk.CTkFrame):
                                        text_color="#737373")
         self.name_label.pack(anchor="nw", padx=10, pady=8)
         self.name_entry = ctk.CTkEntry(self.name_frame, font=("Arial", 35), width=500, height=60,
-                                       fg_color="#FFFFFF",text_color="#212121", border_color="#818c81")
+                                       fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
         self.name_entry.bind("<KeyRelease>", self.get_name)
         self.name_entry.pack(side="left", anchor="nw", padx=10)
         self.name_entry.insert(0, "Максим")
@@ -78,7 +78,7 @@ class InfoFrame(ctk.CTkFrame):
                                              button_color="#818c81", button_hover_color="#000", dropdown_fg_color="#FFF",
                                              dropdown_font=("Arial", 15), dropdown_hover_color="#dee3de",
                                              dropdown_text_color="#212121", state="readonly",
-                                             values=list(gv.general_task_list.keys()),
+                                             values=list(gv.general_task_dict.keys()),
                                              command=self.combobox_selected)
         self.type_combobox.pack(side="left", anchor="nw", padx=10)
         self.type_combobox.set(value="Квадратные уравнения")
@@ -113,7 +113,6 @@ class InfoFrame(ctk.CTkFrame):
 
     def get_name(self, event):
         gv.name = self.name_entry.get().strip()  # save username for table column "name_student"
-        print(gv.name)
         if len(gv.name) == 0:
             self.name_error.configure(text="Имя не должно быть пустым\nПожалуйста, напишите ещё раз")
             self.name_entry.configure(fg_color="#ffc9c9")
@@ -129,8 +128,8 @@ class InfoFrame(ctk.CTkFrame):
             self.info_label.configure(fg_color="#65bf65", text="Все поля заполнены")
         self.type_error.configure(text="")
         self.type_combobox.configure(fg_color="#d9ffdf")
-        self.count_slider.configure(state="normal", to=len(gv.general_task_list[self.type_combobox.get()]),
-                                    number_of_steps=len(gv.general_task_list[self.type_combobox.get()]) - 1)
+        self.count_slider.configure(state="normal", to=len(gv.general_task_dict[self.type_combobox.get()]),
+                                    number_of_steps=len(gv.general_task_dict[self.type_combobox.get()]) - 1)
         self.var.set(value=1)
         self.count_slider.unbind("<Button-1>")
 
@@ -147,8 +146,9 @@ class InfoFrame(ctk.CTkFrame):
         else:
             gv.tasks_type = self.type_combobox.get()
             gv.count_tasks = int(self.count_slider.get())
-            gv.officer_task_list = dict(sample(list(gv.general_task_list[gv.tasks_type].items()), gv.count_tasks))
-            gv.sergeant_task_list = list(gv.officer_task_list.keys())
+            gv.officer_task_dict = dict(enumerate(sample(list(gv.general_task_dict[gv.tasks_type].items()), gv.count_tasks), start=1))
+            #gv.sergeant_task_list = list(gv.officer_task_dict.keys())
+
             self.destroy()
             self.task_frame = TaskFrame(app, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
 
@@ -178,7 +178,7 @@ class TaskFrame(ctk.CTkFrame):
 
         self.task_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=300)
         self.task_frame.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30)
-        self.counter = 1
+        gv.counter = 1
         self.number_entry = ctk.CTkEntry(self.task_frame, font=("Arial", 35, "bold"),
                                          fg_color="#FFFFFF", text_color="#212121",
                                          border_color="#818c81", width=100,
@@ -188,29 +188,31 @@ class TaskFrame(ctk.CTkFrame):
         self.number_entry.pack(anchor="nw", padx=20, pady=[20, 10])
         self.task_label = ctk.CTkLabel(self.task_frame, height=45, width=390, text="",
                                        font=("Arial", 45, "bold"), text_color="#000000")
-        self.task_label.pack(anchor="center", padx=20, pady=[0, 30])
+        self.task_label.pack(anchor="center", padx=20, pady=[0, 20])
 
         self.answer_info = ctk.CTkLabel(self.task_frame, width=390, text=gv.explanation,
-                                       font=("Arial", 13, "bold"), text_color="#000000")
-        self.answer_info.pack(expand=True, anchor="s", padx=20)
+                                       font=("Arial", 13, "bold"), text_color="#000000", justify="left")
+        self.answer_info.pack(expand=True, anchor="s", padx=[20, 150], pady=[0, 6])
 
-        self.task_entry = ctk.CTkEntry(self.task_frame, font=("Arial", 40), width=600, height=70,
+        self.task_entry = ctk.CTkEntry(self.task_frame, font=("Arial", 40), width=650, height=70,
                                        fg_color="#FFFFFF", text_color="#212121",
                                        border_color="#818c81")
-        self.task_entry.pack(side="left", anchor="e", expand=True, padx=[26, 5], pady=[0, 110])
+        self.task_entry.bind("<KeyRelease>", self.change_answer)
+        self.task_entry.pack(side="left", anchor="w", expand=True, padx=[80, 5], pady=[0, 150])
 
-        self.save_photo = ctk.CTkImage(dark_image=Image.open("save9.1.png"), size=(60, 59))
+        self.save_photo = ctk.CTkImage(dark_image=Image.open("save9.1.png"), size=(59, 59))
         self.save_button = ctk.CTkButton(self.task_frame, command=self.save_answer, height=70, width=80,
                                          fg_color="#009900", font=("Arial", 40, "bold"), border_width=3,
                                          border_color="#006600", corner_radius=5, text="",
                                          hover_color="#007D00", image=self.save_photo)
-        self.save_button.pack(expand=True, side="left", anchor="w", padx=[5, 30], pady=[50, 110])
+        self.save_button.pack(expand=True, side="left", anchor="w", padx=[8, 95], pady=[0, 150])
 
         self.previous_button = ctk.CTkButton(self, command=self.previous_task, text="Назад",
                                              fg_color="#009900",
                                              height=60, width=330, font=("Arial", 40, "bold"), border_width=3,
                                              border_color="#006600", corner_radius=5,
-                                             text_color="#FFFFFF", hover_color="#007D00")
+                                             text_color="#FFFFFF", hover_color="#007D00",
+                                             state="disabled")
         self.previous_button.grid(row=3, column=0, sticky="w", padx=30, pady=[14, 28])
 
         self.next_button = ctk.CTkButton(self, command=self.next_task, text="Дальше",
@@ -220,32 +222,40 @@ class TaskFrame(ctk.CTkFrame):
                                          text_color="#FFFFFF", hover_color="#007D00")
         self.next_button.grid(row=3, column=1, sticky="e", padx=30, pady=[14, 28])
 
-        for i in range(gv.count_tasks):
-            self.task_label.configure(text=gv.sergeant_task_list[i])
+        self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
 
-
-    def get_answer(self):
-        self.answer = self.name_entry.get().strip()  # save username for table column "name_student"
-        print(gv.name)
-        if len(gv.name) == 0:
-            self.name_error.configure(text="Имя не должно быть пустым\nПожалуйста, напишите ещё раз")
-            self.name_entry.configure(fg_color="#ffc9c9")
-            self.info_label.configure(fg_color="#ff9191", text="Заполните все поля")
-        else:
-            if self.type_combobox.get() != "":
-                self.info_label.configure(fg_color="#65bf65", text="Все поля заполнены")
-            self.name_error.configure(text="")
-            self.name_entry.configure(fg_color="#d9ffdf")
 
     def save_answer(self):
-        pass
+        gv.answer[gv.counter] = (self.task_entry.get().strip())
+        print(gv.answer)
+        self.task_entry.configure(fg_color="#d9ffdf")
+
+    def change_answer(self, event):
+        self.task_entry.configure(fg_color="#ffffff")
 
     def next_task(self):
-        pass
+        gv.counter += 1
+        self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
+        self.task_entry.delete(0, "end")
+        self.task_entry.configure(fg_color="#ffffff")
+        self.number_entry.configure(state="normal")
+        self.number_entry.delete(0, "end")
+        self.number_entry.insert(0, f'{gv.counter} / {gv.count_tasks}')
+        self.number_entry.configure(state="disabled")
+        if gv.counter == 2:
+            self.previous_button.configure(state="normal")
+        if gv.counter == gv.count_tasks:
+            self.next_button.configure(text="Завершить", command=self.go_to_result())
 
     def previous_task(self):
-        pass
+        gv.counter -= 1
+        self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
+        self.task_entry.delete(0, "end")
+        if gv.counter == 2:
+            self.previous_button.configure(state="normal")
 
+    def go_to_result(self):
+        pass
 
 
 if __name__ == "__main__":
