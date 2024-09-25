@@ -158,6 +158,8 @@ class TaskFrame(ctk.CTkFrame):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
+        gv.counter = 1
+
         # Grid configuration
         self.rowconfigure(index=0, weight=1)
         self.rowconfigure(index=1, weight=2)
@@ -166,10 +168,10 @@ class TaskFrame(ctk.CTkFrame):
         self.columnconfigure(index=0, weight=1)
         self.columnconfigure(index=1, weight=1)
 
-        self.pr_var = ctk.DoubleVar(value=0.0)
+        self.progress_var = ctk.DoubleVar(value=(gv.counter - 1) / gv.count_tasks)
         self.task_progress = ctk.CTkProgressBar(self, height=30, corner_radius=30, border_width=3, fg_color="#d9ffdf",
                                                 progress_color="#1bc21b", border_color="#818c81",
-                                                variable=self.pr_var)
+                                                variable=self.progress_var)
         self.task_progress.grid(row=0, column=0, columnspan=2, sticky="ew", padx=25, pady=[20, 10])
 
         self.exercise_label = ctk.CTkLabel(self, text=gv.exercise[gv.tasks_type], height=45,
@@ -178,7 +180,7 @@ class TaskFrame(ctk.CTkFrame):
 
         self.task_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=300)
         self.task_frame.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30)
-        gv.counter = 1
+
         self.number_entry = ctk.CTkEntry(self.task_frame, font=("Arial", 35, "bold"),
                                          fg_color="#FFFFFF", text_color="#212121",
                                          border_color="#818c81", width=100,
@@ -215,14 +217,22 @@ class TaskFrame(ctk.CTkFrame):
                                              state="disabled")
         self.previous_button.grid(row=3, column=0, sticky="w", padx=30, pady=[14, 28])
 
-        self.next_button = ctk.CTkButton(self, command=self.next_task, text="Дальше",
-                                         fg_color="#009900",
-                                         height=60, width=330, font=("Arial", 40, "bold"), border_width=3,
-                                         border_color="#006600", corner_radius=5,
-                                         text_color="#FFFFFF", hover_color="#007D00")
+        if gv.count_tasks == 1:
+            self.next_button = ctk.CTkButton(self, command=self.go_to_result, text="Завершить",
+                                             fg_color="#009900",
+                                             height=60, width=330, font=("Arial", 40, "bold"), border_width=3,
+                                             border_color="#006600", corner_radius=5,
+                                             text_color="#FFFFFF", hover_color="#007D00")
+        else:
+            self.next_button = ctk.CTkButton(self, command=self.next_task, text="Дальше",
+                                             fg_color="#009900",
+                                             height=60, width=330, font=("Arial", 40, "bold"), border_width=3,
+                                             border_color="#006600", corner_radius=5,
+                                             text_color="#FFFFFF", hover_color="#007D00")
         self.next_button.grid(row=3, column=1, sticky="e", padx=30, pady=[14, 28])
 
         self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
+
 
 
     def save_answer(self):
@@ -235,24 +245,48 @@ class TaskFrame(ctk.CTkFrame):
 
     def next_task(self):
         gv.counter += 1
+        self.progress_var.set(value=(gv.counter - 1) / gv.count_tasks)
+
+        self.previous_button.configure(state="normal")
+
         self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
         self.task_entry.delete(0, "end")
-        self.task_entry.configure(fg_color="#ffffff")
+        if gv.counter in gv.answer:
+            self.task_entry.insert(0, gv.answer[gv.counter])
+            self.task_entry.configure(fg_color="#d9ffdf")
+        else:
+            self.task_entry.configure(fg_color="#ffffff")
+
         self.number_entry.configure(state="normal")
         self.number_entry.delete(0, "end")
         self.number_entry.insert(0, f'{gv.counter} / {gv.count_tasks}')
         self.number_entry.configure(state="disabled")
-        if gv.counter == 2:
-            self.previous_button.configure(state="normal")
+
         if gv.counter == gv.count_tasks:
-            self.next_button.configure(text="Завершить", command=self.go_to_result())
+            self.next_button.configure(text="Завершить", command=self.go_to_result)
 
     def previous_task(self):
+        if gv.counter == gv.count_tasks:
+            self.next_button.configure(text="Дальше", command=self.next_task)
+
         gv.counter -= 1
+        self.progress_var.set(value=(gv.counter - 1) / gv.count_tasks)
+
         self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
         self.task_entry.delete(0, "end")
-        if gv.counter == 2:
-            self.previous_button.configure(state="normal")
+        if gv.counter in gv.answer:
+            self.task_entry.insert(0, gv.answer[gv.counter])
+            self.task_entry.configure(fg_color="#d9ffdf")
+        else:
+            self.task_entry.configure(fg_color="#ffffff")
+
+        self.number_entry.configure(state="normal")
+        self.number_entry.delete(0, "end")
+        self.number_entry.insert(0, f'{gv.counter} / {gv.count_tasks}')
+        self.number_entry.configure(state="disabled")
+
+        if gv.counter == 1:
+            self.previous_button.configure(state="disabled")
 
     def go_to_result(self):
         pass
