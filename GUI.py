@@ -238,6 +238,7 @@ class TaskFrame(ctk.CTkFrame):
     def save_answer(self):
         gv.answer[gv.counter] = (self.task_entry.get().strip())
         print(gv.answer)
+        print(gv.officer_task_dict)
         self.task_entry.configure(fg_color="#d9ffdf")
 
     def change_answer(self, event):
