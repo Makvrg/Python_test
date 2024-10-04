@@ -1,11 +1,13 @@
 import customtkinter as ctk
 import Math_simulator_code as ms_code
 import Global_variable as gv
+import Handlers as hd
 from random import sample, choice
 from PIL import Image
 
+
 def finish():
-    app.destroy() # Ручное закрытие окна и всего приложения
+    app.destroy()  # Ручное закрытие окна и всего приложения
     print('Закрытие приложения')
 
 
@@ -26,9 +28,10 @@ class App(ctk.CTk):
         self.hallo_label = ctk.CTkLabel(self.main_frame, text="Добро пожаловать в математический тренажер",
                                         font=("Arial", 37, "bold"), fg_color="#FFFFFF", text_color="#000000")
         self.hallo_label.pack(side="top", pady=60)
-        self.go_button = ctk.CTkButton(self.main_frame, command=self.goto_info, text="Начать", fg_color="#009900",
-                                       height=100, width=400, font=("Arial", 70, "bold"), border_width=3,
-                                       border_color="#006600", corner_radius=5, text_color="#FFFFFF", hover_color="#007D00")
+        self.go_button = ctk.CTkButton(self.main_frame, command=self.goto_info, text="Начать",
+                                       fg_color="#009900", height=100, width=400, font=("Arial", 70, "bold"),
+                                       border_width=3, border_color="#006600", corner_radius=5,
+                                       text_color="#FFFFFF", hover_color="#007D00")
         self.go_button.pack(side="bottom", pady=150)
 
     def goto_info(self):
@@ -90,7 +93,7 @@ class InfoFrame(ctk.CTkFrame):
         self.count_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.count_frame.grid(row=3, column=0, sticky="nsew", padx=30, pady=5)
         self.count_label = ctk.CTkLabel(self.count_frame, text="Установите количество задач", font=("Arial", 30),
-                                       text_color="#737373")
+                                        text_color="#737373")
         self.count_label.pack(anchor="nw", padx=10, pady=8)
         self.var = ctk.IntVar(value=1)
         self.count_entry = ctk.CTkEntry(self.count_frame, font=("Arial", 40), width=100, height=60,
@@ -105,9 +108,9 @@ class InfoFrame(ctk.CTkFrame):
         self.count_slider.bind("<Button-1>", self.disabled_count_slider)
         self.count_slider.pack(side="left", anchor="n", padx=10)
 
-        self.go_button = ctk.CTkButton(self, command=self.goto_training, text="Приступить к выполнению", fg_color="#009900",
-                                       height=70, width=430, font=("Arial", 30, "bold"), border_width=3,
-                                       border_color="#006600", corner_radius=5,
+        self.go_button = ctk.CTkButton(self, command=self.goto_training, text="Приступить к выполнению",
+                                       fg_color="#009900", height=70, width=430, font=("Arial", 30, "bold"),
+                                       border_width=3, border_color="#006600", corner_radius=5,
                                        text_color="#FFFFFF", hover_color="#007D00")
         self.go_button.grid(row=4, column=0, sticky="ne", padx=30, pady=[15, 28])
 
@@ -147,10 +150,10 @@ class InfoFrame(ctk.CTkFrame):
             gv.tasks_type = self.type_combobox.get()
             gv.count_tasks = int(self.count_slider.get())
             gv.officer_task_dict = dict(enumerate(sample(list(gv.general_task_dict[gv.tasks_type].items()), gv.count_tasks), start=1))
-            #gv.sergeant_task_list = list(gv.officer_task_dict.keys())
 
             self.destroy()
-            self.task_frame = TaskFrame(app, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
+            self.task_frame = TaskFrame(app, border_width=15, border_color="#006600",
+                                        fg_color="#FFFFFF", corner_radius=30)
 
 
 class TaskFrame(ctk.CTkFrame):
@@ -193,7 +196,7 @@ class TaskFrame(ctk.CTkFrame):
         self.task_label.pack(anchor="center", padx=20, pady=[0, 20])
 
         self.answer_info = ctk.CTkLabel(self.task_frame, width=390, text=gv.explanation,
-                                       font=("Arial", 13, "bold"), text_color="#000000", justify="left")
+                                        font=("Arial", 13, "bold"), text_color="#000000", justify="left")
         self.answer_info.pack(expand=True, anchor="s", padx=[20, 150], pady=[0, 6])
 
         self.task_entry = ctk.CTkEntry(self.task_frame, font=("Arial", 40), width=650, height=70,
@@ -233,12 +236,10 @@ class TaskFrame(ctk.CTkFrame):
 
         self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
 
-
-
     def save_answer(self):
         gv.answer[gv.counter] = (self.task_entry.get().strip())
-        print(gv.answer)
-        print(gv.officer_task_dict)
+        #print(gv.answer)
+        #print(gv.officer_task_dict)
         self.task_entry.configure(fg_color="#d9ffdf")
 
     def change_answer(self, event):
@@ -290,8 +291,36 @@ class TaskFrame(ctk.CTkFrame):
             self.previous_button.configure(state="disabled")
 
     def go_to_result(self):
-        pass
+        hd.answer_handler(gv.answer, gv.officer_task_dict)
+        self.destroy()
+        self.task_frame = ResultFrame(app, border_width=15, border_color="#006600",
+                                      fg_color="#FFFFFF", corner_radius=30)
 
+
+class ResultFrame(ctk.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
+
+        # Grid configuration
+        self.rowconfigure(index=0, weight=1)
+        self.rowconfigure(index=1, weight=2)
+        self.rowconfigure(index=2, weight=100)
+        self.rowconfigure(index=3, weight=2)
+        self.columnconfigure(index=0, weight=1)
+        self.columnconfigure(index=1, weight=1)
+
+        self.title_label = ctk.CTkLabel(self, text="Ознакомьтесь с вашими результатами:",
+                                        font=("Arial", 35, "bold"), text_color="#000000")
+        self.title_label.grid(row=0, column=0, sticky="sw", padx=30, pady=[19, 13])
+
+        self.result_label = ctk.CTkLabel(self, text=f"Вы решили {gv.result} из {gv.count_tasks} задач",
+                                         font=("Arial", 35, "bold"), text_color="#000000",
+                                         height=45, corner_radius=10, width=390, fg_color="#d6ffd6")
+        self.result_label.grid(row=1, column=0, columnspan=2, sticky="n", padx=30, pady=[0, 10])
+
+        self.result_table = ctk.CTkTabview(self)
+        self.result_table.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30, pady=[0, 10])
 
 if __name__ == "__main__":
     app = App()
