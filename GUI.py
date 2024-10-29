@@ -163,7 +163,8 @@ class TaskFrame(ctk.CTkFrame):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
-        gv.counter = 1
+        for i in range(1, gv.count_tasks + 1):
+            gv.answer[i] = ""
 
         # Grid configuration
         self.rowconfigure(index=0, weight=1)
@@ -202,7 +203,7 @@ class TaskFrame(ctk.CTkFrame):
         self.answer_info.pack(expand=True, anchor="s", padx=[20, 150], pady=[0, 6])
 
         self.task_entry = ctk.CTkEntry(self.task_frame, font=("Arial", 40), width=650, height=70,
-                                       fg_color="#FFFFFF", text_color="#212121",
+                                       fg_color="FFFFFF", text_color="#212121",
                                        border_color="#818c81")
         self.task_entry.bind("<KeyRelease>", self.change_answer)
         self.task_entry.pack(side="left", anchor="w", expand=True, padx=[80, 5], pady=[0, 150])
@@ -325,36 +326,61 @@ class ResultFrame(ctk.CTkFrame):
         self.table_style = ttk.Style()
         self.table_style.theme_use("default")
         self.table_style.configure("Treeview",
-                        background="#2a2d2e",
-                        foreground="white",
+                        background="#ecffe3",
+                        foreground="black",
                         rowheight=45,
-                        fieldbackground="#343638",
-                        bordercolor="#343638",
-                        borderwidth=2,
-                        font=100)
-        self.table_style.map('Treeview', background=[('selected', '#22559b')])
+                        fieldbackground="white",
+                        bordercolor="#3a5e29",
+                        relief="flat",
+                        borderwidth=1
+                        )
+        self.table_style.map('Treeview', background=[('selected', '#bbff9c')], foreground=[("selected", "black")])
         self.table_style.configure("Treeview.Heading",
-                        background="#565b5e",
-                        foreground="white",
-                        relief="flat")
-        self.table_style.map("Treeview.Heading", background=[('active', '#3484F0')])
+                        background="#42c22f",
+                        foreground="black",
+                        relief="flat",
+                        font=("Calibri", 28, "bold"))
+        self.table_style.map("Treeview.Heading", background=[('active', '#6ee55c')])
 
         # Treeviev creating
-        self.result_table = ttk.Treeview(self, style="Treeview", columns=gv.columns)
+        self.result_table = ttk.Treeview(self, style="Treeview", columns=gv.columns,
+                                         show="headings", selectmode="extended")
+        # Tag create
+        self.result_table.tag_configure("table_tag_1", font=("Calibri", 23, "bold"))
 
         # Setting columns
-        self.result_table.heading(gv.columns[0], text='Задача', anchor="w")
-        self.result_table.heading(gv.columns[1], text='Ваш ответ', anchor="w")
-        self.result_table.heading(gv.columns[2], text='Правильный ответ', anchor="w")
+        self.result_table.heading(gv.columns[0], text='Задача', anchor="c")
+        self.result_table.heading(gv.columns[1], text='Ваш ответ', anchor="c")
+        self.result_table.heading(gv.columns[2], text='Правильный ответ', anchor="c")
 
         self.result_table.column(column=gv.columns[0], width=100)
         self.result_table.column(column=gv.columns[1], width=300)
         self.result_table.column(column=gv.columns[2], width=300)
 
-        self.result_table.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30, pady=(0, 10))
-        for num in range(1, gv.count_tasks + 1):
-            self.result_table.insert("", "end", values=(num, gv.answer[num], sorted(list(gv.officer_task_dict[num][1]))))
+        self.result_table.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30, pady=(0, 25))
 
+        for num in range(1, gv.count_tasks + 1):
+            self.result_table.insert("", "end", values=(num, gv.answer[num], sorted(list(gv.officer_task_dict[num][1]))), tags="table_tag_1")
+
+        # Final button
+        self.all_results_button = ctk.CTkButton(self, command=self.go_to_all_results, text="Все результаты",
+                                             fg_color="#009900",
+                                             height=60, width=330, font=("Arial", 40, "bold"), border_width=3,
+                                             border_color="#006600", corner_radius=5,
+                                             text_color="#FFFFFF", hover_color="#007D00",
+                                             state="disabled")
+        self.all_results_button.grid(row=3, column=0, sticky="w", padx=30, pady=[14, 28])
+
+        self. close_program_button = ctk.CTkButton(self, command=finish, text="Завершить",
+                                             fg_color="#009900",
+                                             height=60, width=330, font=("Arial", 40, "bold"), border_width=3,
+                                             border_color="#006600", corner_radius=5,
+                                             text_color="#FFFFFF", hover_color="#007D00")
+        self.close_program_button.grid(row=3, column=1, sticky="e", padx=30, pady=[14, 28])
+
+
+    def go_to_all_results(self):
+        pass
 
 
 if __name__ == "__main__":
