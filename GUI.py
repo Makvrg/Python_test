@@ -4,6 +4,8 @@ import Global_variable as gv
 import Handlers as hd
 from random import sample, choice
 from PIL import Image
+import tkinter as tk
+from tkinter import ttk
 
 
 def finish():
@@ -319,12 +321,43 @@ class ResultFrame(ctk.CTkFrame):
                                          height=45, corner_radius=10, width=390, fg_color="#d6ffd6")
         self.result_label.grid(row=1, column=0, columnspan=2, sticky="n", padx=30, pady=[0, 10])
 
-        self.result_table = ctk.CTkTabview(self)
-        self.result_table.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30, pady=[0, 10])
+        # Create style
+        self.table_style = ttk.Style()
+        self.table_style.theme_use("default")
+        self.table_style.configure("Treeview",
+                        background="#2a2d2e",
+                        foreground="white",
+                        rowheight=45,
+                        fieldbackground="#343638",
+                        bordercolor="#343638",
+                        borderwidth=2,
+                        font=100)
+        self.table_style.map('Treeview', background=[('selected', '#22559b')])
+        self.table_style.configure("Treeview.Heading",
+                        background="#565b5e",
+                        foreground="white",
+                        relief="flat")
+        self.table_style.map("Treeview.Heading", background=[('active', '#3484F0')])
+
+        # Treeviev creating
+        self.result_table = ttk.Treeview(self, style="Treeview", columns=gv.columns)
+
+        # Setting columns
+        self.result_table.heading(gv.columns[0], text='Задача', anchor="w")
+        self.result_table.heading(gv.columns[1], text='Ваш ответ', anchor="w")
+        self.result_table.heading(gv.columns[2], text='Правильный ответ', anchor="w")
+
+        self.result_table.column(column=gv.columns[0], width=100)
+        self.result_table.column(column=gv.columns[1], width=300)
+        self.result_table.column(column=gv.columns[2], width=300)
+
+        self.result_table.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30, pady=(0, 10))
+        for num in range(1, gv.count_tasks + 1):
+            self.result_table.insert("", "end", values=(num, gv.answer[num], sorted(list(gv.officer_task_dict[num][1]))))
+
+
 
 if __name__ == "__main__":
     app = App()
     app.protocol('WM_DELETE_WINDOW', finish)
-    #app.main_frame.destroy()
-    #task_frame = TaskFrame(app, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
     app.mainloop()

@@ -1,8 +1,8 @@
 import Global_variable as gv
 
 
-def answer_handler(answer_dict, task_dict):  # return None, but calculated gv.result
-    for index in range(gv.count_tasks):
+def answer_handler(answer_dict, task_dict):
+    for index in range(1, gv.count_tasks + 1):
         if index not in answer_dict:
             continue
         answer = answer_dict[index].split(",")  # The answer to the task numbered index
@@ -10,11 +10,13 @@ def answer_handler(answer_dict, task_dict):  # return None, but calculated gv.re
         true_answer = task_dict[index][1]
         for x in answer:  # Set of answer for task
             x = x.strip()
-            if ("/" not in x) and ("." not in x):  # Simple digits
+
+            if ("/" not in x) and ("." not in x) and x.isdigit():    # Simple digits
                 x = int(x)
                 if x not in true_answer:
                     break
                 processed_answer.add(x)
+
             elif "/" in x and " " in x:  # Mixed fraction
                 x = x.split()
                 x[1] = x[1].split("/")
@@ -25,14 +27,23 @@ def answer_handler(answer_dict, task_dict):  # return None, but calculated gv.re
                 if x not in true_answer:
                     break
                 processed_answer.add(x)
+
             elif "/" in x and " " not in x:  # Common fraction
                 x = x.split("/")
                 x = int(x[0]) / int(x[1])
                 if x not in true_answer:
                     break
                 processed_answer.add(x)
+
+            elif "." in x:  # Decimals
+                x = float(x)
+                if x not in true_answer:
+                    break
+                processed_answer.add(x)
+
         if processed_answer == true_answer and len(processed_answer) == len(true_answer):
             gv.result += 1
-#print(answer_handler({1: '9, -11 1/2'}, {1: ('x**2 + 2*x - 99 = 0', {-11.5, 9})}))
 
+#answer_handler({1: '9, -11 1/2', 2: "-0.0", 3: "-3/1"}, {1: ('x**2 + 2*x - 99 = 0', {-11.5, 9}), 2: ("x = 4", {0}), 3: ("x = 3", {-3})})
+#print("     ", gv.result)
 
