@@ -1,4 +1,7 @@
 import Global_variable as gv
+import sqlite3
+from random import sample, choice
+
 #import GUI as gui
 
 
@@ -43,7 +46,9 @@ def answer_handler(answer_dict, task_dict):
                 processed_answer.add(x)
 
         if processed_answer == true_answer and len(processed_answer) == len(true_answer):
-            gv.result += 1
+            gv.result.append(1)
+        else:
+            gv.result.append(0)
 
 #answer_handler({1: '9, -11 1/2', 2: "-0.0", 3: "-3"}, {1: ('x**2 + 2*x - 99 = 0', {-11.5, 9}), 2: ("x = 4", {0}), 3: ("x = 3", {-3})})
 #print("     ", gv.result)

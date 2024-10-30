@@ -2,7 +2,7 @@ import customtkinter as ctk
 import Math_simulator_code as ms_code
 import Global_variable as gv
 import Handlers as hd
-from random import sample, choice
+from random import sample
 from PIL import Image
 import tkinter as tk
 from tkinter import ttk
@@ -148,7 +148,7 @@ class InfoFrame(ctk.CTkFrame):
         if self.type_combobox.get() == "":
             self.type_error.configure(text="Тип задач не должен быть пустым\nПожалуйста, выберете его из списка")
             self.type_combobox.configure(fg_color="#ffc9c9")
-        else:
+        if self.name_entry.get() != "" and self.type_combobox.get() != "":
             gv.tasks_type = self.type_combobox.get()
             gv.count_tasks = int(self.count_slider.get())
             gv.officer_task_dict = dict(enumerate(sample(list(gv.general_task_dict[gv.tasks_type].items()), gv.count_tasks), start=1))
@@ -203,7 +203,7 @@ class TaskFrame(ctk.CTkFrame):
         self.answer_info.pack(expand=True, anchor="s", padx=[20, 150], pady=[0, 6])
 
         self.task_entry = ctk.CTkEntry(self.task_frame, font=("Arial", 40), width=650, height=70,
-                                       fg_color="FFFFFF", text_color="#212121",
+                                       fg_color="#FFFFFF", text_color="#212121",
                                        border_color="#818c81")
         self.task_entry.bind("<KeyRelease>", self.change_answer)
         self.task_entry.pack(side="left", anchor="w", expand=True, padx=[80, 5], pady=[0, 150])
@@ -256,7 +256,7 @@ class TaskFrame(ctk.CTkFrame):
 
         self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
         self.task_entry.delete(0, "end")
-        if gv.counter in gv.answer:
+        if gv.answer[gv.counter] != "":
             self.task_entry.insert(0, gv.answer[gv.counter])
             self.task_entry.configure(fg_color="#d9ffdf")
         else:
@@ -279,7 +279,7 @@ class TaskFrame(ctk.CTkFrame):
 
         self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
         self.task_entry.delete(0, "end")
-        if gv.counter in gv.answer:
+        if gv.answer[gv.counter] != "":
             self.task_entry.insert(0, gv.answer[gv.counter])
             self.task_entry.configure(fg_color="#d9ffdf")
         else:
@@ -315,18 +315,18 @@ class ResultFrame(ctk.CTkFrame):
 
         self.title_label = ctk.CTkLabel(self, text="Ознакомьтесь с вашими результатами:",
                                         font=("Arial", 35, "bold"), text_color="#000000")
-        self.title_label.grid(row=0, column=0, sticky="sw", padx=30, pady=[19, 13])
+        self.title_label.grid(row=0, column=0, columnspan=2, sticky="sw", padx=30, pady=[19, 13])
 
-        self.result_label = ctk.CTkLabel(self, text=f"Вы решили {gv.result} из {gv.count_tasks} задач",
+        self.result_label = ctk.CTkLabel(self, text=f"Вы решили {sum(gv.result)} из {gv.count_tasks} задач",
                                          font=("Arial", 35, "bold"), text_color="#000000",
-                                         height=45, corner_radius=10, width=390, fg_color="#d6ffd6")
+                                         height=45, corner_radius=10, width=390, fg_color="#a5faa5")
         self.result_label.grid(row=1, column=0, columnspan=2, sticky="n", padx=30, pady=[0, 10])
 
         # Create style
         self.table_style = ttk.Style()
         self.table_style.theme_use("default")
         self.table_style.configure("Treeview",
-                        background="#ecffe3",
+                        background="#c5faac",
                         foreground="black",
                         rowheight=45,
                         fieldbackground="white",
@@ -334,19 +334,20 @@ class ResultFrame(ctk.CTkFrame):
                         relief="flat",
                         borderwidth=1
                         )
-        self.table_style.map('Treeview', background=[('selected', '#bbff9c')], foreground=[("selected", "black")])
+        self.table_style.map('Treeview', background=[('selected', '#fdffe8')], foreground=[("selected", "black")])
         self.table_style.configure("Treeview.Heading",
-                        background="#42c22f",
+                        background="#4bb519",
                         foreground="black",
                         relief="flat",
                         font=("Calibri", 28, "bold"))
-        self.table_style.map("Treeview.Heading", background=[('active', '#6ee55c')])
+        self.table_style.map("Treeview.Heading", background=[('active', '#5cd649')])
 
         # Treeviev creating
         self.result_table = ttk.Treeview(self, style="Treeview", columns=gv.columns,
                                          show="headings", selectmode="extended")
         # Tag create
-        self.result_table.tag_configure("table_tag_1", font=("Calibri", 23, "bold"))
+        self.result_table.tag_configure("table_tag_true", font=("Calibri", 23, "bold"))
+        self.result_table.tag_configure("table_tag_false", font=("Calibri", 23, "bold"), background="#fca4a4")
 
         # Setting columns
         self.result_table.heading(gv.columns[0], text='Задача', anchor="c")
@@ -360,7 +361,14 @@ class ResultFrame(ctk.CTkFrame):
         self.result_table.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30, pady=(0, 25))
 
         for num in range(1, gv.count_tasks + 1):
-            self.result_table.insert("", "end", values=(num, gv.answer[num], sorted(list(gv.officer_task_dict[num][1]))), tags="table_tag_1")
+            if gv.result[num - 1] == 1:  # True answer, so table row - green (use tags="table_tag_true")
+                self.result_table.insert("", "end",
+                                         values=(num, gv.answer[num], ", ".join(map(str, sorted(list(gv.officer_task_dict[num][1]))))),
+                                         tags="table_tag_true")
+            else:  # False answer, so table row - red (use tags="table_tag_false")
+                self.result_table.insert("", "end",
+                                         values=(num, gv.answer[num], ", ".join(map(str, sorted(list(gv.officer_task_dict[num][1]))))),
+                                         tags="table_tag_false")
 
         # Final button
         self.all_results_button = ctk.CTkButton(self, command=self.go_to_all_results, text="Все результаты",
