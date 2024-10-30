@@ -1,7 +1,7 @@
 import sqlite3
 from random import sample, choice
 
-db = sqlite3.connect('Math_simulator_database.db')
+db = sqlite3.connect('Math_simulator_database(not_relevant).db')
 c = db.cursor()
 
 # Создание базы данных
@@ -121,8 +121,6 @@ def print_table(*tables):
         for i in table:
             print(*list(map(lambda x: str(x).ljust(7), i)))
             print()
-
-
 
 
 def math_training():

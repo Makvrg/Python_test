@@ -295,6 +295,11 @@ class TaskFrame(ctk.CTkFrame):
 
     def go_to_result(self):
         hd.answer_handler(gv.answer, gv.officer_task_dict)
+
+        # Database work
+        hd.create_database()
+
+
         self.destroy()
         self.task_frame = ResultFrame(app, border_width=15, border_color="#006600",
                                       fg_color="#FFFFFF", corner_radius=30)
