@@ -6,6 +6,7 @@ from random import sample
 from PIL import Image
 import tkinter as tk
 from tkinter import ttk
+import sqlite3
 
 
 def finish():
@@ -294,10 +295,26 @@ class TaskFrame(ctk.CTkFrame):
             self.previous_button.configure(state="disabled")
 
     def go_to_result(self):
-        hd.answer_handler(gv.answer, gv.officer_task_dict)
+        hd.answer_handler(gv.answer, gv.officer_task_dict)  # Getting the value of a variable gv.result
+        hd.get_true_in_a_row(gv.result)  # Getting the value of a variable gv.true_in_a_row
 
         # Database work
         hd.create_database()
+        hd.database_update(name_student=gv.name, topic_of_test=gv.tasks_type,
+                           abs_quantity=sum(gv.result), all_quantity=gv.count_tasks,
+                           ratio=round(sum(gv.result) / gv.count_tasks * 100, 2),
+                           result=gv.true_in_a_row)
+
+        # Проверка базы данных для разработчика
+        db = sqlite3.connect('Math_simulator_database.db')
+        c = db.cursor()
+        c.execute('''SELECT * FROM student;''')  # fix bug: student_name is None
+        table1 = (c.fetchall(), 'student')
+        c.execute('''SELECT * FROM max_score ORDER BY max_result DESC;''')
+        table2 = (c.fetchall(), 'max_score')
+        c.execute('''SELECT * FROM score;''')
+        table3 = (c.fetchall(), 'score')
+        hd.print_table(table1, table2, table3)
 
 
         self.destroy()

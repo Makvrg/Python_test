@@ -54,6 +54,30 @@ def answer_handler(answer_dict, task_dict):
 #print("     ", gv.result)
 
 
+def get_true_in_a_row(iter_answer):
+    count = 0
+    m = 0
+    a = iter_answer[0]
+    if a == 1:
+        count += 1
+        m = max(m, count)
+    if len(iter_answer) == 1:
+        gv.true_in_a_row = m
+        return None
+    for i in range(1, len(iter_answer)):
+        a, b = iter_answer[i - 1], iter_answer[i]
+        if b == 1:
+            count += 1
+            m = max(m, count)
+        else:
+            count = 0
+    gv.true_in_a_row = m
+
+
+#get_true_in_a_row([0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0])
+#print(gv.true_in_a_row)
+
+
 # def finish():
 #     gui.app.destroy()  # Ручное закрытие окна и всего приложения
 #     print('Закрытие приложения')
@@ -97,7 +121,7 @@ def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, 
     db = sqlite3.connect('Math_simulator_database.db')
     c = db.cursor()
 
-    if username in map(lambda x: x[0], c.execute('SELECT name_student FROM student;')):
+    if name_student in map(lambda x: x[0], c.execute('SELECT name_student FROM student;')):
         c.execute('''INSERT INTO score (student_id, topic_of_test, abs_quantity, all_quantity, ratio, result)
                            VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?, ?, ?, ?
                            );
@@ -107,7 +131,7 @@ def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, 
                                AND topic_of_test = ?;
                                ''', (name_student, topic_of_test)).fetchone()[0])
         new_max_result = result
-        if new_per > old_per:  # New record
+        if new_max_result > old_max_result:  # New record
             c.execute('''UPDATE max_score
                          SET max_result = ?
                          WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?) 
@@ -117,15 +141,15 @@ def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, 
         c.execute('''INSERT INTO student (name_student)
                      VALUES (?
                      );
-                     ''', (username, ))
-        c.execute('''INSERT INTO max_score (student_id, max_result)
-                           VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?
+                     ''', (name_student, ))
+        c.execute('''INSERT INTO max_score (student_id, topic_of_test, max_result)
+                           VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?
                            );
-                           ''', (username, python_result))
-        c.execute('''INSERT INTO score (student_id, result)
-                           VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?
+                           ''', (name_student, topic_of_test, result))
+        c.execute('''INSERT INTO score (student_id, topic_of_test, abs_quantity, all_quantity, ratio, result)
+                           VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?, ?, ?, ?
                            );
-                           ''', (username, python_result))
+                           ''', (name_student, topic_of_test, abs_quantity, all_quantity, ratio, result))
     db.commit()
     db.close()
 
@@ -171,6 +195,21 @@ def table_editor():  # Edit database
         DROP TABLE score1;''')
     db.commit()
     db.close()
+
+
+def print_table(*tables):
+    db = sqlite3.connect("Math_simulator_database.db")
+    c = db.cursor()
+    name_table = {'student': 'Студент',
+                  'max_score': 'Максимальный результат',
+                  'score': 'Все результаты'}
+    print()
+    for table, t_name in tables:
+        print(f'Таблица: {name_table[t_name]}')
+        for i in table:
+            print(*list(map(lambda x: str(x).ljust(7), i)))
+            print()
+
 
 
 

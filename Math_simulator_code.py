@@ -177,9 +177,17 @@ def math_training():
     table3 = (c.fetchall(), 'score')
     print_table(table1, table2, table3)
 
+# c.execute('''SELECT * FROM student;''')
+# table1 = (c.fetchall(), 'student')
+# print(table1)
+# c.execute('''SELECT * FROM max_score ORDER BY max_result DESC;''')
+# table2 = (c.fetchall(), 'max_score')
+# c.execute('''SELECT * FROM score;''')
+# table3 = (c.fetchall(), 'score')
+# print_table(table1, table2, table3)
 
 
 
     # Завершение работы
-    db.commit()
-    db.close()
+db.commit()
+db.close()
