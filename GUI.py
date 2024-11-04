@@ -81,7 +81,8 @@ class InfoFrame(ctk.CTkFrame):
         self.type_label.pack(anchor="nw", padx=10, pady=8)
         self.type_combobox = ctk.CTkComboBox(self.type_frame, hover=True, font=("Arial", 35), width=450, height=60,
                                              fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
-                                             button_color="#818c81", button_hover_color="#000", dropdown_fg_color="#FFF",
+                                             button_color="#818c81", button_hover_color="#000",
+                                             dropdown_fg_color="#FFF",
                                              dropdown_font=("Arial", 15), dropdown_hover_color="#dee3de",
                                              dropdown_text_color="#212121", state="readonly",
                                              values=list(gv.general_task_dict.keys()),
@@ -242,8 +243,6 @@ class TaskFrame(ctk.CTkFrame):
 
     def save_answer(self):
         gv.answer[gv.counter] = (self.task_entry.get().strip())
-        #print(gv.answer)
-        #print(gv.officer_task_dict)
         self.task_entry.configure(fg_color="#d9ffdf")
 
     def change_answer(self, event):
@@ -308,14 +307,13 @@ class TaskFrame(ctk.CTkFrame):
         # Проверка базы данных для разработчика
         db = sqlite3.connect('Math_simulator_database.db')
         c = db.cursor()
-        c.execute('''SELECT * FROM student;''')  # fix bug: student_name is None
+        c.execute('''SELECT * FROM student;''')
         table1 = (c.fetchall(), 'student')
         c.execute('''SELECT * FROM max_score ORDER BY max_result DESC;''')
         table2 = (c.fetchall(), 'max_score')
         c.execute('''SELECT * FROM score;''')
         table3 = (c.fetchall(), 'score')
         hd.print_table(table1, table2, table3)
-
 
         self.destroy()
         self.task_frame = ResultFrame(app, border_width=15, border_color="#006600",
@@ -348,23 +346,17 @@ class ResultFrame(ctk.CTkFrame):
         self.table_style = ttk.Style()
         self.table_style.theme_use("default")
         self.table_style.configure("Treeview",
-                        background="#c5faac",
-                        foreground="black",
-                        rowheight=45,
-                        fieldbackground="white",
-                        bordercolor="#3a5e29",
-                        relief="flat",
-                        borderwidth=1
-                        )
+                                   background="#c5faac", foreground="black",
+                                   rowheight=45, fieldbackground="white",
+                                   bordercolor="#3a5e29", relief="flat",
+                                   borderwidth=1)
         self.table_style.map('Treeview', background=[('selected', '#fdffe8')], foreground=[("selected", "black")])
         self.table_style.configure("Treeview.Heading",
-                        background="#4bb519",
-                        foreground="black",
-                        relief="flat",
-                        font=("Calibri", 28, "bold"))
+                                   background="#4bb519", foreground="black",
+                                   relief="flat", font=("Calibri", 28, "bold"))
         self.table_style.map("Treeview.Heading", background=[('active', '#5cd649')])
 
-        # Treeviev creating
+        # Treeview creating
         self.result_table = ttk.Treeview(self, style="Treeview", columns=gv.columns,
                                          show="headings", selectmode="extended")
         # Tag create
@@ -392,22 +384,29 @@ class ResultFrame(ctk.CTkFrame):
                                          values=(num, gv.answer[num], ", ".join(map(str, sorted(list(gv.officer_task_dict[num][1]))))),
                                          tags="table_tag_false")
 
+        # Label congratulations on new record
+        if gv.new_record_flag is True:
+            self.new_record_label = ctk.CTkLabel(self, text=f"Поздравляю! Вы побили свой рекорд по решённым\nподряд заданиям: {gv.true_in_a_row} вместо {gv.old_true_in_a_row}",
+                                             font=("Arial", 33, "bold"), text_color="#000000",
+                                             height=45, corner_radius=7, width=390, fg_color="#a5faa5")
+            self.new_record_label.grid(row=3, column=0, columnspan=2, sticky="s", padx=35, pady=[5, 5])
+            # self.rowconfigure(index=4, weight=2)
+
         # Final button
         self.all_results_button = ctk.CTkButton(self, command=self.go_to_all_results, text="Все результаты",
-                                             fg_color="#009900",
-                                             height=60, width=330, font=("Arial", 40, "bold"), border_width=3,
-                                             border_color="#006600", corner_radius=5,
-                                             text_color="#FFFFFF", hover_color="#007D00",
-                                             state="disabled")
-        self.all_results_button.grid(row=3, column=0, sticky="w", padx=30, pady=[14, 28])
+                                                fg_color="#009900", height=60, width=330,
+                                                font=("Arial", 40, "bold"), border_width=3,
+                                                border_color="#006600", corner_radius=5,
+                                                text_color="#FFFFFF", hover_color="#007D00",
+                                                state="disabled")
+        self.all_results_button.grid(row=4, column=0, sticky="nw", padx=30, pady=[14, 28])
 
         self. close_program_button = ctk.CTkButton(self, command=finish, text="Завершить",
-                                             fg_color="#009900",
-                                             height=60, width=330, font=("Arial", 40, "bold"), border_width=3,
-                                             border_color="#006600", corner_radius=5,
-                                             text_color="#FFFFFF", hover_color="#007D00")
-        self.close_program_button.grid(row=3, column=1, sticky="e", padx=30, pady=[14, 28])
-
+                                                   fg_color="#009900", height=60, width=330,
+                                                   font=("Arial", 40, "bold"), border_width=3,
+                                                   border_color="#006600", corner_radius=5,
+                                                   text_color="#FFFFFF", hover_color="#007D00")
+        self.close_program_button.grid(row=4, column=1, sticky="ne", padx=30, pady=[14, 28])
 
     def go_to_all_results(self):
         pass

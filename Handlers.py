@@ -126,17 +126,29 @@ def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, 
                            VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?, ?, ?, ?
                            );
                            ''', (name_student, topic_of_test, abs_quantity, all_quantity, ratio, result))
-        old_max_result = int(c.execute('''SELECT max_result FROM max_score
-                               WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?) 
-                               AND topic_of_test = ?;
-                               ''', (name_student, topic_of_test)).fetchone()[0])
-        new_max_result = result
-        if new_max_result > old_max_result:  # New record
-            c.execute('''UPDATE max_score
-                         SET max_result = ?
-                         WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?) 
-                         AND topic_of_test = ?;
-                         ''', (new_max_result, name_student, topic_of_test))
+        if topic_of_test in map(lambda x: x[0], c.execute('''SELECT topic_of_test FROM max_score
+                               WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?)
+                               ;''', (name_student, ))):
+            old_max_result = int(c.execute('''SELECT max_result FROM max_score
+                                   WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?) 
+                                   AND topic_of_test = ?
+                                   ;''', (name_student, topic_of_test)).fetchone()[0])
+            new_max_result = result
+            if new_max_result > old_max_result:  # New record
+                gv.new_record_flag = True
+                gv.old_true_in_a_row = old_max_result
+                print("gv.old_true_in_a_row", gv.old_true_in_a_row, type(gv.old_true_in_a_row))
+                c.execute('''UPDATE max_score
+                             SET max_result = ?
+                             WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?) 
+                             AND topic_of_test = ?;
+                             ''', (new_max_result, name_student, topic_of_test))
+        else:
+            c.execute('''INSERT INTO max_score (student_id, topic_of_test, max_result)
+                                       VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?
+                                       );
+                                       ''', (name_student, topic_of_test, result))
+
     else:
         c.execute('''INSERT INTO student (name_student)
                      VALUES (?
@@ -152,6 +164,7 @@ def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, 
                            ''', (name_student, topic_of_test, abs_quantity, all_quantity, ratio, result))
     db.commit()
     db.close()
+
 
 def table_editor():  # Edit database
     c.executescript('''

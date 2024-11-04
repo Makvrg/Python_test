@@ -1,6 +1,6 @@
-name = ""
-tasks_type = ""
-count_tasks = 0
+name = ""  # Example output "Максим"
+tasks_type = ""  # Example output "Квадратные уравнения"
+count_tasks = 0  # Example output 5
 general_task_dict = {"Линейные уравнения": {"x + 1 = 1": {0},
                                       "x - 5 = 9": {14},
                                       "2x + 1 = 1": {0},
@@ -26,4 +26,9 @@ answer = {}  # Example output {1: '1, -2', 2: '9, -11', 3: '-9, 7', 4: '5', 5: '
 counter = 1
 result = []  # Example output [1, 0, 1, 1, 1, 0]
 true_in_a_row = 0  # The number of correct responses in a row
+
+# Block "Label congratulations on new record"
+new_record_flag = False  # Has the record been broken or not?
+old_true_in_a_row = 0  # The number of correct responses in a row
+
 columns = ("number", "your answer", "true answer")
