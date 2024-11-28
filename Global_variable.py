@@ -32,3 +32,4 @@ new_record_flag = False  # Has the record been broken or not?
 old_true_in_a_row = 0  # The number of correct responses in a row
 
 columns = ("number", "your answer", "true answer")
+columns_all_result = ("score_id", "name_student", "topic_of_test", "abs_and_all_quantity", "ratio", "result")

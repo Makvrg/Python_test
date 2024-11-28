@@ -316,8 +316,8 @@ class TaskFrame(ctk.CTkFrame):
         hd.print_table(table1, table2, table3)
 
         self.destroy()
-        self.task_frame = ResultFrame(app, border_width=15, border_color="#006600",
-                                      fg_color="#FFFFFF", corner_radius=30)
+        self.result_frame = ResultFrame(app, border_width=15, border_color="#006600",
+                                        fg_color="#FFFFFF", corner_radius=30)
 
 
 class ResultFrame(ctk.CTkFrame):
@@ -343,9 +343,9 @@ class ResultFrame(ctk.CTkFrame):
         self.result_label.grid(row=1, column=0, columnspan=2, sticky="n", padx=30, pady=[0, 10])
 
         # Create style
-        self.table_style = ttk.Style()
+        self.table_style = ttk.Style()  # Need refactor
         self.table_style.theme_use("default")
-        self.table_style.configure("Treeview",
+        self.table_style.configure("1.Treeview",
                                    background="#c5faac", foreground="black",
                                    rowheight=45, fieldbackground="white",
                                    bordercolor="#3a5e29", relief="flat",
@@ -357,7 +357,7 @@ class ResultFrame(ctk.CTkFrame):
         self.table_style.map("Treeview.Heading", background=[('active', '#5cd649')])
 
         # Treeview creating
-        self.result_table = ttk.Treeview(self, style="Treeview", columns=gv.columns,
+        self.result_table = ttk.Treeview(self, style="1.Treeview", columns=gv.columns,
                                          show="headings", selectmode="extended")
         # Tag create
         self.result_table.tag_configure("table_tag_true", font=("Calibri", 23, "bold"))
@@ -397,8 +397,7 @@ class ResultFrame(ctk.CTkFrame):
                                                 fg_color="#009900", height=60, width=330,
                                                 font=("Arial", 40, "bold"), border_width=3,
                                                 border_color="#006600", corner_radius=5,
-                                                text_color="#FFFFFF", hover_color="#007D00",
-                                                state="disabled")
+                                                text_color="#FFFFFF", hover_color="#007D00")
         self.all_results_button.grid(row=4, column=0, sticky="nw", padx=30, pady=[14, 28])
 
         self. close_program_button = ctk.CTkButton(self, command=finish, text="Завершить",
@@ -409,7 +408,67 @@ class ResultFrame(ctk.CTkFrame):
         self.close_program_button.grid(row=4, column=1, sticky="ne", padx=30, pady=[14, 28])
 
     def go_to_all_results(self):
-        pass
+        self.destroy()
+        self.all_results_frame = AllResultsFrame(app, border_width=15, border_color="#006600",
+                                                 fg_color="#FFFFFF", corner_radius=30)
+
+
+class AllResultsFrame(ctk.CTkFrame):
+    def __init__(self, master, **kwargs):
+        super().__init__(master, **kwargs)
+        self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
+
+        # Create Notebook
+        self.tabs = ttk.Notebook(self)
+        self.tabs.pack(expand=True, fill="both", padx=19, pady=19)
+
+        self.frame1 = ttk.Frame(master=self.tabs, relief="solid", borderwidth=3)
+        self.frame2 = ttk.Frame(master=self.tabs, relief="solid", borderwidth=3)
+        self.frame1.pack(expand=True, fill="both")
+        self.frame2.pack(expand=True, fill="both")
+
+        self.trophy_icon = ctk.CTkImage(dark_image=Image.open('Trophy.png'), size=(50, 50))
+        self.tabs.add(child=self.frame1, text='Все результаты')
+        self.tabs.add(child=self.frame2, text='Лучшие результаты', image=self.trophy_icon, compound="left")
+
+        # Create style
+        self.table_style = ttk.Style() # Need refactor
+        self.table_style.theme_use("default")
+        self.table_style.configure("2.Treeview",
+                                   background="#c5faac", foreground="black",
+                                   rowheight=45, fieldbackground="white",
+                                   bordercolor="#3a5e29", relief="flat",
+                                   borderwidth=1)
+        self.table_style.map('Treeview', background=[('selected', '#fdffe8')], foreground=[("selected", "black")])
+        self.table_style.configure("Treeview.Heading",
+                                   background="#4bb519", foreground="black",
+                                   relief="flat", font=("Calibri", 28, "bold"))
+        self.table_style.map("Treeview.Heading", background=[('active', '#5cd649')])
+
+        # Information loading to frame1 and frame2
+        # Treeview creating
+        self.result_table = ttk.Treeview(self.frame1, style="2.Treeview", columns=gv.columns_all_result,
+                                         show="headings", selectmode="extended")
+
+        # Setting columns
+        self.result_table.heading(gv.columns_all_result[0], text='№', anchor="c")
+        self.result_table.heading(gv.columns_all_result[1], text='Имя', anchor="c")
+        self.result_table.heading(gv.columns_all_result[2], text='Тип', anchor="c")
+        self.result_table.heading(gv.columns_all_result[3], text='Результат', anchor="c")
+        self.result_table.heading(gv.columns_all_result[4], text='Качество', anchor="c")
+        self.result_table.heading(gv.columns_all_result[5], text='Подряд', anchor="c")
+
+        self.result_table.column(column=gv.columns_all_result[0], width=1)
+        self.result_table.column(column=gv.columns_all_result[1], width=10)
+        self.result_table.column(column=gv.columns_all_result[2], width=50)
+        self.result_table.column(column=gv.columns_all_result[3], width=80)
+        self.result_table.column(column=gv.columns_all_result[4], width=30)
+        self.result_table.column(column=gv.columns_all_result[5], width=30)
+
+        self.result_table.pack(expand=True, fill="both")
+
+
+
 
 
 if __name__ == "__main__":
