@@ -224,6 +224,18 @@ def print_table(*tables):
             print()
 
 
+def insert_many(treeview_name):  # treeview_name is a "result_table" or "max_result_table"
+    db = sqlite3.connect('Math_simulator_database.db')
+    c = db.cursor()
+
+    count_row = c.execute("SELECT COUNT(*) FROM score").fetchone()
+    print(count_row)
+    for row in range(1, count_row + 1):
+        break
+
+    db.commit()
+    db.close()
+insert_all_results()
 
 
 

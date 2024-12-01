@@ -3,7 +3,7 @@ import Math_simulator_code as ms_code
 import Global_variable as gv
 import Handlers as hd
 from random import sample
-from PIL import Image
+from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import ttk
 import sqlite3
@@ -350,11 +350,11 @@ class ResultFrame(ctk.CTkFrame):
                                    rowheight=45, fieldbackground="white",
                                    bordercolor="#3a5e29", relief="flat",
                                    borderwidth=1)
-        self.table_style.map('Treeview', background=[('selected', '#fdffe8')], foreground=[("selected", "black")])
-        self.table_style.configure("Treeview.Heading",
+        self.table_style.map('1.Treeview', background=[('selected', '#fdffe8')], foreground=[("selected", "black")])
+        self.table_style.configure("1.Treeview.Heading",
                                    background="#4bb519", foreground="black",
                                    relief="flat", font=("Calibri", 28, "bold"))
-        self.table_style.map("Treeview.Heading", background=[('active', '#5cd649')])
+        self.table_style.map("1.Treeview.Heading", background=[('active', '#5cd649')])
 
         # Treeview creating
         self.result_table = ttk.Treeview(self, style="1.Treeview", columns=gv.columns,
@@ -427,9 +427,17 @@ class AllResultsFrame(ctk.CTkFrame):
         self.frame1.pack(expand=True, fill="both")
         self.frame2.pack(expand=True, fill="both")
 
-        self.trophy_icon = ctk.CTkImage(dark_image=Image.open('Trophy.png'), size=(50, 50))
-        self.tabs.add(child=self.frame1, text='Все результаты')
-        self.tabs.add(child=self.frame2, text='Лучшие результаты', image=self.trophy_icon, compound="left")
+        # Creating an image
+        im_trophy = Image.open("Trophy.png")
+        im_trophy.thumbnail(size=(30, 30))
+        im_star = Image.open("star.png")
+        im_star.thumbnail(size=(30, 30))
+        global trophy_icon, star_icon
+        trophy_icon = ImageTk.PhotoImage(im_trophy)
+        star_icon = ImageTk.PhotoImage(im_star)
+
+        self.tabs.add(child=self.frame1, text='Все результаты', image=star_icon, compound="left")
+        self.tabs.add(child=self.frame2, text='Лучшие результаты', image=trophy_icon, compound="left")
 
         # Create style
         self.table_style = ttk.Style() # Need refactor
@@ -439,10 +447,10 @@ class AllResultsFrame(ctk.CTkFrame):
                                    rowheight=45, fieldbackground="white",
                                    bordercolor="#3a5e29", relief="flat",
                                    borderwidth=1)
-        self.table_style.map('Treeview', background=[('selected', '#fdffe8')], foreground=[("selected", "black")])
-        self.table_style.configure("Treeview.Heading",
+        self.table_style.map('2.Treeview', background=[('selected', '#fdffe8')], foreground=[("selected", "black")])
+        self.table_style.configure("2.Treeview.Heading",
                                    background="#4bb519", foreground="black",
-                                   relief="flat", font=("Calibri", 28, "bold"))
+                                   relief="flat", font=("Calibri", 25, "bold"))
         self.table_style.map("Treeview.Heading", background=[('active', '#5cd649')])
 
         # Information loading to frame1 and frame2
@@ -466,6 +474,8 @@ class AllResultsFrame(ctk.CTkFrame):
         self.result_table.column(column=gv.columns_all_result[5], width=30)
 
         self.result_table.pack(expand=True, fill="both")
+
+        # Row insert
 
 
 
