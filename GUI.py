@@ -1,3 +1,4 @@
+from operator import index
 import customtkinter as ctk
 import Math_simulator_code as ms_code
 import Global_variable as gv
@@ -210,7 +211,7 @@ class TaskFrame(ctk.CTkFrame):
         self.task_entry.bind("<KeyRelease>", self.change_answer)
         self.task_entry.pack(side="left", anchor="w", expand=True, padx=[80, 5], pady=[0, 150])
 
-        self.save_photo = ctk.CTkImage(dark_image=Image.open("save9.1.png"), size=(59, 59))
+        self.save_photo = ctk.CTkImage(dark_image=Image.open("Image/save9.1.png"), size=(59, 59))
         self.save_button = ctk.CTkButton(self.task_frame, command=self.save_answer, height=70, width=80,
                                          fg_color="#009900", font=("Arial", 40, "bold"), border_width=3,
                                          border_color="#006600", corner_radius=5, text="",
@@ -350,7 +351,7 @@ class ResultFrame(ctk.CTkFrame):
                                    rowheight=45, fieldbackground="white",
                                    bordercolor="#3a5e29", relief="flat",
                                    borderwidth=1)
-        self.table_style.map('1.Treeview', background=[('selected', '#fdffe8')], foreground=[("selected", "black")])
+        self.table_style.map('1.Treeview', background=[('selected', '#f5ffb8')], foreground=[("selected", "black")])
         self.table_style.configure("1.Treeview.Heading",
                                    background="#4bb519", foreground="black",
                                    relief="flat", font=("Calibri", 28, "bold"))
@@ -374,6 +375,7 @@ class ResultFrame(ctk.CTkFrame):
 
         self.result_table.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30, pady=(0, 25))
 
+        # Insert rows
         for num in range(1, gv.count_tasks + 1):
             if gv.result[num - 1] == 1:  # True answer, so table row - green (use tags="table_tag_true")
                 self.result_table.insert("", "end",
@@ -386,7 +388,7 @@ class ResultFrame(ctk.CTkFrame):
 
         # Label congratulations on new record
         if gv.new_record_flag is True:
-            self.new_record_label = ctk.CTkLabel(self, text=f"Поздравляю! Вы побили свой рекорд по решённым\nподряд заданиям: {gv.true_in_a_row} вместо {gv.old_true_in_a_row}",
+            self.new_record_label = ctk.CTkLabel(self, text=f"Поздравляю! Вы побили свой рекорд по решённым\nподряд заданиям: {gv.old_true_in_a_row} >>> {gv.true_in_a_row}",
                                              font=("Arial", 33, "bold"), text_color="#000000",
                                              height=45, corner_radius=7, width=390, fg_color="#a5faa5")
             self.new_record_label.grid(row=3, column=0, columnspan=2, sticky="s", padx=35, pady=[5, 5])
@@ -427,10 +429,21 @@ class AllResultsFrame(ctk.CTkFrame):
         self.frame1.pack(expand=True, fill="both")
         self.frame2.pack(expand=True, fill="both")
 
+        # Grid setting
+        self.frame1.rowconfigure(index=0, weight=100)
+        self.frame1.rowconfigure(index=1, weight=1)
+        self.frame1.columnconfigure(index=0, weight=1)
+        self.frame1.columnconfigure(index=1, weight=1)
+
+        self.frame2.rowconfigure(index=0, weight=100)
+        self.frame2.rowconfigure(index=1, weight=1)
+        self.frame2.columnconfigure(index=0, weight=1)
+        self.frame2.columnconfigure(index=1, weight=1)
+
         # Creating an image
-        im_trophy = Image.open("Trophy.png")
+        im_trophy = Image.open("Image/Trophy.png")
         im_trophy.thumbnail(size=(30, 30))
-        im_star = Image.open("star.png")
+        im_star = Image.open("Image/star.png")
         im_star.thumbnail(size=(30, 30))
         global trophy_icon, star_icon
         trophy_icon = ImageTk.PhotoImage(im_trophy)
@@ -443,41 +456,68 @@ class AllResultsFrame(ctk.CTkFrame):
         self.table_style = ttk.Style() # Need refactor
         self.table_style.theme_use("default")
         self.table_style.configure("2.Treeview",
-                                   background="#c5faac", foreground="black",
+                                   background="#fcfffa", foreground="black",
                                    rowheight=45, fieldbackground="white",
                                    bordercolor="#3a5e29", relief="flat",
                                    borderwidth=1)
-        self.table_style.map('2.Treeview', background=[('selected', '#fdffe8')], foreground=[("selected", "black")])
+        self.table_style.map('2.Treeview', background=[('selected', '#f5ffb8')], foreground=[("selected", "black")])
         self.table_style.configure("2.Treeview.Heading",
                                    background="#4bb519", foreground="black",
                                    relief="flat", font=("Calibri", 25, "bold"))
-        self.table_style.map("Treeview.Heading", background=[('active', '#5cd649')])
+        self.table_style.map("2.Treeview.Heading", background=[('active', '#5cd649')])
 
         # Information loading to frame1 and frame2
         # Treeview creating
-        self.result_table = ttk.Treeview(self.frame1, style="2.Treeview", columns=gv.columns_all_result,
-                                         show="headings", selectmode="extended")
+        self.all_result_table = ttk.Treeview(self.frame1, style="2.Treeview", columns=gv.columns_all_result,
+                                             show="headings", selectmode="extended")
+
+        # Tag create
+        self.all_result_table.tag_configure("all_result_table_tag_1", font=("Calibri", 20, "bold"))
 
         # Setting columns
-        self.result_table.heading(gv.columns_all_result[0], text='№', anchor="c")
-        self.result_table.heading(gv.columns_all_result[1], text='Имя', anchor="c")
-        self.result_table.heading(gv.columns_all_result[2], text='Тип', anchor="c")
-        self.result_table.heading(gv.columns_all_result[3], text='Результат', anchor="c")
-        self.result_table.heading(gv.columns_all_result[4], text='Качество', anchor="c")
-        self.result_table.heading(gv.columns_all_result[5], text='Подряд', anchor="c")
+        self.all_result_table.heading(gv.columns_all_result[0], text='№', anchor="c")
+        self.all_result_table.heading(gv.columns_all_result[1], text='Имя', anchor="c")
+        self.all_result_table.heading(gv.columns_all_result[2], text='Тип', anchor="c")
+        self.all_result_table.heading(gv.columns_all_result[3], text='Результат', anchor="c")
+        self.all_result_table.heading(gv.columns_all_result[4], text='Качество', anchor="c")
+        self.all_result_table.heading(gv.columns_all_result[5], text='Подряд', anchor="c")
 
-        self.result_table.column(column=gv.columns_all_result[0], width=1)
-        self.result_table.column(column=gv.columns_all_result[1], width=10)
-        self.result_table.column(column=gv.columns_all_result[2], width=50)
-        self.result_table.column(column=gv.columns_all_result[3], width=80)
-        self.result_table.column(column=gv.columns_all_result[4], width=30)
-        self.result_table.column(column=gv.columns_all_result[5], width=30)
+        self.all_result_table.column(column=gv.columns_all_result[0], width=1)
+        self.all_result_table.column(column=gv.columns_all_result[1], width=10)
+        self.all_result_table.column(column=gv.columns_all_result[2], width=50)
+        self.all_result_table.column(column=gv.columns_all_result[3], width=80)
+        self.all_result_table.column(column=gv.columns_all_result[4], width=30)
+        self.all_result_table.column(column=gv.columns_all_result[5], width=30)
 
-        self.result_table.pack(expand=True, fill="both")
+        self.all_result_table.grid(row=0, column=0, columnspan=2, sticky="nsew", pady=(0, 5))
+
+        # Button
+        self.back_button = ctk.CTkButton(self.frame1, command=self.back_to_result, text="Назад",
+                                         fg_color="#009900", height=60, width=330,
+                                         font=("Arial", 40, "bold"), border_width=3,
+                                         border_color="#006600", corner_radius=5,
+                                         text_color="#FFFFFF", hover_color="#007D00")
+        self.back_button.grid(row=1, column=0, sticky="nw", padx=5, pady=[0, 3])
+
+        self.close_program_button_1 = ctk.CTkButton(self.frame1, command=finish, text="Завершить",
+                                                    fg_color="#009900", height=60, width=330,
+                                                    font=("Arial", 40, "bold"), border_width=3,
+                                                    border_color="#006600", corner_radius=5,
+                                                    text_color="#FFFFFF", hover_color="#007D00")
+        self.close_program_button_1.grid(row=1, column=1, sticky="ne", padx=5, pady=[0, 3])
 
         # Row insert
+        for row in hd.get_rows("all_result_table"):
+            self.all_result_table.insert("", "end", values=row, tags="all_result_table_tag_1")
 
+        # for row in hd.get_rows("max_result_table")
+        # Need color setting, place setting and more
 
+        # Methods
+    def back_to_result(self):
+        self.destroy()
+        self.result_frame = ResultFrame(app, border_width=15, border_color="#006600",
+                                        fg_color="#FFFFFF", corner_radius=30)
 
 
 

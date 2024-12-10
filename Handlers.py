@@ -167,6 +167,8 @@ def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, 
 
 
 def table_editor():  # Edit database
+    db = sqlite3.connect("Math_simulator_database.db")
+    c = db.cursor()
     c.executescript('''
         ALTER TABLE max_score
         RENAME TO max_score1;
@@ -224,18 +226,30 @@ def print_table(*tables):
             print()
 
 
-def insert_many(treeview_name):  # treeview_name is a "result_table" or "max_result_table"
+def get_rows(treeview_name):  # treeview_name is a "all_result_table" or "max_result_table"
     db = sqlite3.connect('Math_simulator_database.db')
     c = db.cursor()
+    if treeview_name == "all_result_table":
+        all_rows = c.execute('''SELECT score_id, name_student, topic_of_test, abs_quantity, all_quantity, ratio, result 
+                                FROM score JOIN student USING(student_id);''').fetchall()
 
-    count_row = c.execute("SELECT COUNT(*) FROM score").fetchone()
-    print(count_row)
-    for row in range(1, count_row + 1):
-        break
+        # Union for column "Результат"
+        list_rows = []
+        for row in all_rows:
+            list_rows.append(tuple(list(row[0:3]) + [f'{str(row[3])} / {str(row[4])}'] + list(row[5:])))
 
+    elif treeview_name == "max_result_table":
+        list_rows = c.execute('''SELECT max_score_id, name_student, topic_of_test, max_result 
+                                 FROM max_score JOIN student USING(student_id);''').fetchall()
     db.commit()
     db.close()
-##insert_all_results()
+    return list_rows
+
+
+# def finish_test(object):
+#     object.destroy()  # Ручное закрытие окна и всего приложения
+#     print('Закрытие приложения')
+
 
 
 
