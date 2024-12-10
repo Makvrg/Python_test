@@ -235,7 +235,7 @@ def insert_many(treeview_name):  # treeview_name is a "result_table" or "max_res
 
     db.commit()
     db.close()
-#insert_all_results()
+##insert_all_results()
 
 
 
