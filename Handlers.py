@@ -233,10 +233,10 @@ def get_rows(treeview_name):  # treeview_name is a "all_result_table" or "max_re
         all_rows = c.execute('''SELECT score_id, name_student, topic_of_test, abs_quantity, all_quantity, ratio, result 
                                 FROM score JOIN student USING(student_id);''').fetchall()
 
-        # Union for column "Результат"
+        # Union for column "Результат" and conversion to percentage column "Качество"
         list_rows = []
         for row in all_rows:
-            list_rows.append(tuple(list(row[0:3]) + [f'{str(row[3])} / {str(row[4])}'] + list(row[5:])))
+            list_rows.append(tuple(list(row[0:3]) + [f'{str(row[3])} / {str(row[4])}'] + [f'{round(row[5])}%'] + list(row[6:])))
 
     elif treeview_name == "max_result_table":
         list_rows = c.execute('''SELECT max_score_id, name_student, topic_of_test, max_result 

@@ -347,11 +347,11 @@ class ResultFrame(ctk.CTkFrame):
         self.table_style = ttk.Style()  # Need refactor
         self.table_style.theme_use("default")
         self.table_style.configure("1.Treeview",
-                                   background="#c5faac", foreground="black",
+                                   background="#fcfffa", foreground="black",
                                    rowheight=45, fieldbackground="white",
                                    bordercolor="#3a5e29", relief="flat",
                                    borderwidth=1)
-        self.table_style.map('1.Treeview', background=[('selected', '#f5ffb8')], foreground=[("selected", "black")])
+        self.table_style.map('1.Treeview', background=[('selected', '#f1ff94')], foreground=[("selected", "black")])
         self.table_style.configure("1.Treeview.Heading",
                                    background="#4bb519", foreground="black",
                                    relief="flat", font=("Calibri", 28, "bold"))
@@ -402,7 +402,7 @@ class ResultFrame(ctk.CTkFrame):
                                                 text_color="#FFFFFF", hover_color="#007D00")
         self.all_results_button.grid(row=4, column=0, sticky="nw", padx=30, pady=[14, 28])
 
-        self. close_program_button = ctk.CTkButton(self, command=finish, text="Завершить",
+        self. close_program_button = ctk.CTkButton(self, command=finish, text="Выйти",
                                                    fg_color="#009900", height=60, width=330,
                                                    font=("Arial", 40, "bold"), border_width=3,
                                                    border_color="#006600", corner_radius=5,
@@ -420,12 +420,26 @@ class AllResultsFrame(ctk.CTkFrame):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
+        # Create style
+        self.notebook_style = ttk.Style()  # Need refactor
+        self.notebook_style.theme_use("default")
+        self.notebook_style.configure("1.TNotebook",
+                                      background="#FFFFFF", foreground="#FFFFFF",
+                                      fieldbackground="white",
+                                      bordercolor="#FFFFFF", relief="flat")
+        self.notebook_style.configure('1.TNotebook.Tab', background='#8fed64', foreground='black',
+                                      font=("Calibri", 18, "bold"))
+        self.notebook_style.map('1.TNotebook.Tab', background=[("selected", '#319602')])
+
         # Create Notebook
-        self.tabs = ttk.Notebook(self)
+        self.tabs = ttk.Notebook(self, style="1.TNotebook")
         self.tabs.pack(expand=True, fill="both", padx=19, pady=19)
 
-        self.frame1 = ttk.Frame(master=self.tabs, relief="solid", borderwidth=3)
-        self.frame2 = ttk.Frame(master=self.tabs, relief="solid", borderwidth=3)
+
+        self.frame1 = ctk.CTkFrame(master=self.tabs, border_width=3, bg_color="transparent",
+                                   fg_color="#FFFFFF", border_color="#FFFFFF")
+        self.frame2 = ctk.CTkFrame(master=self.tabs, border_width=3, bg_color="transparent",
+                                   fg_color="#FFFFFF", border_color="#FFFFFF")
         self.frame1.pack(expand=True, fill="both")
         self.frame2.pack(expand=True, fill="both")
 
@@ -460,19 +474,27 @@ class AllResultsFrame(ctk.CTkFrame):
                                    rowheight=45, fieldbackground="white",
                                    bordercolor="#3a5e29", relief="flat",
                                    borderwidth=1)
-        self.table_style.map('2.Treeview', background=[('selected', '#f5ffb8')], foreground=[("selected", "black")])
+        self.table_style.map('2.Treeview', background=[('selected', '#f1ff94')], foreground=[("selected", "black")])
         self.table_style.configure("2.Treeview.Heading",
                                    background="#4bb519", foreground="black",
                                    relief="flat", font=("Calibri", 25, "bold"))
         self.table_style.map("2.Treeview.Heading", background=[('active', '#5cd649')])
 
         # Information loading to frame1 and frame2
-        # Treeview creating
+        # Treeview and Scrollbar creating
         self.all_result_table = ttk.Treeview(self.frame1, style="2.Treeview", columns=gv.columns_all_result,
                                              show="headings", selectmode="extended")
+        self.all_result_table_scrollbar = ctk.CTkScrollbar(self.frame1, border_spacing=6, minimum_pixel_length=100,
+                                                           bg_color="transparent", fg_color="#e4ffcf", button_color="#169c02",
+                                                           orientation="vertical", command=self.all_result_table.yview,
+                                                           width=25, hover=False)
+        self.all_result_table_scrollbar.grid(row=0, column=2, sticky="nsew", pady=[0, 6])
+        self.all_result_table.configure(yscrollcommand=self.all_result_table_scrollbar.set)
+
 
         # Tag create
         self.all_result_table.tag_configure("all_result_table_tag_1", font=("Calibri", 20, "bold"))
+        self.all_result_table.tag_configure("all_result_table_tag_2", font=("Calibri", 20, "bold"), background="#e6ffd4")
 
         # Setting columns
         self.all_result_table.heading(gv.columns_all_result[0], text='№', anchor="c")
@@ -482,12 +504,12 @@ class AllResultsFrame(ctk.CTkFrame):
         self.all_result_table.heading(gv.columns_all_result[4], text='Качество', anchor="c")
         self.all_result_table.heading(gv.columns_all_result[5], text='Подряд', anchor="c")
 
-        self.all_result_table.column(column=gv.columns_all_result[0], width=1)
-        self.all_result_table.column(column=gv.columns_all_result[1], width=10)
-        self.all_result_table.column(column=gv.columns_all_result[2], width=50)
-        self.all_result_table.column(column=gv.columns_all_result[3], width=80)
-        self.all_result_table.column(column=gv.columns_all_result[4], width=30)
-        self.all_result_table.column(column=gv.columns_all_result[5], width=30)
+        self.all_result_table.column(column=gv.columns_all_result[0], width=70)
+        self.all_result_table.column(column=gv.columns_all_result[1], width=150)
+        self.all_result_table.column(column=gv.columns_all_result[2], width=250)
+        self.all_result_table.column(column=gv.columns_all_result[3], width=100)
+        self.all_result_table.column(column=gv.columns_all_result[4], width=80)
+        self.all_result_table.column(column=gv.columns_all_result[5], width=80)
 
         self.all_result_table.grid(row=0, column=0, columnspan=2, sticky="nsew", pady=(0, 5))
 
@@ -499,19 +521,23 @@ class AllResultsFrame(ctk.CTkFrame):
                                          text_color="#FFFFFF", hover_color="#007D00")
         self.back_button.grid(row=1, column=0, sticky="nw", padx=5, pady=[0, 3])
 
-        self.close_program_button_1 = ctk.CTkButton(self.frame1, command=finish, text="Завершить",
+        self.close_program_button_1 = ctk.CTkButton(self.frame1, command=finish, text="Выйти",
                                                     fg_color="#009900", height=60, width=330,
                                                     font=("Arial", 40, "bold"), border_width=3,
                                                     border_color="#006600", corner_radius=5,
                                                     text_color="#FFFFFF", hover_color="#007D00")
-        self.close_program_button_1.grid(row=1, column=1, sticky="ne", padx=5, pady=[0, 3])
+        self.close_program_button_1.grid(row=1, column=1, columnspan=2, sticky="ne", padx=5, pady=[0, 3])
 
         # Row insert
+        self.k = 1
         for row in hd.get_rows("all_result_table"):
-            self.all_result_table.insert("", "end", values=row, tags="all_result_table_tag_1")
+            if self.k % 2 == 0:
+                self.all_result_table.insert("", "end", values=row, tags="all_result_table_tag_1")
+            else:
+                self.all_result_table.insert("", "end", values=row, tags="all_result_table_tag_2")
+            self.k += 1
 
         # for row in hd.get_rows("max_result_table")
-        # Need color setting, place setting and more
 
         # Methods
     def back_to_result(self):
