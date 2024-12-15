@@ -17,7 +17,6 @@ general_task_dict = {"Линейные уравнения": {"x + 1 = 1": {0},
                                         }
                      }
 officer_task_dict = {}  # Example output {1: ('2x + 1 = 1', {0}), 2: ('x + 2 = -1', {-3}), 3: ('x + 1 = 1', {0})}
-sergeant_task_list = None
 exercise = {"Линейные уравнения": "Решите уравнение в действительных числах:",
             "Квадратные уравнения": "Решите уравнение в действительных числах:"
             }
@@ -33,3 +32,4 @@ old_true_in_a_row = 0  # The number of correct responses in a row
 
 columns = ("number", "your answer", "true answer")
 columns_all_result = ("score_id", "name_student", "topic_of_test", "abs_and_all_quantity", "ratio", "result")
+columns_max_result = ("max_score_id", "name_student", "topic_of_test", "max_result")

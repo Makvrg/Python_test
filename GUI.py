@@ -377,6 +377,7 @@ class ResultFrame(ctk.CTkFrame):
 
         # Insert rows
         for num in range(1, gv.count_tasks + 1):
+            print(gv.result)
             if gv.result[num - 1] == 1:  # True answer, so table row - green (use tags="table_tag_true")
                 self.result_table.insert("", "end",
                                          values=(num, gv.answer[num], ", ".join(map(str, sorted(list(gv.officer_task_dict[num][1]))))),
@@ -427,7 +428,7 @@ class AllResultsFrame(ctk.CTkFrame):
                                       background="#FFFFFF", foreground="#FFFFFF",
                                       fieldbackground="white",
                                       bordercolor="#FFFFFF", relief="flat")
-        self.notebook_style.configure('1.TNotebook.Tab', background='#8fed64', foreground='black',
+        self.notebook_style.configure('1.TNotebook.Tab', background='#73cf48', foreground='black',
                                       font=("Calibri", 18, "bold"))
         self.notebook_style.map('1.TNotebook.Tab', background=[("selected", '#319602')])
 
@@ -481,7 +482,7 @@ class AllResultsFrame(ctk.CTkFrame):
         self.table_style.map("2.Treeview.Heading", background=[('active', '#5cd649')])
 
         # Information loading to frame1 and frame2
-        # Treeview and Scrollbar creating
+        # Treeview and Scrollbar creating №1
         self.all_result_table = ttk.Treeview(self.frame1, style="2.Treeview", columns=gv.columns_all_result,
                                              show="headings", selectmode="extended")
         self.all_result_table_scrollbar = ctk.CTkScrollbar(self.frame1, border_spacing=6, minimum_pixel_length=100,
@@ -513,6 +514,34 @@ class AllResultsFrame(ctk.CTkFrame):
 
         self.all_result_table.grid(row=0, column=0, columnspan=2, sticky="nsew", pady=(0, 5))
 
+        # Treeview and Scrollbar creating №2
+        self.max_result_table = ttk.Treeview(self.frame2, style="2.Treeview", columns=gv.columns_max_result,
+                                             show="headings", selectmode="extended")
+        self.max_result_table_scrollbar = ctk.CTkScrollbar(self.frame2, border_spacing=6, minimum_pixel_length=100,
+                                                           bg_color="transparent", fg_color="#e4ffcf",
+                                                           button_color="#169c02",
+                                                           orientation="vertical", command=self.max_result_table.yview,
+                                                           width=25, hover=False)
+        self.max_result_table_scrollbar.grid(row=0, column=2, sticky="nsew", pady=[0, 6])
+        self.max_result_table.configure(yscrollcommand=self.max_result_table_scrollbar.set)
+
+        # Tag create
+        self.max_result_table.tag_configure("max_result_table_tag_1", font=("Calibri", 20, "bold"))
+        self.max_result_table.tag_configure("max_result_table_tag_2", font=("Calibri", 20, "bold"), background="#e6ffd4")
+
+        # Setting columns
+        self.max_result_table.heading(gv.columns_max_result[0], text='№', anchor="c")
+        self.max_result_table.heading(gv.columns_max_result[1], text='Имя', anchor="c")
+        self.max_result_table.heading(gv.columns_max_result[2], text='Тип', anchor="c")
+        self.max_result_table.heading(gv.columns_max_result[3], text='Подряд', anchor="c")
+
+        self.max_result_table.column(column=gv.columns_max_result[0], width=100)
+        self.max_result_table.column(column=gv.columns_max_result[1], width=200)
+        self.max_result_table.column(column=gv.columns_max_result[2], width=350)
+        self.max_result_table.column(column=gv.columns_max_result[3], width=150)
+
+        self.max_result_table.grid(row=0, column=0, columnspan=2, sticky="nsew", pady=(0, 5))
+
         # Button
         self.back_button = ctk.CTkButton(self.frame1, command=self.back_to_result, text="Назад",
                                          fg_color="#009900", height=60, width=330,
@@ -537,9 +566,16 @@ class AllResultsFrame(ctk.CTkFrame):
                 self.all_result_table.insert("", "end", values=row, tags="all_result_table_tag_2")
             self.k += 1
 
-        # for row in hd.get_rows("max_result_table")
+        self.k = 1
+        for row in hd.get_rows("max_result_table"):
+            if self.k % 2 == 0:
+                self.max_result_table.insert("", "end", values=row, tags="max_result_table_tag_1")
+            else:
+                self.max_result_table.insert("", "end", values=row, tags="max_result_table_tag_2")
+            self.k += 1
 
-        # Methods
+
+    # Methods
     def back_to_result(self):
         self.destroy()
         self.result_frame = ResultFrame(app, border_width=15, border_color="#006600",

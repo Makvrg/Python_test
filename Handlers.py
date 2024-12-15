@@ -7,7 +7,7 @@ from random import sample, choice
 
 def answer_handler(answer_dict, task_dict):
     for index in range(1, gv.count_tasks + 1):
-        answer = answer_dict[index].split(",")  # The answer to the task numbered index
+        answer = answer_dict[index].split(" ,")  # The answer to the task numbered index
         processed_answer = set()
         true_answer = task_dict[index][1]
         for x in answer:  # Set of answer for task
@@ -45,7 +45,7 @@ def answer_handler(answer_dict, task_dict):
                     break
                 processed_answer.add(x)
 
-        if processed_answer == true_answer and len(processed_answer) == len(true_answer):
+        if processed_answer == true_answer:
             gv.result.append(1)
         else:
             gv.result.append(0)
