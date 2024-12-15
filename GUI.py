@@ -361,7 +361,7 @@ class ResultFrame(ctk.CTkFrame):
         self.result_table = ttk.Treeview(self, style="1.Treeview", columns=gv.columns,
                                          show="headings", selectmode="extended")
         # Tag create
-        self.result_table.tag_configure("table_tag_true", font=("Calibri", 23, "bold"))
+        self.result_table.tag_configure("table_tag_true", font=("Calibri", 23, "bold"), background="#c5faac")
         self.result_table.tag_configure("table_tag_false", font=("Calibri", 23, "bold"), background="#fca4a4")
 
         # Setting columns
