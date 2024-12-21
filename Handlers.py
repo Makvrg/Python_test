@@ -137,7 +137,7 @@ def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, 
             if new_max_result > old_max_result:  # New record
                 gv.new_record_flag = True
                 gv.old_true_in_a_row = old_max_result
-                print("gv.old_true_in_a_row", gv.old_true_in_a_row, type(gv.old_true_in_a_row))
+                #print("gv.old_true_in_a_row", gv.old_true_in_a_row, type(gv.old_true_in_a_row))
                 c.execute('''UPDATE max_score
                              SET max_result = ?
                              WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?) 

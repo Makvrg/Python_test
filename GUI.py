@@ -24,19 +24,26 @@ class App(ctk.CTk):
 
         # Theme and mode setting
         ctk.set_default_color_theme("dark-blue")  # Themes: "blue" (standard), "green", "dark-blue"
-        ctk.set_appearance_mode("system")
+        ctk.set_appearance_mode("light")
 
         self.main_frame = ctk.CTkFrame(self, border_width=15, border_color="#006600",
                                        fg_color="#FFFFFF", corner_radius=30)
         self.main_frame.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
-        self.hallo_label = ctk.CTkLabel(self.main_frame, text="Добро пожаловать в математический тренажер",
-                                        font=("Arial", 37, "bold"), fg_color="#FFFFFF", text_color="#000000")
-        self.hallo_label.pack(side="top", pady=60)
+
+        first_d = Image.open("Image/First_display.png")
+        #first_d.thumbnail(size=(700, 1200))
+        global first_display_image
+        first_display_image = ctk.CTkImage(first_d, size=(900, 500))
+
+        self.hallo_label = ctk.CTkLabel(self.main_frame, image=first_display_image,
+                                        font=("Arial", 37, "bold"), fg_color="#FFFFFF", text_color="#000000",
+                                        text="")
+        self.hallo_label.pack(side="top", pady=[60, 0])
         self.go_button = ctk.CTkButton(self.main_frame, command=self.goto_info, text="Начать",
                                        fg_color="#009900", height=100, width=400, font=("Arial", 70, "bold"),
                                        border_width=3, border_color="#006600", corner_radius=5,
                                        text_color="#FFFFFF", hover_color="#007D00")
-        self.go_button.pack(side="bottom", pady=150)
+        self.go_button.pack(side="bottom", pady=[0, 150])
 
     def goto_info(self):
         self.main_frame.destroy()
@@ -377,7 +384,6 @@ class ResultFrame(ctk.CTkFrame):
 
         # Insert rows
         for num in range(1, gv.count_tasks + 1):
-            print(gv.result)
             if gv.result[num - 1] == 1:  # True answer, so table row - green (use tags="table_tag_true")
                 self.result_table.insert("", "end",
                                          values=(num, gv.answer[num], ", ".join(map(str, sorted(list(gv.officer_task_dict[num][1]))))),
@@ -433,8 +439,13 @@ class AllResultsFrame(ctk.CTkFrame):
         self.notebook_style.map('1.TNotebook.Tab', background=[("selected", '#319602')])
 
         # Create Notebook
+        self.rowconfigure(index=0, weight=100)
+        self.rowconfigure(index=1, weight=10)
+        self.columnconfigure(index=0, weight=1)
+        self.columnconfigure(index=1, weight=1)
+
         self.tabs = ttk.Notebook(self, style="1.TNotebook")
-        self.tabs.pack(expand=True, fill="both", padx=19, pady=19)
+        self.tabs.grid(sticky="nsew", row=0, column=0, columnspan=2, padx=19, pady=(19, 0))
 
 
         self.frame1 = ctk.CTkFrame(master=self.tabs, border_width=3, bg_color="transparent",
@@ -445,15 +456,15 @@ class AllResultsFrame(ctk.CTkFrame):
         self.frame2.pack(expand=True, fill="both")
 
         # Grid setting
-        self.frame1.rowconfigure(index=0, weight=100)
-        self.frame1.rowconfigure(index=1, weight=1)
+        self.frame1.rowconfigure(index=0, weight=1)
+        #self.frame1.rowconfigure(index=1, weight=1)
         self.frame1.columnconfigure(index=0, weight=1)
-        self.frame1.columnconfigure(index=1, weight=1)
+        #self.frame1.columnconfigure(index=1, weight=1)
 
-        self.frame2.rowconfigure(index=0, weight=100)
-        self.frame2.rowconfigure(index=1, weight=1)
+        self.frame2.rowconfigure(index=0, weight=1)
+        #self.frame2.rowconfigure(index=1, weight=1)
         self.frame2.columnconfigure(index=0, weight=1)
-        self.frame2.columnconfigure(index=1, weight=1)
+        #self.frame2.columnconfigure(index=1, weight=1)
 
         # Creating an image
         im_trophy = Image.open("Image/Trophy.png")
@@ -489,7 +500,7 @@ class AllResultsFrame(ctk.CTkFrame):
                                                            bg_color="transparent", fg_color="#e4ffcf", button_color="#169c02",
                                                            orientation="vertical", command=self.all_result_table.yview,
                                                            width=25, hover=False)
-        self.all_result_table_scrollbar.grid(row=0, column=2, sticky="nsew", pady=[0, 6])
+        self.all_result_table_scrollbar.grid(row=0, column=2, sticky="nsew", pady=0)
         self.all_result_table.configure(yscrollcommand=self.all_result_table_scrollbar.set)
 
 
@@ -505,14 +516,14 @@ class AllResultsFrame(ctk.CTkFrame):
         self.all_result_table.heading(gv.columns_all_result[4], text='Качество', anchor="c")
         self.all_result_table.heading(gv.columns_all_result[5], text='Подряд', anchor="c")
 
-        self.all_result_table.column(column=gv.columns_all_result[0], width=70)
+        self.all_result_table.column(column=gv.columns_all_result[0], width=30)
         self.all_result_table.column(column=gv.columns_all_result[1], width=150)
-        self.all_result_table.column(column=gv.columns_all_result[2], width=250)
-        self.all_result_table.column(column=gv.columns_all_result[3], width=100)
+        self.all_result_table.column(column=gv.columns_all_result[2], width=300)
+        self.all_result_table.column(column=gv.columns_all_result[3], width=95)
         self.all_result_table.column(column=gv.columns_all_result[4], width=80)
         self.all_result_table.column(column=gv.columns_all_result[5], width=80)
 
-        self.all_result_table.grid(row=0, column=0, columnspan=2, sticky="nsew", pady=(0, 5))
+        self.all_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
 
         # Treeview and Scrollbar creating №2
         self.max_result_table = ttk.Treeview(self.frame2, style="2.Treeview", columns=gv.columns_max_result,
@@ -522,7 +533,7 @@ class AllResultsFrame(ctk.CTkFrame):
                                                            button_color="#169c02",
                                                            orientation="vertical", command=self.max_result_table.yview,
                                                            width=25, hover=False)
-        self.max_result_table_scrollbar.grid(row=0, column=2, sticky="nsew", pady=[0, 6])
+        self.max_result_table_scrollbar.grid(row=0, column=2, sticky="nsew", pady=0)
         self.max_result_table.configure(yscrollcommand=self.max_result_table_scrollbar.set)
 
         # Tag create
@@ -540,22 +551,22 @@ class AllResultsFrame(ctk.CTkFrame):
         self.max_result_table.column(column=gv.columns_max_result[2], width=350)
         self.max_result_table.column(column=gv.columns_max_result[3], width=150)
 
-        self.max_result_table.grid(row=0, column=0, columnspan=2, sticky="nsew", pady=(0, 5))
+        self.max_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
 
         # Button
-        self.back_button = ctk.CTkButton(self.frame1, command=self.back_to_result, text="Назад",
-                                         fg_color="#009900", height=60, width=330,
+        self.back_button = ctk.CTkButton(self, command=self.back_to_result, text="Назад",
+                                         fg_color="#009900", height=50, width=330,
                                          font=("Arial", 40, "bold"), border_width=3,
                                          border_color="#006600", corner_radius=5,
                                          text_color="#FFFFFF", hover_color="#007D00")
-        self.back_button.grid(row=1, column=0, sticky="nw", padx=5, pady=[0, 3])
+        self.back_button.grid(row=1, column=0, sticky="nw", padx=20, pady=[8, 6])
 
-        self.close_program_button_1 = ctk.CTkButton(self.frame1, command=finish, text="Выйти",
-                                                    fg_color="#009900", height=60, width=330,
+        self.close_program_button_1 = ctk.CTkButton(self, command=finish, text="Выйти",
+                                                    fg_color="#009900", height=50, width=330,
                                                     font=("Arial", 40, "bold"), border_width=3,
                                                     border_color="#006600", corner_radius=5,
                                                     text_color="#FFFFFF", hover_color="#007D00")
-        self.close_program_button_1.grid(row=1, column=1, columnspan=2, sticky="ne", padx=5, pady=[0, 3])
+        self.close_program_button_1.grid(row=1, column=1, columnspan=2, sticky="ne", padx=20, pady=[8, 6])
 
         # Row insert
         self.k = 1
