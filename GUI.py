@@ -30,19 +30,22 @@ class App(ctk.CTk):
                                        fg_color="#FFFFFF", corner_radius=30)
         self.main_frame.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
+        # Add .png files
         first_d = Image.open("Image/First_display.png")
-        #first_d.thumbnail(size=(700, 1200))
         global first_display_image
-        first_display_image = ctk.CTkImage(first_d, size=(900, 500))
+        first_display_image = ctk.CTkImage(first_d, size=(914, 333))
+
+        button_1 = Image.open("Image/Button_1.png")
+        global button_1_image
+        button_1_image = ctk.CTkImage(button_1, size=(340, 85))
 
         self.hallo_label = ctk.CTkLabel(self.main_frame, image=first_display_image,
-                                        font=("Arial", 37, "bold"), fg_color="#FFFFFF", text_color="#000000",
-                                        text="")
-        self.hallo_label.pack(side="top", pady=[60, 0])
-        self.go_button = ctk.CTkButton(self.main_frame, command=self.goto_info, text="Начать",
-                                       fg_color="#009900", height=100, width=400, font=("Arial", 70, "bold"),
+                                        fg_color="#FFFFFF", text="")
+        self.hallo_label.pack(side="top", pady=[50, 0])
+        self.go_button = ctk.CTkButton(self.main_frame, command=self.goto_info,
+                                       fg_color="#009900", height=95, width=400,
                                        border_width=3, border_color="#006600", corner_radius=5,
-                                       text_color="#FFFFFF", hover_color="#007D00")
+                                       image=button_1_image, text="", hover_color="#007D00")
         self.go_button.pack(side="bottom", pady=[0, 150])
 
     def goto_info(self):
@@ -62,9 +65,18 @@ class InfoFrame(ctk.CTkFrame):
         self.rowconfigure(index=4, weight=1)
         self.columnconfigure(index=0, weight=1)
 
+        # Add .png files
+        label_flag = Image.open("Image/InfoFrame_Label_flag.png")
+        global label_flag_image
+        label_flag_image = ctk.CTkImage(label_flag, size=(340, 43))
+
+        button_1 = Image.open("Image/Button_1.png")
+        global button_1_image
+        button_1_image = ctk.CTkImage(button_1, size=(340, 35))
+
         # Create widgets
-        self.info_label = ctk.CTkLabel(self, text="Заполните все поля", height=45, corner_radius=10,
-                                       width=390, font=("Arial", 35, "bold"), fg_color="#ff9191", text_color="#000000")
+        self.info_label = ctk.CTkLabel(self, text="", height=45, corner_radius=10,
+                                       width=370, image=label_flag_image, fg_color="#ff9191", text_color="#000000")
         self.info_label.grid(row=0, column=0, sticky="sw", padx=30, pady=[30, 13])
 
         self.name_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
