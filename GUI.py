@@ -70,9 +70,17 @@ class InfoFrame(ctk.CTkFrame):
         global label_flag_image
         label_flag_image = ctk.CTkImage(label_flag, size=(340, 43))
 
-        button_1 = Image.open("Image/Button_1.png")
-        global button_1_image
-        button_1_image = ctk.CTkImage(button_1, size=(340, 35))
+        label_name = Image.open("Image/InfoFrame_Label_name.png")
+        global label_name_image
+        label_name_image = ctk.CTkImage(label_name, size=(284, 28))
+
+        label_type = Image.open("Image/InfoFrame_Label_type.png")
+        global label_type_image
+        label_type_image = ctk.CTkImage(label_type, size=(290, 28))
+
+        label_count = Image.open("Image/InfoFrame_Label_count.png")
+        global label_count_image
+        label_count_image = ctk.CTkImage(label_count, size=(424, 28))
 
         # Create widgets
         self.info_label = ctk.CTkLabel(self, text="", height=45, corner_radius=10,
@@ -81,9 +89,8 @@ class InfoFrame(ctk.CTkFrame):
 
         self.name_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.name_frame.grid(row=1, column=0, sticky="nsew", padx=30, pady=5)
-        self.name_label = ctk.CTkLabel(self.name_frame, text="Напишите свое имя", font=("Arial", 30),
-                                       text_color="#737373")
-        self.name_label.pack(anchor="nw", padx=10, pady=8)
+        self.name_label = ctk.CTkLabel(self.name_frame, text="", image=label_name_image)
+        self.name_label.pack(anchor="nw", padx=10, pady=[8, 12])
         self.name_entry = ctk.CTkEntry(self.name_frame, font=("Arial", 35), width=500, height=60,
                                        fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
         self.name_entry.bind("<KeyRelease>", self.get_name)
@@ -96,9 +103,8 @@ class InfoFrame(ctk.CTkFrame):
 
         self.type_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.type_frame.grid(row=2, column=0, sticky="nsew", padx=30, pady=5)
-        self.type_label = ctk.CTkLabel(self.type_frame, text="Выберете тип задач", font=("Arial", 30),
-                                       text_color="#737373")
-        self.type_label.pack(anchor="nw", padx=10, pady=8)
+        self.type_label = ctk.CTkLabel(self.type_frame, text="", image=label_type_image)
+        self.type_label.pack(anchor="nw", padx=10, pady=[8, 12])
         self.type_combobox = ctk.CTkComboBox(self.type_frame, hover=True, font=("Arial", 35), width=450, height=60,
                                              fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
                                              button_color="#818c81", button_hover_color="#000",
@@ -116,9 +122,8 @@ class InfoFrame(ctk.CTkFrame):
 
         self.count_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.count_frame.grid(row=3, column=0, sticky="nsew", padx=30, pady=5)
-        self.count_label = ctk.CTkLabel(self.count_frame, text="Установите количество задач", font=("Arial", 30),
-                                        text_color="#737373")
-        self.count_label.pack(anchor="nw", padx=10, pady=8)
+        self.count_label = ctk.CTkLabel(self.count_frame, text="", image=label_count_image)
+        self.count_label.pack(anchor="nw", padx=10, pady=[8, 12])
         self.var = ctk.IntVar(value=1)
         self.count_entry = ctk.CTkEntry(self.count_frame, font=("Arial", 40), width=100, height=60,
                                         fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
