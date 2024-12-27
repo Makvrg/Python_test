@@ -1,6 +1,5 @@
 from operator import index
 import customtkinter as ctk
-import Math_simulator_code as ms_code
 import Global_variable as gv
 import Handlers as hd
 from random import sample
@@ -19,7 +18,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Математический тренажер")
-        self.geometry("1000x700+450+200")
+        self.geometry("1000x700+360+150")
         self.configure(fg_color="#CCFFCC")
 
         # Theme and mode setting
@@ -76,11 +75,15 @@ class InfoFrame(ctk.CTkFrame):
 
         label_type = Image.open("Image/InfoFrame_Label_type.png")
         global label_type_image
-        label_type_image = ctk.CTkImage(label_type, size=(290, 28))
+        label_type_image = ctk.CTkImage(label_type, size=(290, 31))
 
         label_count = Image.open("Image/InfoFrame_Label_count.png")
         global label_count_image
-        label_count_image = ctk.CTkImage(label_count, size=(424, 28))
+        label_count_image = ctk.CTkImage(label_count, size=(424, 29))
+
+        label_button = Image.open("Image/InfoFrame_Label_button.png")
+        global label_button_image
+        label_button_image = ctk.CTkImage(label_button, size=(500, 51))
 
         # Create widgets
         self.info_label = ctk.CTkLabel(self, text="", height=45, corner_radius=10,
@@ -90,7 +93,7 @@ class InfoFrame(ctk.CTkFrame):
         self.name_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.name_frame.grid(row=1, column=0, sticky="nsew", padx=30, pady=5)
         self.name_label = ctk.CTkLabel(self.name_frame, text="", image=label_name_image)
-        self.name_label.pack(anchor="nw", padx=10, pady=[8, 12])
+        self.name_label.pack(anchor="nw", padx=10, pady=[10, 14])
         self.name_entry = ctk.CTkEntry(self.name_frame, font=("Arial", 35), width=500, height=60,
                                        fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
         self.name_entry.bind("<KeyRelease>", self.get_name)
@@ -104,7 +107,7 @@ class InfoFrame(ctk.CTkFrame):
         self.type_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.type_frame.grid(row=2, column=0, sticky="nsew", padx=30, pady=5)
         self.type_label = ctk.CTkLabel(self.type_frame, text="", image=label_type_image)
-        self.type_label.pack(anchor="nw", padx=10, pady=[8, 12])
+        self.type_label.pack(anchor="nw", padx=10, pady=[12, 10])
         self.type_combobox = ctk.CTkComboBox(self.type_frame, hover=True, font=("Arial", 35), width=450, height=60,
                                              fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
                                              button_color="#818c81", button_hover_color="#000",
@@ -123,7 +126,7 @@ class InfoFrame(ctk.CTkFrame):
         self.count_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.count_frame.grid(row=3, column=0, sticky="nsew", padx=30, pady=5)
         self.count_label = ctk.CTkLabel(self.count_frame, text="", image=label_count_image)
-        self.count_label.pack(anchor="nw", padx=10, pady=[8, 12])
+        self.count_label.pack(anchor="nw", padx=11, pady=[10, 14])
         self.var = ctk.IntVar(value=1)
         self.count_entry = ctk.CTkEntry(self.count_frame, font=("Arial", 40), width=100, height=60,
                                         fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
@@ -137,10 +140,10 @@ class InfoFrame(ctk.CTkFrame):
         self.count_slider.bind("<Button-1>", self.disabled_count_slider)
         self.count_slider.pack(side="left", anchor="n", padx=10)
 
-        self.go_button = ctk.CTkButton(self, command=self.goto_training, text="Приступить к выполнению",
-                                       fg_color="#009900", height=70, width=430, font=("Arial", 30, "bold"),
+        self.go_button = ctk.CTkButton(self, command=self.goto_training, text="",
+                                       fg_color="#009900", height=70, width=430,
                                        border_width=3, border_color="#006600", corner_radius=5,
-                                       text_color="#FFFFFF", hover_color="#007D00")
+                                       image=label_button_image, hover_color="#007D00")
         self.go_button.grid(row=4, column=0, sticky="ne", padx=30, pady=[15, 28])
 
     def get_name(self, event):
