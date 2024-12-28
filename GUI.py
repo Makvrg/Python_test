@@ -65,9 +65,13 @@ class InfoFrame(ctk.CTkFrame):
         self.columnconfigure(index=0, weight=1)
 
         # Add .png files
-        label_flag = Image.open("Image/InfoFrame_Label_flag.png")
-        global label_flag_image
-        label_flag_image = ctk.CTkImage(label_flag, size=(340, 43))
+        label_flag_1 = Image.open("Image/InfoFrame_Label_flag_1.png")
+        global label_flag_1_image
+        label_flag_1_image = ctk.CTkImage(label_flag_1, size=(340, 43))
+
+        label_flag_2 = Image.open("Image/InfoFrame_Label_flag_2.png")
+        global label_flag_2_image
+        label_flag_2_image = ctk.CTkImage(label_flag_2, size=(360, 45))
 
         label_name = Image.open("Image/InfoFrame_Label_name.png")
         global label_name_image
@@ -85,9 +89,21 @@ class InfoFrame(ctk.CTkFrame):
         global label_button_image
         label_button_image = ctk.CTkImage(label_button, size=(500, 51))
 
+        label_error_name = Image.open("Image/InfoFrame_Label_error_name.png")
+        global label_error_name_image
+        label_error_name_image = ctk.CTkImage(label_error_name, size=(300, 48))
+
+        label_error_type_1 = Image.open("Image/InfoFrame_Label_error_type_1.png")
+        global label_error_type_1_image
+        label_error_type_1_image = ctk.CTkImage(label_error_type_1, size=(310, 49))
+
+        label_error_type_2 = Image.open("Image/InfoFrame_Label_error_type_2.png")
+        global label_error_type_2_image
+        label_error_type_2_image = ctk.CTkImage(label_error_type_2, size=(310, 46))
+
         # Create widgets
         self.info_label = ctk.CTkLabel(self, text="", height=45, corner_radius=10,
-                                       width=370, image=label_flag_image, fg_color="#ff9191", text_color="#000000")
+                                       width=370, image=label_flag_1_image, fg_color="#ff9191", text_color="#000000")
         self.info_label.grid(row=0, column=0, sticky="sw", padx=30, pady=[30, 13])
 
         self.name_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
@@ -100,8 +116,7 @@ class InfoFrame(ctk.CTkFrame):
         self.name_entry.pack(side="left", anchor="nw", padx=10)
         self.name_entry.insert(0, "Максим")
 
-        self.name_error = ctk.CTkLabel(self.name_frame, text="",
-                                       font=("Arial", 20), text_color="#ff5757")
+        self.name_error = ctk.CTkLabel(self.name_frame, text="")
         self.name_error.pack(side="left", anchor="nw", padx=10, pady=7)
 
         self.type_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
@@ -119,8 +134,7 @@ class InfoFrame(ctk.CTkFrame):
         self.type_combobox.pack(side="left", anchor="nw", padx=10)
         self.type_combobox.set(value="Квадратные уравнения")
 
-        self.type_error = ctk.CTkLabel(self.type_frame, text="",
-                                       font=("Arial", 20), text_color="#ff5757")
+        self.type_error = ctk.CTkLabel(self.type_frame, text="")
         self.type_error.pack(side="left", anchor="nw", padx=10, pady=7)
 
         self.count_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
@@ -149,19 +163,19 @@ class InfoFrame(ctk.CTkFrame):
     def get_name(self, event):
         gv.name = self.name_entry.get().strip()  # save username for table column "name_student"
         if len(gv.name) == 0:
-            self.name_error.configure(text="Имя не должно быть пустым\nПожалуйста, напишите ещё раз")
-            self.name_entry.configure(fg_color="#ffc9c9")
-            self.info_label.configure(fg_color="#ff9191", text="Заполните все поля")
+            self.name_error.configure(image=label_error_name_image)
+            self.name_entry.configure(fg_color="#FFFFFF")
+            self.info_label.configure(fg_color="#ff9191", image=label_flag_1_image)
         else:
             if self.type_combobox.get() != "":
-                self.info_label.configure(fg_color="#65bf65", text="Все поля заполнены")
-            self.name_error.configure(text="")
+                self.info_label.configure(fg_color="#65bf65", image=label_flag_2_image)
+            self.name_error.configure(image="")
             self.name_entry.configure(fg_color="#d9ffdf")
 
     def combobox_selected(self, event):
         if self.name_entry.get().strip() != "":
-            self.info_label.configure(fg_color="#65bf65", text="Все поля заполнены")
-        self.type_error.configure(text="")
+            self.info_label.configure(fg_color="#65bf65", image=label_flag_2_image)
+        self.type_error.configure(image="")
         self.type_combobox.configure(fg_color="#d9ffdf")
         self.count_slider.configure(state="normal", to=len(gv.general_task_dict[self.type_combobox.get()]),
                                     number_of_steps=len(gv.general_task_dict[self.type_combobox.get()]) - 1)
@@ -169,14 +183,14 @@ class InfoFrame(ctk.CTkFrame):
         self.count_slider.unbind("<Button-1>")
 
     def disabled_count_slider(self, event):
-        self.type_error.configure(text="Сначала надо выбрать тип задач\nПожалуйста, выберете его здесь")
+        self.type_error.configure(image=label_error_type_1_image)
 
     def goto_training(self):
         if self.name_entry.get() == "":
-            self.name_error.configure(text="Имя не должно быть пустым\nПожалуйста, напишите ещё раз")
+            self.name_error.configure(image=label_error_name_image)
             self.name_entry.configure(fg_color="#ffc9c9")
         if self.type_combobox.get() == "":
-            self.type_error.configure(text="Тип задач не должен быть пустым\nПожалуйста, выберете его из списка")
+            self.type_error.configure(image=label_error_type_2_image)
             self.type_combobox.configure(fg_color="#ffc9c9")
         if self.name_entry.get() != "" and self.type_combobox.get() != "":
             gv.tasks_type = self.type_combobox.get()
