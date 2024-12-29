@@ -1,3 +1,5 @@
+import Image_initialization as Ii
+
 name = ""  # Example output "Максим"
 tasks_type = ""  # Example output "Квадратные уравнения"
 count_tasks = 0  # Example output 5
@@ -17,10 +19,9 @@ general_task_dict = {"Линейные уравнения": {"x + 1 = 1": {0},
                                         }
                      }
 officer_task_dict = {}  # Example output {1: ('2x + 1 = 1', {0}), 2: ('x + 2 = -1', {-3}), 3: ('x + 1 = 1', {0})}
-exercise = {"Линейные уравнения": "Решите уравнение в действительных числах:",
-            "Квадратные уравнения": "Решите уравнение в действительных числах:"
+exercise = {"Линейные уравнения": Ii.get_label_exercise_1_image(),
+            "Квадратные уравнения": Ii.get_label_exercise_1_image()
             }
-explanation = "Записывайте по образцу: несколько ответов <<12, -6>>, \nдесятичные дроби <<1.21>>, обыкновенные дроби <<5/4>> и смешанные дроби <<11 3/4>>"
 answer = {}  # Example output {1: '1, -2', 2: '9, -11', 3: '-9, 7', 4: '5', 5: '0, 7', 6: '2, 16/2', 7: '13, 4'}
 counter = 1
 result = []  # Example output [1, 0, 1, 1, 1, 0]

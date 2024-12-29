@@ -7,6 +7,7 @@ from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import ttk
 import sqlite3
+import Image_initialization as Ii
 
 
 def finish():
@@ -29,22 +30,13 @@ class App(ctk.CTk):
                                        fg_color="#FFFFFF", corner_radius=30)
         self.main_frame.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
-        # Add .png files
-        first_d = Image.open("Image/First_display.png")
-        global first_display_image
-        first_display_image = ctk.CTkImage(first_d, size=(914, 333))
-
-        button_1 = Image.open("Image/Button_1.png")
-        global button_1_image
-        button_1_image = ctk.CTkImage(button_1, size=(340, 85))
-
-        self.hallo_label = ctk.CTkLabel(self.main_frame, image=first_display_image,
+        self.hallo_label = ctk.CTkLabel(self.main_frame, image=Ii.get_first_display_image(),
                                         fg_color="#FFFFFF", text="")
         self.hallo_label.pack(side="top", pady=[50, 0])
         self.go_button = ctk.CTkButton(self.main_frame, command=self.goto_info,
                                        fg_color="#009900", height=95, width=400,
                                        border_width=3, border_color="#006600", corner_radius=5,
-                                       image=button_1_image, text="", hover_color="#007D00")
+                                       image=Ii.get_button_1_image(), text="", hover_color="#007D00")
         self.go_button.pack(side="bottom", pady=[0, 150])
 
     def goto_info(self):
@@ -64,51 +56,14 @@ class InfoFrame(ctk.CTkFrame):
         self.rowconfigure(index=4, weight=1)
         self.columnconfigure(index=0, weight=1)
 
-        # Add .png files
-        label_flag_1 = Image.open("Image/InfoFrame_Label_flag_1.png")
-        global label_flag_1_image
-        label_flag_1_image = ctk.CTkImage(label_flag_1, size=(340, 43))
-
-        label_flag_2 = Image.open("Image/InfoFrame_Label_flag_2.png")
-        global label_flag_2_image
-        label_flag_2_image = ctk.CTkImage(label_flag_2, size=(360, 45))
-
-        label_name = Image.open("Image/InfoFrame_Label_name.png")
-        global label_name_image
-        label_name_image = ctk.CTkImage(label_name, size=(284, 28))
-
-        label_type = Image.open("Image/InfoFrame_Label_type.png")
-        global label_type_image
-        label_type_image = ctk.CTkImage(label_type, size=(290, 31))
-
-        label_count = Image.open("Image/InfoFrame_Label_count.png")
-        global label_count_image
-        label_count_image = ctk.CTkImage(label_count, size=(424, 29))
-
-        label_button = Image.open("Image/InfoFrame_Label_button.png")
-        global label_button_image
-        label_button_image = ctk.CTkImage(label_button, size=(500, 51))
-
-        label_error_name = Image.open("Image/InfoFrame_Label_error_name.png")
-        global label_error_name_image
-        label_error_name_image = ctk.CTkImage(label_error_name, size=(300, 48))
-
-        label_error_type_1 = Image.open("Image/InfoFrame_Label_error_type_1.png")
-        global label_error_type_1_image
-        label_error_type_1_image = ctk.CTkImage(label_error_type_1, size=(310, 49))
-
-        label_error_type_2 = Image.open("Image/InfoFrame_Label_error_type_2.png")
-        global label_error_type_2_image
-        label_error_type_2_image = ctk.CTkImage(label_error_type_2, size=(310, 46))
-
         # Create widgets
         self.info_label = ctk.CTkLabel(self, text="", height=45, corner_radius=10,
-                                       width=370, image=label_flag_1_image, fg_color="#ff9191", text_color="#000000")
+                                       width=370, image=Ii.get_label_flag_1_image(), fg_color="#ff9191", text_color="#000000")
         self.info_label.grid(row=0, column=0, sticky="sw", padx=30, pady=[30, 13])
 
         self.name_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.name_frame.grid(row=1, column=0, sticky="nsew", padx=30, pady=5)
-        self.name_label = ctk.CTkLabel(self.name_frame, text="", image=label_name_image)
+        self.name_label = ctk.CTkLabel(self.name_frame, text="", image=Ii.get_label_name_image())
         self.name_label.pack(anchor="nw", padx=10, pady=[10, 14])
         self.name_entry = ctk.CTkEntry(self.name_frame, font=("Arial", 35), width=500, height=60,
                                        fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
@@ -121,7 +76,7 @@ class InfoFrame(ctk.CTkFrame):
 
         self.type_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.type_frame.grid(row=2, column=0, sticky="nsew", padx=30, pady=5)
-        self.type_label = ctk.CTkLabel(self.type_frame, text="", image=label_type_image)
+        self.type_label = ctk.CTkLabel(self.type_frame, text="", image=Ii.get_label_type_image())
         self.type_label.pack(anchor="nw", padx=10, pady=[12, 10])
         self.type_combobox = ctk.CTkComboBox(self.type_frame, hover=True, font=("Arial", 35), width=450, height=60,
                                              fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
@@ -139,7 +94,7 @@ class InfoFrame(ctk.CTkFrame):
 
         self.count_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.count_frame.grid(row=3, column=0, sticky="nsew", padx=30, pady=5)
-        self.count_label = ctk.CTkLabel(self.count_frame, text="", image=label_count_image)
+        self.count_label = ctk.CTkLabel(self.count_frame, text="", image=Ii.get_label_count_image())
         self.count_label.pack(anchor="nw", padx=11, pady=[10, 14])
         self.var = ctk.IntVar(value=1)
         self.count_entry = ctk.CTkEntry(self.count_frame, font=("Arial", 40), width=100, height=60,
@@ -157,25 +112,25 @@ class InfoFrame(ctk.CTkFrame):
         self.go_button = ctk.CTkButton(self, command=self.goto_training, text="",
                                        fg_color="#009900", height=70, width=430,
                                        border_width=3, border_color="#006600", corner_radius=5,
-                                       image=label_button_image, hover_color="#007D00")
+                                       image=Ii.get_label_button_image(), hover_color="#007D00")
         self.go_button.grid(row=4, column=0, sticky="ne", padx=30, pady=[15, 28])
 
     def get_name(self, event):
         gv.name = self.name_entry.get().strip()  # save username for table column "name_student"
         if len(gv.name) == 0:
-            self.name_error.configure(image=label_error_name_image)
-            self.name_entry.configure(fg_color="#FFFFFF")
-            self.info_label.configure(fg_color="#ff9191", image=label_flag_1_image)
+            self.name_error.configure(image=Ii.get_label_error_name_image())
+            self.name_entry.configure(fg_color="#ffc9c9")
+            self.info_label.configure(fg_color="#ff9191", image=Ii.get_label_flag_1_image())
         else:
             if self.type_combobox.get() != "":
-                self.info_label.configure(fg_color="#65bf65", image=label_flag_2_image)
-            self.name_error.configure(image="")
+                self.info_label.configure(fg_color="#65bf65", image=Ii.get_label_flag_2_image())
+            self.name_error.configure(image=Ii.get_empty_plug_image())
             self.name_entry.configure(fg_color="#d9ffdf")
 
     def combobox_selected(self, event):
         if self.name_entry.get().strip() != "":
-            self.info_label.configure(fg_color="#65bf65", image=label_flag_2_image)
-        self.type_error.configure(image="")
+            self.info_label.configure(fg_color="#65bf65", image=Ii.get_label_flag_2_image())
+        self.type_error.configure(image=Ii.get_empty_plug_image())
         self.type_combobox.configure(fg_color="#d9ffdf")
         self.count_slider.configure(state="normal", to=len(gv.general_task_dict[self.type_combobox.get()]),
                                     number_of_steps=len(gv.general_task_dict[self.type_combobox.get()]) - 1)
@@ -183,14 +138,14 @@ class InfoFrame(ctk.CTkFrame):
         self.count_slider.unbind("<Button-1>")
 
     def disabled_count_slider(self, event):
-        self.type_error.configure(image=label_error_type_1_image)
+        self.type_error.configure(image=Ii.get_label_error_type_1_image())
 
     def goto_training(self):
         if self.name_entry.get() == "":
-            self.name_error.configure(image=label_error_name_image)
+            self.name_error.configure(image=Ii.get_label_error_name_image())
             self.name_entry.configure(fg_color="#ffc9c9")
         if self.type_combobox.get() == "":
-            self.type_error.configure(image=label_error_type_2_image)
+            self.type_error.configure(image=Ii.get_label_error_type_2_image())
             self.type_combobox.configure(fg_color="#ffc9c9")
         if self.name_entry.get() != "" and self.type_combobox.get() != "":
             gv.tasks_type = self.type_combobox.get()
@@ -222,11 +177,10 @@ class TaskFrame(ctk.CTkFrame):
         self.task_progress = ctk.CTkProgressBar(self, height=30, corner_radius=30, border_width=3, fg_color="#d9ffdf",
                                                 progress_color="#1bc21b", border_color="#818c81",
                                                 variable=self.progress_var)
-        self.task_progress.grid(row=0, column=0, columnspan=2, sticky="ew", padx=25, pady=[20, 10])
+        self.task_progress.grid(row=0, column=0, columnspan=2, sticky="ew", padx=25, pady=[23, 5])
 
-        self.exercise_label = ctk.CTkLabel(self, text=gv.exercise[gv.tasks_type], height=45,
-                                           width=390, font=("Arial", 35, "bold"), text_color="#000000")
-        self.exercise_label.grid(row=1, column=0, columnspan=2, sticky="nw", padx=28)
+        self.exercise_label = ctk.CTkLabel(self, text="", image=gv.exercise[gv.tasks_type])
+        self.exercise_label.grid(row=1, column=0, columnspan=2, sticky="nw", padx=30)
 
         self.task_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=300)
         self.task_frame.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30)
@@ -238,13 +192,12 @@ class TaskFrame(ctk.CTkFrame):
         self.number_entry.insert(0, "1 / " + str(gv.count_tasks))
         self.number_entry.configure(state="disabled")
         self.number_entry.pack(anchor="nw", padx=20, pady=[20, 10])
-        self.task_label = ctk.CTkLabel(self.task_frame, height=45, width=390, text="",
-                                       font=("Arial", 45, "bold"), text_color="#000000")
+        self.task_label = ctk.CTkLabel(self.task_frame, height=45, width=390, text="")
         self.task_label.pack(anchor="center", padx=20, pady=[0, 20])
 
-        self.answer_info = ctk.CTkLabel(self.task_frame, width=390, text=gv.explanation,
-                                        font=("Arial", 13, "bold"), text_color="#000000", justify="left")
-        self.answer_info.pack(expand=True, anchor="s", padx=[20, 150], pady=[0, 6])
+        self.answer_info = ctk.CTkLabel(self.task_frame, width=390, image=Ii.get_label_explanation_image(),
+                                        text="")
+        self.answer_info.pack(expand=True, anchor="sw", padx=70, pady=[0, 6])
 
         self.task_entry = ctk.CTkEntry(self.task_frame, font=("Arial", 40), width=650, height=70,
                                        fg_color="#FFFFFF", text_color="#212121",
@@ -252,33 +205,29 @@ class TaskFrame(ctk.CTkFrame):
         self.task_entry.bind("<KeyRelease>", self.change_answer)
         self.task_entry.pack(side="left", anchor="w", expand=True, padx=[80, 5], pady=[0, 150])
 
-        self.save_photo = ctk.CTkImage(dark_image=Image.open("Image/save9.1.png"), size=(59, 59))
-        self.save_button = ctk.CTkButton(self.task_frame, command=self.save_answer, height=70, width=80,
+        self.save_button = ctk.CTkButton(self.task_frame, command=self.save_answer, height=70, width=70,
                                          fg_color="#009900", font=("Arial", 40, "bold"), border_width=3,
                                          border_color="#006600", corner_radius=5, text="",
-                                         hover_color="#007D00", image=self.save_photo)
-        self.save_button.pack(expand=True, side="left", anchor="w", padx=[8, 95], pady=[0, 150])
+                                         hover_color="#007D00", image=Ii.get_button_save_image())
+        self.save_button.pack(expand=True, side="left", anchor="w", padx=[8, 95], pady=[0, 154])
 
-        self.previous_button = ctk.CTkButton(self, command=self.previous_task, text="Назад",
-                                             fg_color="#009900",
-                                             height=60, width=330, font=("Arial", 40, "bold"), border_width=3,
+        self.previous_button = ctk.CTkButton(self, command=self.previous_task, text="",
+                                             fg_color="#009900", image=Ii.get_taskframe_button_previous_disabled_image(),
+                                             height=60, width=330, border_width=3,
                                              border_color="#006600", corner_radius=5,
-                                             text_color="#FFFFFF", hover_color="#007D00",
-                                             state="disabled")
+                                             hover_color="#007D00", state="disabled")
         self.previous_button.grid(row=3, column=0, sticky="w", padx=30, pady=[14, 28])
 
         if gv.count_tasks == 1:
-            self.next_button = ctk.CTkButton(self, command=self.go_to_result, text="Завершить",
-                                             fg_color="#009900",
-                                             height=60, width=330, font=("Arial", 40, "bold"), border_width=3,
-                                             border_color="#006600", corner_radius=5,
-                                             text_color="#FFFFFF", hover_color="#007D00")
+            self.next_button = ctk.CTkButton(self, command=self.go_to_result, text="",
+                                             fg_color="#009900", image=Ii.get_taskframe_button_compete_image(),
+                                             height=60, width=330, border_width=3, border_color="#006600",
+                                             corner_radius=5, hover_color="#007D00")
         else:
-            self.next_button = ctk.CTkButton(self, command=self.next_task, text="Дальше",
-                                             fg_color="#009900",
-                                             height=60, width=330, font=("Arial", 40, "bold"), border_width=3,
-                                             border_color="#006600", corner_radius=5,
-                                             text_color="#FFFFFF", hover_color="#007D00")
+            self.next_button = ctk.CTkButton(self, command=self.next_task, text="",
+                                             fg_color="#009900", image=Ii.get_taskframe_button_next_image(),
+                                             height=60, width=330, border_width=3, border_color="#006600",
+                                             corner_radius=5, hover_color="#007D00")
         self.next_button.grid(row=3, column=1, sticky="e", padx=30, pady=[14, 28])
 
         self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
@@ -294,7 +243,7 @@ class TaskFrame(ctk.CTkFrame):
         gv.counter += 1
         self.progress_var.set(value=(gv.counter - 1) / gv.count_tasks)
 
-        self.previous_button.configure(state="normal")
+        self.previous_button.configure(state="normal", image=Ii.get_taskframe_button_previous_image())
 
         self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
         self.task_entry.delete(0, "end")
@@ -310,11 +259,11 @@ class TaskFrame(ctk.CTkFrame):
         self.number_entry.configure(state="disabled")
 
         if gv.counter == gv.count_tasks:
-            self.next_button.configure(text="Завершить", command=self.go_to_result)
+            self.next_button.configure(image=Ii.get_taskframe_button_compete_image(), command=self.go_to_result)
 
     def previous_task(self):
         if gv.counter == gv.count_tasks:
-            self.next_button.configure(text="Дальше", command=self.next_task)
+            self.next_button.configure(image=Ii.get_taskframe_button_next_image(), command=self.next_task)
 
         gv.counter -= 1
         self.progress_var.set(value=(gv.counter - 1) / gv.count_tasks)
@@ -333,7 +282,7 @@ class TaskFrame(ctk.CTkFrame):
         self.number_entry.configure(state="disabled")
 
         if gv.counter == 1:
-            self.previous_button.configure(state="disabled")
+            self.previous_button.configure(state="disabled", image=Ii.get_taskframe_button_previous_disabled_image())
 
     def go_to_result(self):
         hd.answer_handler(gv.answer, gv.officer_task_dict)  # Getting the value of a variable gv.result
