@@ -1,4 +1,3 @@
-from operator import index
 import customtkinter as ctk
 import Global_variable as gv
 import Handlers as hd
@@ -192,8 +191,8 @@ class TaskFrame(ctk.CTkFrame):
         self.number_entry.insert(0, "1 / " + str(gv.count_tasks))
         self.number_entry.configure(state="disabled")
         self.number_entry.pack(anchor="nw", padx=20, pady=[20, 10])
-        self.task_label = ctk.CTkLabel(self.task_frame, height=45, width=390, text="")
-        self.task_label.pack(anchor="center", padx=20, pady=[0, 20])
+        self.task_label = ctk.CTkLabel(self.task_frame, text="")
+        self.task_label.pack(anchor="center", padx=20, pady=[20, 20])
 
         self.answer_info = ctk.CTkLabel(self.task_frame, width=390, image=Ii.get_label_explanation_image(),
                                         text="")
@@ -230,7 +229,7 @@ class TaskFrame(ctk.CTkFrame):
                                              corner_radius=5, hover_color="#007D00")
         self.next_button.grid(row=3, column=1, sticky="e", padx=30, pady=[14, 28])
 
-        self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
+        self.task_label.configure(image=hd.output_task(gv.officer_task_dict[gv.counter][0], gv.tasks_type))
 
     def save_answer(self):
         gv.answer[gv.counter] = (self.task_entry.get().strip())
@@ -245,7 +244,7 @@ class TaskFrame(ctk.CTkFrame):
 
         self.previous_button.configure(state="normal", image=Ii.get_taskframe_button_previous_image())
 
-        self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
+        self.task_label.configure(image=hd.output_task(gv.officer_task_dict[gv.counter][0], gv.tasks_type))
         self.task_entry.delete(0, "end")
         if gv.answer[gv.counter] != "":
             self.task_entry.insert(0, gv.answer[gv.counter])
@@ -268,7 +267,7 @@ class TaskFrame(ctk.CTkFrame):
         gv.counter -= 1
         self.progress_var.set(value=(gv.counter - 1) / gv.count_tasks)
 
-        self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
+        self.task_label.configure(image=hd.output_task(gv.officer_task_dict[gv.counter][0], gv.tasks_type))
         self.task_entry.delete(0, "end")
         if gv.answer[gv.counter] != "":
             self.task_entry.insert(0, gv.answer[gv.counter])
@@ -321,6 +320,7 @@ class ResultFrame(ctk.CTkFrame):
         self.rowconfigure(index=1, weight=2)
         self.rowconfigure(index=2, weight=100)
         self.rowconfigure(index=3, weight=2)
+        self.rowconfigure(index=4, weight=2)
         self.columnconfigure(index=0, weight=1)
         self.columnconfigure(index=1, weight=1)
 
@@ -381,8 +381,7 @@ class ResultFrame(ctk.CTkFrame):
             self.new_record_label = ctk.CTkLabel(self, text=f"Поздравляю! Вы побили свой рекорд по решённым\nподряд заданиям: {gv.old_true_in_a_row} >>> {gv.true_in_a_row}",
                                              font=("Arial", 33, "bold"), text_color="#000000",
                                              height=45, corner_radius=7, width=390, fg_color="#a5faa5")
-            self.new_record_label.grid(row=3, column=0, columnspan=2, sticky="s", padx=35, pady=[5, 5])
-            # self.rowconfigure(index=4, weight=2)
+            self.new_record_label.grid(row=3, column=0, columnspan=2, sticky="s", padx=35, pady=[0, 5])
 
         # Final button
         self.all_results_button = ctk.CTkButton(self, command=self.go_to_all_results, text="Все результаты",
@@ -440,14 +439,10 @@ class AllResultsFrame(ctk.CTkFrame):
 
         # Grid setting
         self.frame1.rowconfigure(index=0, weight=1)
-        #self.frame1.rowconfigure(index=1, weight=1)
         self.frame1.columnconfigure(index=0, weight=1)
-        #self.frame1.columnconfigure(index=1, weight=1)
 
         self.frame2.rowconfigure(index=0, weight=1)
-        #self.frame2.rowconfigure(index=1, weight=1)
         self.frame2.columnconfigure(index=0, weight=1)
-        #self.frame2.columnconfigure(index=1, weight=1)
 
         # Creating an image
         im_trophy = Image.open("Image/Trophy.png")

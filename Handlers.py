@@ -1,8 +1,8 @@
 import Global_variable as gv
+import Image_initialization as Ii
 import sqlite3
-from random import sample, choice
-
-#import GUI as gui
+import customtkinter as ctk
+from PIL import Image
 
 
 def answer_handler(answer_dict, task_dict):
@@ -17,6 +17,7 @@ def answer_handler(answer_dict, task_dict):
 
             if ("/" not in x) and ("." not in x) and (x.isdigit() or x[0] == "-" and x != "-" and x[1].isdigit()):    # Simple digits
                 x = int(x)
+                print("Ответ", x)
                 if x not in true_answer:
                     break
                 processed_answer.add(x)
@@ -44,11 +45,14 @@ def answer_handler(answer_dict, task_dict):
                 if x not in true_answer:
                     break
                 processed_answer.add(x)
-
-        if processed_answer == true_answer:
-            gv.result.append(1)
         else:
-            gv.result.append(0)
+            if processed_answer == true_answer:
+                gv.result.append(1)
+                continue
+            else:
+                gv.result.append(0)
+                continue
+        gv.result.append(0)
 
 #answer_handler({1: '9, -11 1/2', 2: "-0.0", 3: "-3"}, {1: ('x**2 + 2*x - 99 = 0', {-11.5, 9}), 2: ("x = 4", {0}), 3: ("x = 3", {-3})})
 #print("     ", gv.result)
@@ -213,8 +217,6 @@ def table_editor():  # Edit database
 
 
 def print_table(*tables):
-    db = sqlite3.connect("Math_simulator_database.db")
-    c = db.cursor()
     name_table = {'student': 'Студент',
                   'max_score': 'Максимальный результат',
                   'score': 'Все результаты'}
@@ -226,15 +228,16 @@ def print_table(*tables):
             print()
 
 
-def get_rows(treeview_name):  # treeview_name is a "all_result_table" or "max_result_table"
+def get_rows(treeview_name):  # treeview_name is an "all_result_table" or "max_result_table"
     db = sqlite3.connect('Math_simulator_database.db')
     c = db.cursor()
+
+    list_rows = []
     if treeview_name == "all_result_table":
         all_rows = c.execute('''SELECT score_id, name_student, topic_of_test, abs_quantity, all_quantity, ratio, result 
                                 FROM score JOIN student USING(student_id);''').fetchall()
 
         # Union for column "Результат" and conversion to percentage column "Качество"
-        list_rows = []
         for row in all_rows:
             list_rows.append(tuple(list(row[0:3]) + [f'{str(row[3])} / {str(row[4])}'] + [f'{round(row[5])}%'] + list(row[6:])))
 
@@ -244,6 +247,23 @@ def get_rows(treeview_name):  # treeview_name is a "all_result_table" or "max_re
     db.commit()
     db.close()
     return list_rows
+
+
+def output_task(number, t_type):
+    if t_type == "Линейные уравнения":
+        label_task = Image.open(f'Image/Task_linear_equations/number_{number}.png')
+        label_task_image = ctk.CTkImage(label_task, size=(500, 58))
+        return label_task_image
+
+    elif t_type == "Квадратные уравнения":
+        label_task = Image.open(f'Image/Task_quadratic_equations/number_{number}.png')
+        label_task_image = ctk.CTkImage(label_task, size=(500, 83))
+        return label_task_image
+
+    else:
+        print("Без изображения")
+        return Ii.get_empty_plug_image()
+
 
 
 # def finish_test(object):
