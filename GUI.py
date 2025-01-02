@@ -219,7 +219,7 @@ class TaskFrame(ctk.CTkFrame):
 
         if gv.count_tasks == 1:
             self.next_button = ctk.CTkButton(self, command=self.go_to_result, text="",
-                                             fg_color="#009900", image=Ii.get_taskframe_button_compete_image(),
+                                             fg_color="#009900", image=Ii.get_taskframe_button_complete_image(),
                                              height=60, width=330, border_width=3, border_color="#006600",
                                              corner_radius=5, hover_color="#007D00")
         else:
@@ -258,7 +258,7 @@ class TaskFrame(ctk.CTkFrame):
         self.number_entry.configure(state="disabled")
 
         if gv.counter == gv.count_tasks:
-            self.next_button.configure(image=Ii.get_taskframe_button_compete_image(), command=self.go_to_result)
+            self.next_button.configure(image=Ii.get_taskframe_button_complete_image(), command=self.go_to_result)
 
     def previous_task(self):
         if gv.counter == gv.count_tasks:
@@ -324,8 +324,7 @@ class ResultFrame(ctk.CTkFrame):
         self.columnconfigure(index=0, weight=1)
         self.columnconfigure(index=1, weight=1)
 
-        self.title_label = ctk.CTkLabel(self, text="Ознакомьтесь с вашими результатами:",
-                                        font=("Arial", 35, "bold"), text_color="#000000")
+        self.title_label = ctk.CTkLabel(self, image=Ii.get_hallo_label_image(), text="")
         self.title_label.grid(row=0, column=0, columnspan=2, sticky="sw", padx=30, pady=[19, 13])
 
         self.result_label = ctk.CTkLabel(self, text=f"Вы решили {sum(gv.result)} из {gv.count_tasks} задач",
@@ -355,9 +354,13 @@ class ResultFrame(ctk.CTkFrame):
         self.result_table.tag_configure("table_tag_false", font=("Calibri", 23, "bold"), background="#fca4a4")
 
         # Setting columns
-        self.result_table.heading(gv.columns[0], text='Задача', anchor="c")
-        self.result_table.heading(gv.columns[1], text='Ваш ответ', anchor="c")
-        self.result_table.heading(gv.columns[2], text='Правильный ответ', anchor="c")
+        global i1, i2, i3
+        i1 = Ii.get_column_task_image()
+        i2 = Ii.get_column_your_answer_image()
+        i3 = Ii.get_column_true_answer_image()
+        self.result_table.heading(gv.columns[0], image=i1)
+        self.result_table.heading(gv.columns[1], image=i2)
+        self.result_table.heading(gv.columns[2], image=i3)
 
         self.result_table.column(column=gv.columns[0], width=100)
         self.result_table.column(column=gv.columns[1], width=300)
@@ -384,18 +387,16 @@ class ResultFrame(ctk.CTkFrame):
             self.new_record_label.grid(row=3, column=0, columnspan=2, sticky="s", padx=35, pady=[0, 5])
 
         # Final button
-        self.all_results_button = ctk.CTkButton(self, command=self.go_to_all_results, text="Все результаты",
-                                                fg_color="#009900", height=60, width=330,
-                                                font=("Arial", 40, "bold"), border_width=3,
+        self.all_results_button = ctk.CTkButton(self, command=self.go_to_all_results, text="",
+                                                fg_color="#009900", height=60, width=330, border_width=3,
                                                 border_color="#006600", corner_radius=5,
-                                                text_color="#FFFFFF", hover_color="#007D00")
+                                                image=Ii.get_button_all_results_image(), hover_color="#007D00")
         self.all_results_button.grid(row=4, column=0, sticky="nw", padx=30, pady=[14, 28])
 
-        self. close_program_button = ctk.CTkButton(self, command=finish, text="Выйти",
-                                                   fg_color="#009900", height=60, width=330,
-                                                   font=("Arial", 40, "bold"), border_width=3,
+        self. close_program_button = ctk.CTkButton(self, command=finish, text="",
+                                                   fg_color="#009900", height=60, width=330, border_width=3,
                                                    border_color="#006600", corner_radius=5,
-                                                   text_color="#FFFFFF", hover_color="#007D00")
+                                                   image=Ii.get_button_finish_image(), hover_color="#007D00")
         self.close_program_button.grid(row=4, column=1, sticky="ne", padx=30, pady=[14, 28])
 
     def go_to_all_results(self):
@@ -444,17 +445,12 @@ class AllResultsFrame(ctk.CTkFrame):
         self.frame2.rowconfigure(index=0, weight=1)
         self.frame2.columnconfigure(index=0, weight=1)
 
-        # Creating an image
-        im_trophy = Image.open("Image/Trophy.png")
-        im_trophy.thumbnail(size=(30, 30))
-        im_star = Image.open("Image/star.png")
-        im_star.thumbnail(size=(30, 30))
-        global trophy_icon, star_icon
-        trophy_icon = ImageTk.PhotoImage(im_trophy)
-        star_icon = ImageTk.PhotoImage(im_star)
+        global c_star, c_trophy
+        c_star = Ii.get_column_star_image()
+        c_trophy = Ii.get_column_trophy_image()
 
-        self.tabs.add(child=self.frame1, text='Все результаты', image=star_icon, compound="left")
-        self.tabs.add(child=self.frame2, text='Лучшие результаты', image=trophy_icon, compound="left")
+        self.tabs.add(child=self.frame1, image=c_star)
+        self.tabs.add(child=self.frame2, image=c_trophy)
 
         # Create style
         self.table_style = ttk.Style() # Need refactor
@@ -532,18 +528,16 @@ class AllResultsFrame(ctk.CTkFrame):
         self.max_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
 
         # Button
-        self.back_button = ctk.CTkButton(self, command=self.back_to_result, text="Назад",
+        self.back_button = ctk.CTkButton(self, command=self.back_to_result, text="",
                                          fg_color="#009900", height=50, width=330,
-                                         font=("Arial", 40, "bold"), border_width=3,
-                                         border_color="#006600", corner_radius=5,
-                                         text_color="#FFFFFF", hover_color="#007D00")
+                                         image=Ii.get_taskframe_button_previous_image(), border_width=3,
+                                         border_color="#006600", corner_radius=5, hover_color="#007D00")
         self.back_button.grid(row=1, column=0, sticky="nw", padx=20, pady=[8, 6])
 
-        self.close_program_button_1 = ctk.CTkButton(self, command=finish, text="Выйти",
+        self.close_program_button_1 = ctk.CTkButton(self, command=finish, text="",
                                                     fg_color="#009900", height=50, width=330,
-                                                    font=("Arial", 40, "bold"), border_width=3,
-                                                    border_color="#006600", corner_radius=5,
-                                                    text_color="#FFFFFF", hover_color="#007D00")
+                                                    image=Ii.get_button_finish_image(), border_width=3,
+                                                    border_color="#006600", corner_radius=5, hover_color="#007D00")
         self.close_program_button_1.grid(row=1, column=1, columnspan=2, sticky="ne", padx=20, pady=[8, 6])
 
         # Row insert

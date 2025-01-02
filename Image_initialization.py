@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from PIL import Image
+from PIL import Image, ImageTk
 
 
 # All frame
@@ -86,7 +86,7 @@ def get_taskframe_button_previous_image():
     taskframe_button_previous_image = ctk.CTkImage(button_previous, size=(161, 43))
     return taskframe_button_previous_image
 
-def get_taskframe_button_compete_image():
+def get_taskframe_button_complete_image():
     button_complete = Image.open("Image/TaskFrame_button_complete.png")
     taskframe_button_complete_image = ctk.CTkImage(button_complete, size=(248, 43))
     return taskframe_button_complete_image
@@ -100,3 +100,50 @@ def get_taskframe_button_previous_disabled_image():
     button_previous_disabled = Image.open("Image/TaskFrame_button_previous_disabled.png")
     taskframe_button_previous_disabled_image = ctk.CTkImage(button_previous_disabled, size=(161, 43))
     return taskframe_button_previous_disabled_image
+
+# ResultFrame
+def get_hallo_label_image():
+    hallo_label = Image.open("Image/ResultFrame_hallo_label.png")
+    hallo_label_image = ctk.CTkImage(hallo_label, size=(600, 39))
+    return hallo_label_image
+
+def get_button_all_results_image():
+    button_all_results = Image.open("Image/ResultFrame_button_all_results.png")
+    button_all_results_image = ctk.CTkImage(button_all_results, size=(284, 45))
+    return button_all_results_image
+
+def get_button_finish_image():
+    button_finish = Image.open("Image/ResultFrame_button_finish.png")
+    button_finish_image = ctk.CTkImage(button_finish, size=(153, 43))
+    return button_finish_image
+
+def get_column_task_image():
+    column_task = Image.open("Image/ResultFrame_column_task.png")
+    column_task.thumbnail(size=(228, 33))
+    column_task_image = ImageTk.PhotoImage(column_task)
+    return column_task_image
+
+def get_column_your_answer_image():
+    column_your_answer = Image.open("Image/ResultFrame_column_your_answer.png")
+    column_your_answer.thumbnail(size=(341, 33))
+    column_your_answer_image = ImageTk.PhotoImage(column_your_answer)
+    return column_your_answer_image
+
+def get_column_true_answer_image():
+    column_true_answer = Image.open("Image/ResultFrame_column_true_answer.png")
+    column_true_answer.thumbnail(size=(430, 33))
+    column_true_answer_image = ImageTk.PhotoImage(column_true_answer)
+    return column_true_answer_image
+
+# AllResultsFrame
+def get_column_star_image():
+    column_star = Image.open("Image/column_star.png")
+    column_star.thumbnail(size=(198, 28))
+    column_star_image = ImageTk.PhotoImage(column_star)
+    return column_star_image
+
+def get_column_trophy_image():
+    column_trophy = Image.open("Image/column_trophy.png")
+    column_trophy.thumbnail(size=(226, 28))
+    column_trophy_image = ImageTk.PhotoImage(column_trophy)
+    return column_trophy_image
