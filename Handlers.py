@@ -5,7 +5,7 @@ import customtkinter as ctk
 from PIL import Image
 
 
-def answer_handler(answer_dict, task_dict):
+def answer_handler(answer_dict, task_dict):  # error_and_wrong_update()
     for index in range(1, gv.count_tasks + 1):
         answer = answer_dict[index].split(",")  # The answer to the task numbered index
         processed_answer = set()
@@ -15,36 +15,60 @@ def answer_handler(answer_dict, task_dict):
             if x == "":
                 continue
 
-            if ("/" not in x) and ("." not in x) and (x.isdigit() or x[0] == "-" and x != "-" and x[1].isdigit()):    # Simple digits
-                x = int(x)
-                print("Ответ", x)
-                if x not in true_answer:
+            if ("/" not in x) and ("." not in x) and (x.isdigit() or x[0] == "-" and x != "-" and x[1].isdigit()):  # Simple digits
+                try:
+                    x = int(x)
+                    if x not in true_answer:
+                        break
+                    processed_answer.add(x)
+                except ValueError:
                     break
-                processed_answer.add(x)
+                except TypeError:
+                    break
 
             elif "/" in x and " " in x:  # Mixed fraction
-                x = x.split()
-                x[1] = x[1].split("/")
-                if int(x[0]) < 0:
-                    x = (-1) * (abs(int(x[0])) + int(x[1][0]) / int(x[1][1]))
-                else:
-                    x = int(x[0]) + int(x[1][0]) / int(x[1][1])
-                if x not in true_answer:
+                try:
+                    x = x.split()
+                    x[1] = x[1].split("/")
+                    if int(x[0]) < 0:
+                        x = (-1) * (abs(int(x[0])) + int(x[1][0]) / int(x[1][1]))
+                    else:
+                        x = int(x[0]) + int(x[1][0]) / int(x[1][1])
+                    if x not in true_answer:
+                        break
+                    processed_answer.add(x)
+                except ZeroDivisionError:
                     break
-                processed_answer.add(x)
+                except ValueError:
+                    break
+                except TypeError:
+                    break
 
             elif "/" in x and " " not in x:  # Common fraction
-                x = x.split("/")
-                x = int(x[0]) / int(x[1])
-                if x not in true_answer:
+                try:
+                    x = x.split("/")
+                    x = int(x[0]) / int(x[1])
+                    if x not in true_answer:
+                        break
+                    processed_answer.add(x)
+                except ZeroDivisionError:
                     break
-                processed_answer.add(x)
-
+                except ValueError:
+                    break
+                except TypeError:
+                    break
             elif "." in x:  # Decimals
-                x = float(x)
-                if x not in true_answer:
+                try:
+                    x = float(x)
+                    if x not in true_answer:
+                        break
+                    processed_answer.add(x)
+                except ValueError:
                     break
-                processed_answer.add(x)
+                except TypeError:
+                    break
+            else:
+                break
         else:
             if processed_answer == true_answer:
                 gv.result.append(1)
@@ -54,8 +78,12 @@ def answer_handler(answer_dict, task_dict):
                 continue
         gv.result.append(0)
 
-#answer_handler({1: '9, -11 1/2', 2: "-0.0", 3: "-3"}, {1: ('x**2 + 2*x - 99 = 0', {-11.5, 9}), 2: ("x = 4", {0}), 3: ("x = 3", {-3})})
-#print("     ", gv.result)
+
+def errors_and_wrong_update():
+    pass
+
+#answer_handler({1: '-11.5, 9', 2: "0", 3: "-3"}, {1: ('x**2 + 2*x - 99 = 0', {-11.5, 9}), 2: ("x = 4", {0}), 3: ("x = 3", {-3})})
+#print("Результат:", gv.result)
 
 
 def get_true_in_a_row(iter_answer):
@@ -117,6 +145,16 @@ def create_database():  # Create database
         REFERENCES student(student_id)
         ON DELETE CASCADE
         );''')
+    c.execute('''CREATE TABLE IF NOT EXIST errors_and_wrong
+        errors_and_wrong_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        score_id INTEGER NOT NULL,
+        task_id INTEGER,
+        student_answer TEXT,
+        true_answer TEXT,
+        FOREIGN KEY (score_id),
+        REFERENCES score(score_id)
+        ON DELETE CASCADE
+        ''')
     db.commit()
     db.close()
 
