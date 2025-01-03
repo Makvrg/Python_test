@@ -284,11 +284,12 @@ class TaskFrame(ctk.CTkFrame):
             self.previous_button.configure(state="disabled", image=Ii.get_taskframe_button_previous_disabled_image())
 
     def go_to_result(self):
+        hd.create_database()
+
         hd.answer_handler(gv.answer, gv.officer_task_dict)  # Getting the value of a variable gv.result
         hd.get_true_in_a_row(gv.result)  # Getting the value of a variable gv.true_in_a_row
 
         # Database work
-        hd.create_database()
         hd.database_update(name_student=gv.name, topic_of_test=gv.tasks_type,
                            abs_quantity=sum(gv.result), all_quantity=gv.count_tasks,
                            ratio=round(sum(gv.result) / gv.count_tasks * 100, 2),
@@ -297,13 +298,19 @@ class TaskFrame(ctk.CTkFrame):
         # Проверка базы данных для разработчика
         db = sqlite3.connect('Math_simulator_database.db')
         c = db.cursor()
+
         c.execute('''SELECT * FROM student;''')
         table1 = (c.fetchall(), 'student')
         c.execute('''SELECT * FROM max_score ORDER BY max_result DESC;''')
         table2 = (c.fetchall(), 'max_score')
         c.execute('''SELECT * FROM score;''')
         table3 = (c.fetchall(), 'score')
-        hd.print_table(table1, table2, table3)
+        c.execute('''SELECT * FROM errors_and_wrong;''')
+        table4 = (c.fetchall(), 'errors_and_wrong')
+        hd.print_table(table1, table2, table3, table4)
+
+        db.commit()
+        db.close()
 
         self.destroy()
         self.result_frame = ResultFrame(app, border_width=15, border_color="#006600",

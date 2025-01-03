@@ -5,11 +5,12 @@ import customtkinter as ctk
 from PIL import Image
 
 
-def answer_handler(answer_dict, task_dict):  # error_and_wrong_update()
+def answer_handler(answer_dict, task_dict):
     for index in range(1, gv.count_tasks + 1):
         answer = answer_dict[index].split(",")  # The answer to the task numbered index
         processed_answer = set()
         true_answer = task_dict[index][1]
+        gv.er_wg_comment = "Wrong answer or writing"
         for x in answer:  # Set of answer for task
             x = x.strip()
             if x == "":
@@ -22,8 +23,10 @@ def answer_handler(answer_dict, task_dict):  # error_and_wrong_update()
                         break
                     processed_answer.add(x)
                 except ValueError:
+                    gv.er_wg_comment = "ValueError"
                     break
                 except TypeError:
+                    gv.er_wg_comment = "TypeError"
                     break
 
             elif "/" in x and " " in x:  # Mixed fraction
@@ -38,10 +41,13 @@ def answer_handler(answer_dict, task_dict):  # error_and_wrong_update()
                         break
                     processed_answer.add(x)
                 except ZeroDivisionError:
+                    gv.er_wg_comment = "ZeroDivisionError"
                     break
                 except ValueError:
+                    gv.er_wg_comment = "ValueError"
                     break
                 except TypeError:
+                    gv.er_wg_comment = "TypeError"
                     break
 
             elif "/" in x and " " not in x:  # Common fraction
@@ -52,10 +58,13 @@ def answer_handler(answer_dict, task_dict):  # error_and_wrong_update()
                         break
                     processed_answer.add(x)
                 except ZeroDivisionError:
+                    gv.er_wg_comment = "ZeroDivisionError"
                     break
                 except ValueError:
+                    gv.er_wg_comment = "ValueError"
                     break
                 except TypeError:
+                    gv.er_wg_comment = "TypeError"
                     break
             elif "." in x:  # Decimals
                 try:
@@ -64,8 +73,10 @@ def answer_handler(answer_dict, task_dict):  # error_and_wrong_update()
                         break
                     processed_answer.add(x)
                 except ValueError:
+                    gv.er_wg_comment = "ValueError"
                     break
                 except TypeError:
+                    gv.er_wg_comment = "TypeError"
                     break
             else:
                 break
@@ -75,15 +86,45 @@ def answer_handler(answer_dict, task_dict):  # error_and_wrong_update()
                 continue
             else:
                 gv.result.append(0)
+                errors_and_wrong_update(score_id=get_new_score_id(), task_id=task_dict[index][0],
+                                        student_answer=answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
+                                        comment=gv.er_wg_comment)
                 continue
         gv.result.append(0)
 
+        # Add information about error or wrong answer
+        errors_and_wrong_update(score_id=get_new_score_id(), task_id=task_dict[index][0],
+                                student_answer=answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
+                                comment=gv.er_wg_comment)
 
-def errors_and_wrong_update():
-    pass
 
 #answer_handler({1: '-11.5, 9', 2: "0", 3: "-3"}, {1: ('x**2 + 2*x - 99 = 0', {-11.5, 9}), 2: ("x = 4", {0}), 3: ("x = 3", {-3})})
 #print("Результат:", gv.result)
+
+
+def get_new_score_id():
+    db = sqlite3.connect('Math_simulator_database.db')
+    c = db.cursor()
+
+    new_score_id = c.execute("SELECT COUNT(*) FROM score;").fetchone()[0] + 1
+
+    db.commit()
+    db.close()
+
+    return new_score_id
+#print(get_new_score_id())
+
+
+def errors_and_wrong_update(*, score_id, task_id, student_answer, true_answer, comment):
+    db = sqlite3.connect('Math_simulator_database.db')
+    c = db.cursor()
+
+    c.execute('''INSERT INTO errors_and_wrong (score_id, task_id, student_answer, true_answer, comment)
+    VALUES (?, ?, ?, ?, ?)
+        ;''', (score_id, task_id, student_answer, true_answer, comment))
+
+    db.commit()
+    db.close()
 
 
 def get_true_in_a_row(iter_answer):
@@ -119,6 +160,7 @@ def create_database():  # Create database
     db = sqlite3.connect('Math_simulator_database.db')
     c = db.cursor()
 
+    c.execute('''DROP TABLE errors_and_wrong;''')
     c.execute('PRAGMA foreign_keys = ON;')
     c.execute('''CREATE TABLE IF NOT EXISTS student (
         student_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -145,16 +187,18 @@ def create_database():  # Create database
         REFERENCES student(student_id)
         ON DELETE CASCADE
         );''')
-    c.execute('''CREATE TABLE IF NOT EXIST errors_and_wrong
+    c.execute('''CREATE TABLE IF NOT EXISTS errors_and_wrong (
         errors_and_wrong_id INTEGER PRIMARY KEY AUTOINCREMENT,
         score_id INTEGER NOT NULL,
         task_id INTEGER,
         student_answer TEXT,
         true_answer TEXT,
-        FOREIGN KEY (score_id),
+        comment TEXT,
+        FOREIGN KEY (score_id)
         REFERENCES score(score_id)
         ON DELETE CASCADE
-        ''')
+        );''')
+
     db.commit()
     db.close()
 
@@ -204,6 +248,7 @@ def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, 
                            VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?, ?, ?, ?
                            );
                            ''', (name_student, topic_of_test, abs_quantity, all_quantity, ratio, result))
+
     db.commit()
     db.close()
 
@@ -211,6 +256,7 @@ def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, 
 def table_editor():  # Edit database
     db = sqlite3.connect("Math_simulator_database.db")
     c = db.cursor()
+
     c.executescript('''
         ALTER TABLE max_score
         RENAME TO max_score1;
@@ -250,6 +296,7 @@ def table_editor():  # Edit database
         DROP TABLE student1;
         DROP TABLE max_score1;
         DROP TABLE score1;''')
+
     db.commit()
     db.close()
 
@@ -257,10 +304,14 @@ def table_editor():  # Edit database
 def print_table(*tables):
     name_table = {'student': 'Студент',
                   'max_score': 'Максимальный результат',
-                  'score': 'Все результаты'}
+                  'score': 'Все результаты',
+                  'errors_and_wrong': 'Ошибки и неправильные ответы'}
     print()
     for table, t_name in tables:
-        print(f'Таблица: {name_table[t_name]}')
+        if t_name in name_table:
+            print(f'Таблица: {name_table[t_name]}')
+        else:
+            print(f'Таблица: {t_name}')
         for i in table:
             print(*list(map(lambda x: str(x).ljust(7), i)))
             print()
@@ -282,6 +333,7 @@ def get_rows(treeview_name):  # treeview_name is an "all_result_table" or "max_r
     elif treeview_name == "max_result_table":
         list_rows = c.execute('''SELECT max_score_id, name_student, topic_of_test, max_result 
                                  FROM max_score JOIN student USING(student_id);''').fetchall()
+
     db.commit()
     db.close()
     return list_rows

@@ -25,6 +25,7 @@ exercise = {"Линейные уравнения": Ii.get_label_exercise_1_image
 answer = {}  # Example output {1: '1, -2', 2: '9, -11', 3: '-9, 7', 4: '5', 5: '0, 7', 6: '2, 16/2', 7: '13, 4'}
 counter = 1
 result = []  # Example output [1, 0, 1, 1, 1, 0]
+er_wg_comment = "Wrong answer or writing"
 true_in_a_row = 0  # The number of correct responses in a row
 
 # Block "Label congratulations on new record"
