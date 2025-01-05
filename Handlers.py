@@ -160,7 +160,6 @@ def create_database():  # Create database
     db = sqlite3.connect('Math_simulator_database.db')
     c = db.cursor()
 
-    c.execute('''DROP TABLE errors_and_wrong;''')
     c.execute('PRAGMA foreign_keys = ON;')
     c.execute('''CREATE TABLE IF NOT EXISTS student (
         student_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -355,9 +354,8 @@ def output_task(number, t_type):
         return Ii.get_empty_plug_image()
 
 
-
-# def finish_test(object):
-#     object.destroy()  # Ручное закрытие окна и всего приложения
+# def finish_test():
+#     GUI.app.destroy()  # Ручное закрытие окна и всего приложения
 #     print('Закрытие приложения')
 
 

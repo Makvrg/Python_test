@@ -2,8 +2,6 @@ import customtkinter as ctk
 import Global_variable as gv
 import Handlers as hd
 from random import sample
-from PIL import Image, ImageTk
-import tkinter as tk
 from tkinter import ttk
 import sqlite3
 import Image_initialization as Ii
