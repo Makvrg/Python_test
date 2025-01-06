@@ -2,14 +2,17 @@ import customtkinter as ctk
 import Global_variable as gv
 from random import sample
 import Image_initialization as Ii
-from Classes.Class_TaskFrame import TaskFrame
-from Executor_file import app
+#from Classes.Class_TaskFrame import TaskFrame
+#from Executor_file import app
 
 
 class InfoFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
+
+        # Create attribute from window
+        self.window_attribute = master
 
         # Grid configuration
         self.rowconfigure(index=0, weight=1)
@@ -115,5 +118,6 @@ class InfoFrame(ctk.CTkFrame):
             gv.officer_task_dict = dict(enumerate(sample(list(gv.general_task_dict[gv.tasks_type].items()), gv.count_tasks), start=1))
 
             self.destroy()
-            self.task_frame = TaskFrame(app, border_width=15, border_color="#006600",
+            import Classes.Class_TaskFrame
+            self.task_frame = Classes.Class_TaskFrame.TaskFrame(self.window_attribute, border_width=15, border_color="#006600",
                                         fg_color="#FFFFFF", corner_radius=30)

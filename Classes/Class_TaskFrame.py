@@ -13,6 +13,9 @@ class TaskFrame(ctk.CTkFrame):
         for i in range(1, gv.count_tasks + 1):
             gv.answer[i] = ""
 
+        # Create attribute from window
+        self.window_attribute = master
+
         # Grid configuration
         self.rowconfigure(index=0, weight=1)
         self.rowconfigure(index=1, weight=2)
@@ -162,5 +165,6 @@ class TaskFrame(ctk.CTkFrame):
         db.close()
 
         self.destroy()
-        self.result_frame = ResultFrame(app, border_width=15, border_color="#006600",
+        import Classes.Class_ResultFrame
+        self.result_frame = Classes.Class_ResultFrame.ResultFrame(self.window_attribute, border_width=15, border_color="#006600",
                                         fg_color="#FFFFFF", corner_radius=30)
