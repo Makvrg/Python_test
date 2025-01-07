@@ -20,10 +20,10 @@ class App(ctk.CTk):
         self.hallo_label = ctk.CTkLabel(self.main_frame, image=Ii.get_first_display_image(),
                                         fg_color="#FFFFFF", text="")
         self.hallo_label.pack(side="top", pady=[50, 0])
-        self.go_button = ctk.CTkButton(self.main_frame, command=self.goto_info,
-                                       fg_color="#009900", height=95, width=400,
-                                       border_width=3, border_color="#006600", corner_radius=5,
-                                       image=Ii.get_button_1_image(), text="", hover_color="#007D00")
+        self.go_button = ctk.CTkButton(self.main_frame, command=self.goto_info, text="Начать",
+                                       fg_color="#009900", height=45, width=400, border_width=3,
+                                       border_color="#006600", corner_radius=5, hover_color="#007D00",
+                                       text_color="#FFF", font=("Fira Sans Bold", 70))
         self.go_button.pack(side="bottom", pady=[0, 150])
 
     def goto_info(self):
