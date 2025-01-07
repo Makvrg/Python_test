@@ -22,15 +22,15 @@ class InfoFrame(ctk.CTkFrame):
         self.columnconfigure(index=0, weight=1)
 
         # Create widgets
-        self.info_label = ctk.CTkLabel(self, text="", height=45, corner_radius=10,
-                                       width=370, image=Ii.get_label_flag_1_image(), fg_color="#ff9191", text_color="#000000")
+        self.info_label = ctk.CTkLabel(self, text="Fira Sans", font=("Fira Sans", 10) , height=45, corner_radius=10,
+                                       width=370, fg_color="#ff9191", text_color="#000000")
         self.info_label.grid(row=0, column=0, sticky="sw", padx=30, pady=[30, 13])
 
         self.name_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.name_frame.grid(row=1, column=0, sticky="nsew", padx=30, pady=5)
         self.name_label = ctk.CTkLabel(self.name_frame, text="", image=Ii.get_label_name_image())
         self.name_label.pack(anchor="nw", padx=10, pady=[10, 14])
-        self.name_entry = ctk.CTkEntry(self.name_frame, font=("Impact", 35), width=500, height=60,
+        self.name_entry = ctk.CTkEntry(self.name_frame, font=("Tahoma", 35), width=500, height=60,
                                        fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
         self.name_entry.bind("<KeyRelease>", self.get_name)
         self.name_entry.pack(side="left", anchor="nw", padx=10)
@@ -43,11 +43,11 @@ class InfoFrame(ctk.CTkFrame):
         self.type_frame.grid(row=2, column=0, sticky="nsew", padx=30, pady=5)
         self.type_label = ctk.CTkLabel(self.type_frame, text="", image=Ii.get_label_type_image())
         self.type_label.pack(anchor="nw", padx=10, pady=[12, 10])
-        self.type_combobox = ctk.CTkComboBox(self.type_frame, hover=True, font=("Arial", 35), width=450, height=60,
+        self.type_combobox = ctk.CTkComboBox(self.type_frame, hover=True, font=("Tahoma", 35), width=450, height=60,
                                              fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
                                              button_color="#818c81", button_hover_color="#000",
                                              dropdown_fg_color="#FFF",
-                                             dropdown_font=("Arial", 15), dropdown_hover_color="#dee3de",
+                                             dropdown_font=("Tahoma", 15), dropdown_hover_color="#dee3de",
                                              dropdown_text_color="#212121", state="readonly",
                                              values=list(gv.general_task_dict.keys()),
                                              command=self.combobox_selected)
