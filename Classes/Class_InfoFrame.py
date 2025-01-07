@@ -30,7 +30,7 @@ class InfoFrame(ctk.CTkFrame):
         self.name_frame.grid(row=1, column=0, sticky="nsew", padx=30, pady=5)
         self.name_label = ctk.CTkLabel(self.name_frame, text="", image=Ii.get_label_name_image())
         self.name_label.pack(anchor="nw", padx=10, pady=[10, 14])
-        self.name_entry = ctk.CTkEntry(self.name_frame, font=("Arial", 35), width=500, height=60,
+        self.name_entry = ctk.CTkEntry(self.name_frame, font=("Impact", 35), width=500, height=60,
                                        fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
         self.name_entry.bind("<KeyRelease>", self.get_name)
         self.name_entry.pack(side="left", anchor="nw", padx=10)
@@ -118,6 +118,7 @@ class InfoFrame(ctk.CTkFrame):
             gv.officer_task_dict = dict(enumerate(sample(list(gv.general_task_dict[gv.tasks_type].items()), gv.count_tasks), start=1))
 
             self.destroy()
+
             import Classes.Class_TaskFrame
             self.task_frame = Classes.Class_TaskFrame.TaskFrame(self.window_attribute, border_width=15, border_color="#006600",
                                         fg_color="#FFFFFF", corner_radius=30)

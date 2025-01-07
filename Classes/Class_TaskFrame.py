@@ -165,6 +165,7 @@ class TaskFrame(ctk.CTkFrame):
         db.close()
 
         self.destroy()
+
         import Classes.Class_ResultFrame
         self.result_frame = Classes.Class_ResultFrame.ResultFrame(self.window_attribute, border_width=15, border_color="#006600",
                                         fg_color="#FFFFFF", corner_radius=30)

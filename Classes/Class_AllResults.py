@@ -10,6 +10,9 @@ class AllResultsFrame(ctk.CTkFrame):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
+        # Create attribute from window
+        self.window_attribute = master
+
         # Create style
         self.notebook_style = ttk.Style()  # Need refactor
         self.notebook_style.theme_use("default")
@@ -134,7 +137,7 @@ class AllResultsFrame(ctk.CTkFrame):
                                          border_color="#006600", corner_radius=5, hover_color="#007D00")
         self.back_button.grid(row=1, column=0, sticky="nw", padx=20, pady=[8, 6])
 
-        self.close_program_button_1 = ctk.CTkButton(self, command=finish, text="",
+        self.close_program_button_1 = ctk.CTkButton(self, command=lambda: hd.finish(self.window_attribute), text="",
                                                     fg_color="#009900", height=50, width=330,
                                                     image=Ii.get_button_finish_image(), border_width=3,
                                                     border_color="#006600", corner_radius=5, hover_color="#007D00")
@@ -161,5 +164,7 @@ class AllResultsFrame(ctk.CTkFrame):
     # Methods
     def back_to_result(self):
         self.destroy()
-        self.result_frame = ResultFrame(app, border_width=15, border_color="#006600",
+
+        import Classes.Class_ResultFrame
+        self.result_frame = Classes.Class_ResultFrame.ResultFrame(self.window_attribute, border_width=15, border_color="#006600",
                                         fg_color="#FFFFFF", corner_radius=30)

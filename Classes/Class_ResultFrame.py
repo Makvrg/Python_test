@@ -2,12 +2,16 @@ import customtkinter as ctk
 import Global_variable as gv
 from tkinter import ttk
 import Image_initialization as Ii
+from Handlers import finish
 
 
 class ResultFrame(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
+
+        # Create attribute from window
+        self.window_attribute = master
 
         # Grid configuration
         self.rowconfigure(index=0, weight=1)
@@ -87,7 +91,7 @@ class ResultFrame(ctk.CTkFrame):
                                                 image=Ii.get_button_all_results_image(), hover_color="#007D00")
         self.all_results_button.grid(row=4, column=0, sticky="nw", padx=30, pady=[14, 28])
 
-        self. close_program_button = ctk.CTkButton(self, command=finish, text="",
+        self. close_program_button = ctk.CTkButton(self, command=lambda: finish(self.window_attribute), text="",
                                                    fg_color="#009900", height=60, width=330, border_width=3,
                                                    border_color="#006600", corner_radius=5,
                                                    image=Ii.get_button_finish_image(), hover_color="#007D00")
@@ -95,5 +99,7 @@ class ResultFrame(ctk.CTkFrame):
 
     def go_to_all_results(self):
         self.destroy()
-        self.all_results_frame = AllResultsFrame(app, border_width=15, border_color="#006600",
+
+        import Classes.Class_AllResults
+        self.all_results_frame = Classes.Class_AllResults.AllResultsFrame(self.window_attribute, border_width=15, border_color="#006600",
                                                  fg_color="#FFFFFF", corner_radius=30)

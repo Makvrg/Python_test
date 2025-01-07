@@ -5,6 +5,11 @@ import customtkinter as ctk
 from PIL import Image
 
 
+def finish(win):
+    win.destroy()  # Ручное закрытие окна и всего приложения
+    print('Закрытие приложения')
+
+
 def answer_handler(answer_dict, task_dict):
     for index in range(1, gv.count_tasks + 1):
         answer = answer_dict[index].split(",")  # The answer to the task numbered index
