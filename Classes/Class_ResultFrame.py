@@ -54,7 +54,7 @@ class ResultFrame(ctk.CTkFrame):
                                                            button_color="#169c02",
                                                            orientation="vertical", command=self.result_table.yview,
                                                            width=25, hover=True, button_hover_color="#007D00")
-        self.result_table_scrollbar.grid(row=2, column=2, sticky="ns", padx=[0, 25], pady=(0, 17))
+        self.result_table_scrollbar.grid(row=2, column=2, sticky="ns", padx=[0, 25], pady=(0, 19))
         self.result_table.configure(yscrollcommand=self.result_table_scrollbar.set)
 
         # Tag create
@@ -106,6 +106,5 @@ class ResultFrame(ctk.CTkFrame):
     def go_to_all_results(self):
         self.destroy()
 
-        # import Classes.Class_AllResults
         all_results_frame = Classes.Class_AllResults.AllResultsFrame(self.window_attribute, border_width=15, border_color="#006600",
                                                  fg_color="#FFFFFF", corner_radius=30)

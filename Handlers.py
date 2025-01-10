@@ -1,8 +1,5 @@
 import Global_variable as gv
-import Image_initialization as Ii
 import sqlite3
-import customtkinter as ctk
-from PIL import Image
 
 
 def finish(win):
@@ -117,7 +114,6 @@ def get_new_score_id():
     db.close()
 
     return new_score_id
-#print(get_new_score_id())
 
 
 def errors_and_wrong_update(*, score_id, task_id, student_answer, true_answer, comment):
@@ -150,15 +146,6 @@ def get_true_in_a_row(iter_answer):
         else:
             count = 0
     gv.true_in_a_row = m
-
-
-#get_true_in_a_row([0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0])
-#print(gv.true_in_a_row)
-
-
-# def finish():
-#     gui.app.destroy()  # Ручное закрытие окна и всего приложения
-#     print('Закрытие приложения')
 
 
 def create_database():  # Create database
@@ -341,19 +328,3 @@ def get_rows(treeview_name):  # treeview_name is an "all_result_table" or "max_r
     db.commit()
     db.close()
     return list_rows
-
-
-def output_task(number, t_type):
-    if t_type == "Линейные уравнения":
-        label_task = Image.open(f'Image/Task_linear_equations/number_{number}.png')
-        label_task_image = ctk.CTkImage(label_task, size=(500, 58))
-        return label_task_image
-
-    elif t_type == "Квадратные уравнения":
-        label_task = Image.open(f'Image/Task_quadratic_equations/number_{number}.png')
-        label_task_image = ctk.CTkImage(label_task, size=(500, 83))
-        return label_task_image
-
-    else:
-        print("Без изображения")
-        return Ii.get_empty_plug_image()

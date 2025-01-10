@@ -141,6 +141,7 @@ class TaskFrame(ctk.CTkFrame):
             self.previous_button.configure(state="disabled")
 
     def go_to_result(self):
+        print("answer", gv.answer)
         hd.create_database()
 
         hd.answer_handler(gv.answer, gv.officer_task_dict)  # Getting the value of a variable gv.result
@@ -171,6 +172,5 @@ class TaskFrame(ctk.CTkFrame):
 
         self.destroy()
 
-        # import Classes.Class_ResultFrame
         result_frame = Classes.Class_ResultFrame.ResultFrame(self.window_attribute, border_width=15, border_color="#006600",
                                         fg_color="#FFFFFF", corner_radius=30)

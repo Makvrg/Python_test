@@ -34,7 +34,7 @@ class InfoFrame(ctk.CTkFrame):
                                        fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
         self.name_entry.bind("<KeyRelease>", self.get_name)
         self.name_entry.pack(side="left", anchor="nw", padx=10)
-        self.name_entry.insert(0, "Максим")
+        #self.name_entry.insert(0, "Тестовое имя")
 
         self.name_error = ctk.CTkLabel(self.name_frame, text="",
                                        font=("Fira Sans", 20), text_color="#FF5555")
@@ -54,7 +54,7 @@ class InfoFrame(ctk.CTkFrame):
                                              values=list(gv.general_task_dict.keys()),
                                              command=self.combobox_selected)
         self.type_combobox.pack(side="left", anchor="nw", padx=10)
-        self.type_combobox.set(value="Квадратные уравнения")
+        #self.type_combobox.set(value="Квадратные уравнения")
 
         self.type_error = ctk.CTkLabel(self.type_frame, text="",
                                        font=("Fira Sans", 20), text_color="#FF5555")
@@ -114,15 +114,15 @@ class InfoFrame(ctk.CTkFrame):
             self.name_error.configure(text="Имя не должно быть пустым\nПожалуйста, напишите ещё раз")
             self.name_entry.configure(fg_color="#ffc9c9")
         if self.type_combobox.get() == "":
-            self.type_error.configure(image="Тип задач не должен быть пустым\nПожалуйста, выберите его из списка")
+            self.type_error.configure(text="Тип задач не должен быть пустым\nПожалуйста, выберите его из списка")
             self.type_combobox.configure(fg_color="#ffc9c9")
         if self.name_entry.get() != "" and self.type_combobox.get() != "":
             gv.tasks_type = self.type_combobox.get()
             gv.count_tasks = int(self.count_slider.get())
             gv.officer_task_dict = dict(enumerate(sample(list(gv.general_task_dict[gv.tasks_type].items()), gv.count_tasks), start=1))
+            print(gv.officer_task_dict)
 
             self.destroy()
 
-            # import Classes.Class_TaskFrame
             task_frame = Classes.Class_TaskFrame.TaskFrame(self.window_attribute, border_width=15, border_color="#006600",
                                         fg_color="#FFFFFF", corner_radius=30)
