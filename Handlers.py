@@ -357,12 +357,3 @@ def output_task(number, t_type):
     else:
         print("Без изображения")
         return Ii.get_empty_plug_image()
-
-
-# def finish_test():
-#     GUI.app.destroy()  # Ручное закрытие окна и всего приложения
-#     print('Закрытие приложения')
-
-
-
-

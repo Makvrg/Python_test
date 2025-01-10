@@ -136,14 +136,14 @@ def get_column_true_answer_image():
     return column_true_answer_image
 
 # AllResultsFrame
-def get_column_star_image():
-    column_star = Image.open("Image/column_star.png")
-    column_star.thumbnail(size=(198, 28))
-    column_star_image = ImageTk.PhotoImage(column_star)
-    return column_star_image
+def get_notebook_star_image():
+    notebook_star = Image.open("Image/notebook_star.png")
+    notebook_star.thumbnail(size=(29, 28))
+    notebook_star_image = ImageTk.PhotoImage(notebook_star)
+    return notebook_star_image
 
-def get_column_trophy_image():
-    column_trophy = Image.open("Image/column_trophy.png")
-    column_trophy.thumbnail(size=(226, 28))
-    column_trophy_image = ImageTk.PhotoImage(column_trophy)
-    return column_trophy_image
+def get_notebook_trophy_image():
+    notebook_trophy = Image.open("Image/notebook_trophy.png")
+    notebook_trophy.thumbnail(size=(24, 28))
+    notebook_trophy_image = ImageTk.PhotoImage(notebook_trophy)
+    return notebook_trophy_image
