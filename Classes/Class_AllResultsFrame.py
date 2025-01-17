@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import Global_variable as gv
-import Handlers as hd
+from Functions import Handlers as hd
 from tkinter import ttk
 import Image_initialization as Ii
 
@@ -66,7 +66,7 @@ class AllResultsFrame(ctk.CTkFrame):
         self.table_style.map('2.Treeview', background=[('selected', '#f1ff94')], foreground=[("selected", "black")])
         self.table_style.configure("2.Treeview.Heading",
                                    background="#4bb519", foreground="black",
-                                   relief="flat", font=("Fira Sans SemiBold", 25))
+                                   relief="flat", font=("Fira Sans SemiBold", 23))
         self.table_style.map("2.Treeview.Heading", background=[('active', '#5cd649')])
 
         # Information loading to frame1 and frame2
@@ -82,8 +82,8 @@ class AllResultsFrame(ctk.CTkFrame):
 
 
         # Tag create
-        self.all_result_table.tag_configure("all_result_table_tag_1", font=("Fira Sans SemiBold", 20))
-        self.all_result_table.tag_configure("all_result_table_tag_2", font=("Fira Sans SemiBold", 20), background="#e6ffd4")
+        self.all_result_table.tag_configure("all_result_table_tag_1", font=("Fira Sans SemiBold", 19))
+        self.all_result_table.tag_configure("all_result_table_tag_2", font=("Fira Sans SemiBold", 19), background="#e6ffd4")
 
         # Setting columns
         self.all_result_table.heading(gv.columns_all_result[0], text='№', anchor="c")
@@ -95,9 +95,9 @@ class AllResultsFrame(ctk.CTkFrame):
 
         self.all_result_table.column(column=gv.columns_all_result[0], width=30)
         self.all_result_table.column(column=gv.columns_all_result[1], width=150)
-        self.all_result_table.column(column=gv.columns_all_result[2], width=300)
-        self.all_result_table.column(column=gv.columns_all_result[3], width=95)
-        self.all_result_table.column(column=gv.columns_all_result[4], width=80)
+        self.all_result_table.column(column=gv.columns_all_result[2], width=250)
+        self.all_result_table.column(column=gv.columns_all_result[3], width=100)
+        self.all_result_table.column(column=gv.columns_all_result[4], width=90)
         self.all_result_table.column(column=gv.columns_all_result[5], width=80)
 
         self.all_result_table.grid(row=0, column=0, sticky="nsew", pady=0)

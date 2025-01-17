@@ -1,9 +1,9 @@
 import customtkinter as ctk
 import Global_variable as gv
 from tkinter import ttk
-from Handlers import finish
+from Functions.Handlers import finish
 
-import Classes.Class_AllResults
+import Classes.Class_AllResultsFrame
 
 
 class ResultFrame(ctk.CTkFrame):

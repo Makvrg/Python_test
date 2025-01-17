@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import Global_variable as gv
-import Handlers as hd
+from Functions import Handlers as hd
 from random import sample
 from tkinter import ttk
 import sqlite3

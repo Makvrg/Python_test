@@ -1,7 +1,6 @@
 import customtkinter as ctk
 import Global_variable as gv
-import Handlers as hd
-import sqlite3
+from Functions import Handlers as hd
 import Image_initialization as Ii
 
 import Classes.Class_ResultFrame
@@ -141,7 +140,6 @@ class TaskFrame(ctk.CTkFrame):
             self.previous_button.configure(state="disabled")
 
     def go_to_result(self):
-        print("answer", gv.answer)
         hd.create_database()
 
         hd.answer_handler(gv.answer, gv.officer_task_dict)  # Getting the value of a variable gv.result
@@ -154,21 +152,7 @@ class TaskFrame(ctk.CTkFrame):
                            result=gv.true_in_a_row)
 
         # Проверка базы данных для разработчика
-        db = sqlite3.connect('Math_simulator_database.db')
-        c = db.cursor()
-
-        c.execute('''SELECT * FROM student;''')
-        table1 = (c.fetchall(), 'student')
-        c.execute('''SELECT * FROM max_score ORDER BY max_result DESC;''')
-        table2 = (c.fetchall(), 'max_score')
-        c.execute('''SELECT * FROM score;''')
-        table3 = (c.fetchall(), 'score')
-        c.execute('''SELECT * FROM errors_and_wrong;''')
-        table4 = (c.fetchall(), 'errors_and_wrong')
-        hd.print_table(table1, table2, table3, table4)
-
-        db.commit()
-        db.close()
+        # hd.print_table()
 
         self.destroy()
 

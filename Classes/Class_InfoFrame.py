@@ -47,7 +47,7 @@ class InfoFrame(ctk.CTkFrame):
         self.type_label.pack(anchor="nw", padx=10, pady=8)
         self.type_combobox = ctk.CTkComboBox(self.type_frame, hover=True, font=("Tahoma", 35), width=450, height=60,
                                              fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
-                                             button_color="#818c81", button_hover_color="#000",
+                                             button_color="#818c81", button_hover_color="#6f7f6f",
                                              dropdown_fg_color="#FFF",
                                              dropdown_font=("Tahoma", 17), dropdown_hover_color="#dee3de",
                                              dropdown_text_color="#212121", state="readonly",
@@ -120,7 +120,6 @@ class InfoFrame(ctk.CTkFrame):
             gv.tasks_type = self.type_combobox.get()
             gv.count_tasks = int(self.count_slider.get())
             gv.officer_task_dict = dict(enumerate(sample(list(gv.general_task_dict[gv.tasks_type].items()), gv.count_tasks), start=1))
-            print(gv.officer_task_dict)
 
             self.destroy()
 

@@ -105,7 +105,7 @@ def answer_handler(answer_dict, task_dict):
 
 
 def get_new_score_id():
-    db = sqlite3.connect('Math_simulator_database.db')
+    db = sqlite3.connect('../Math_simulator_database.db')
     c = db.cursor()
 
     new_score_id = c.execute("SELECT COUNT(*) FROM score;").fetchone()[0] + 1
@@ -117,7 +117,7 @@ def get_new_score_id():
 
 
 def errors_and_wrong_update(*, score_id, task_id, student_answer, true_answer, comment):
-    db = sqlite3.connect('Math_simulator_database.db')
+    db = sqlite3.connect('../Math_simulator_database.db')
     c = db.cursor()
 
     c.execute('''INSERT INTO errors_and_wrong (score_id, task_id, student_answer, true_answer, comment)
@@ -149,7 +149,7 @@ def get_true_in_a_row(iter_answer):
 
 
 def create_database():  # Create database
-    db = sqlite3.connect('Math_simulator_database.db')
+    db = sqlite3.connect('../Math_simulator_database.db')
     c = db.cursor()
 
     c.execute('PRAGMA foreign_keys = ON;')
@@ -195,7 +195,7 @@ def create_database():  # Create database
 
 
 def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, ratio, result):
-    db = sqlite3.connect('Math_simulator_database.db')
+    db = sqlite3.connect('../Math_simulator_database.db')
     c = db.cursor()
 
     if name_student in map(lambda x: x[0], c.execute('SELECT name_student FROM student;')):
@@ -245,7 +245,7 @@ def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, 
 
 
 def table_editor():  # Edit database
-    db = sqlite3.connect("Math_simulator_database.db")
+    db = sqlite3.connect("../Math_simulator_database.db")
     c = db.cursor()
 
     c.executescript('''
@@ -292,24 +292,26 @@ def table_editor():  # Edit database
     db.close()
 
 
-def print_table(*tables):
-    name_table = {'student': 'Студент',
-                  'max_score': 'Максимальный результат',
-                  'score': 'Все результаты',
-                  'errors_and_wrong': 'Ошибки и неправильные ответы'}
+def print_table():  # For developer
+    db = sqlite3.connect('../Math_simulator_database.db')
+    c = db.cursor()
+
     print()
-    for table, t_name in tables:
-        if t_name in name_table:
-            print(f'Таблица: {name_table[t_name]}')
-        else:
-            print(f'Таблица: {t_name}')
-        for i in table:
-            print(*list(map(lambda x: str(x).ljust(7), i)))
+    for t_name in gv.name_table:
+        c.execute(f'''SELECT * FROM {t_name};''')
+
+        print(f'Таблица: {t_name}')
+
+        for i in c.fetchall():
+            print(*list(map(lambda x: str(x).ljust(9), i)))
             print()
+
+    db.commit()
+    db.close()
 
 
 def get_rows(treeview_name):  # treeview_name is an "all_result_table" or "max_result_table"
-    db = sqlite3.connect('Math_simulator_database.db')
+    db = sqlite3.connect('../Math_simulator_database.db')
     c = db.cursor()
 
     list_rows = []

@@ -1,4 +1,4 @@
-from Handlers import finish
+from Functions.Handlers import finish
 import Classes.Class_App
 
 
