@@ -50,7 +50,7 @@ class TaskFrame(ctk.CTkFrame):
         self.task_label.pack(anchor="center", padx=20, pady=[20, 20])
 
         self.answer_info = ctk.CTkLabel(self.task_frame, width=390, text=gv.explanation,
-                                        font=("Fira Sans Medium", 15), text_color="#000000",
+                                        font=("Fira Sans Mdium", 15), text_color="#000000",
                                         justify="left")
         self.answer_info.pack(expand=True, anchor="sw", padx=70, pady=[0, 6])
 

@@ -105,7 +105,7 @@ def answer_handler(answer_dict, task_dict):
 
 
 def get_new_score_id():
-    db = sqlite3.connect('../Math_simulator_database.db')
+    db = sqlite3.connect('Math_simulator_database.db')
     c = db.cursor()
 
     new_score_id = c.execute("SELECT COUNT(*) FROM score;").fetchone()[0] + 1
@@ -117,7 +117,7 @@ def get_new_score_id():
 
 
 def errors_and_wrong_update(*, score_id, task_id, student_answer, true_answer, comment):
-    db = sqlite3.connect('../Math_simulator_database.db')
+    db = sqlite3.connect('Math_simulator_database.db')
     c = db.cursor()
 
     c.execute('''INSERT INTO errors_and_wrong (score_id, task_id, student_answer, true_answer, comment)
@@ -149,7 +149,7 @@ def get_true_in_a_row(iter_answer):
 
 
 def create_database():  # Create database
-    db = sqlite3.connect('../Math_simulator_database.db')
+    db = sqlite3.connect('Math_simulator_database.db')
     c = db.cursor()
 
     c.execute('PRAGMA foreign_keys = ON;')
@@ -195,7 +195,7 @@ def create_database():  # Create database
 
 
 def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, ratio, result):
-    db = sqlite3.connect('../Math_simulator_database.db')
+    db = sqlite3.connect('Math_simulator_database.db')
     c = db.cursor()
 
     if name_student in map(lambda x: x[0], c.execute('SELECT name_student FROM student;')):
@@ -245,7 +245,7 @@ def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, 
 
 
 def table_editor():  # Edit database
-    db = sqlite3.connect("../Math_simulator_database.db")
+    db = sqlite3.connect("Math_simulator_database.db")
     c = db.cursor()
 
     c.executescript('''
@@ -292,8 +292,8 @@ def table_editor():  # Edit database
     db.close()
 
 
-def print_table():  # For developer
-    db = sqlite3.connect('../Math_simulator_database.db')
+def print_table():  # For developer (can using in Class_TaskFrame.py)
+    db = sqlite3.connect('Math_simulator_database.db')
     c = db.cursor()
 
     print()
@@ -311,7 +311,7 @@ def print_table():  # For developer
 
 
 def get_rows(treeview_name):  # treeview_name is an "all_result_table" or "max_result_table"
-    db = sqlite3.connect('../Math_simulator_database.db')
+    db = sqlite3.connect("Math_simulator_database.db")
     c = db.cursor()
 
     list_rows = []

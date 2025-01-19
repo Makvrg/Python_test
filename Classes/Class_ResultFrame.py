@@ -106,5 +106,5 @@ class ResultFrame(ctk.CTkFrame):
     def go_to_all_results(self):
         self.destroy()
 
-        all_results_frame = Classes.Class_AllResults.AllResultsFrame(self.window_attribute, border_width=15, border_color="#006600",
+        all_results_frame = Classes.Class_AllResultsFrame.AllResultsFrame(self.window_attribute, border_width=15, border_color="#006600",
                                                  fg_color="#FFFFFF", corner_radius=30)
