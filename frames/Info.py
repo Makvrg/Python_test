@@ -1,11 +1,11 @@
 import customtkinter as ctk
-import Global_variable as gv
+import global_variable as gv
 from random import sample
 
-import Classes.Class_TaskFrame
+import frames.Task
 
 
-class InfoFrame(ctk.CTkFrame):
+class Info(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
@@ -123,5 +123,5 @@ class InfoFrame(ctk.CTkFrame):
 
             self.destroy()
 
-            task_frame = Classes.Class_TaskFrame.TaskFrame(self.window_attribute, border_width=15, border_color="#006600",
-                                        fg_color="#FFFFFF", corner_radius=30)
+            task_frame = frames.Task.Task(self.window_attribute, border_width=15, border_color="#006600",
+                                          fg_color="#FFFFFF", corner_radius=30)

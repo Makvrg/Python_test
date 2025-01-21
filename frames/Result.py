@@ -1,12 +1,12 @@
 import customtkinter as ctk
-import Global_variable as gv
+import global_variable as gv
 from tkinter import ttk
-from Functions.Handlers import finish
+from functions.handlers import finish
 
-import Classes.Class_AllResultsFrame
+import frames.AllResults
 
 
-class ResultFrame(ctk.CTkFrame):
+class Result(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
@@ -106,5 +106,5 @@ class ResultFrame(ctk.CTkFrame):
     def go_to_all_results(self):
         self.destroy()
 
-        all_results_frame = Classes.Class_AllResultsFrame.AllResultsFrame(self.window_attribute, border_width=15, border_color="#006600",
-                                                 fg_color="#FFFFFF", corner_radius=30)
+        all_results_frame = frames.AllResults.AllResults(self.window_attribute, border_width=15, border_color="#006600",
+                                                                    fg_color="#FFFFFF", corner_radius=30)

@@ -1,7 +1,7 @@
 import customtkinter as ctk
-import Image_initialization as Ii
+import image_initialization as Ii
 
-import Classes.Class_InfoFrame
+import frames.Info
 
 
 class App(ctk.CTk):
@@ -31,4 +31,4 @@ class App(ctk.CTk):
     def goto_info(self):
         self.main_frame.destroy()
 
-        info_frame = Classes.Class_InfoFrame.InfoFrame(self, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
+        info_frame = frames.Info.Info(self, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)

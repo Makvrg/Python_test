@@ -22,6 +22,8 @@ exercise = {"Линейные уравнения": "Решите уравнен�
             }
 
 # Blok database work
+database_abs_path = ""  # Example output 'C:\Users\Mi\PycharmProjects\Math_train\math_simulator_database.db'
+
 name_table = {'student': 'Студент',
               'max_score': 'Максимальный результат',
               'score': 'Все результаты',

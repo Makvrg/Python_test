@@ -1,12 +1,13 @@
 import customtkinter as ctk
-import Global_variable as gv
-from Functions import Handlers as hd
-import Image_initialization as Ii
+import global_variable as gv
+from functions import handlers as hd
+from functions import db_handlers as dbh
+import image_initialization as Ii
 
-import Classes.Class_ResultFrame
+import frames.Result
 
 
-class TaskFrame(ctk.CTkFrame):
+class Task(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
@@ -140,21 +141,23 @@ class TaskFrame(ctk.CTkFrame):
             self.previous_button.configure(state="disabled")
 
     def go_to_result(self):
-        hd.create_database()
+        dbh.create_database()
 
         hd.answer_handler(gv.answer, gv.officer_task_dict)  # Getting the value of a variable gv.result
         hd.get_true_in_a_row(gv.result)  # Getting the value of a variable gv.true_in_a_row
 
         # Database work
-        hd.database_update(name_student=gv.name, topic_of_test=gv.tasks_type,
+        dbh.database_update(name_student=gv.name, topic_of_test=gv.tasks_type,
                            abs_quantity=sum(gv.result), all_quantity=gv.count_tasks,
                            ratio=round(sum(gv.result) / gv.count_tasks * 100, 2),
                            result=gv.true_in_a_row)
 
+
         # Проверка базы данных для разработчика
-        # hd.print_table()
+        dbh.print_table()
+
 
         self.destroy()
 
-        result_frame = Classes.Class_ResultFrame.ResultFrame(self.window_attribute, border_width=15, border_color="#006600",
-                                        fg_color="#FFFFFF", corner_radius=30)
+        result_frame = frames.Result.Result(self.window_attribute, border_width=15, border_color="#006600",
+                                                       fg_color="#FFFFFF", corner_radius=30)

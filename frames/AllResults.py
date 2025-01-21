@@ -1,11 +1,12 @@
 import customtkinter as ctk
-import Global_variable as gv
-from Functions import Handlers as hd
+import global_variable as gv
+from functions import handlers as hd
+from functions import db_handlers as dbh
 from tkinter import ttk
-import Image_initialization as Ii
+import image_initialization as Ii
 
 
-class AllResultsFrame(ctk.CTkFrame):
+class AllResults(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
@@ -147,7 +148,7 @@ class AllResultsFrame(ctk.CTkFrame):
 
         # Row insert
         self.k = 1
-        for row in hd.get_rows("all_result_table"):
+        for row in dbh.get_rows("all_result_table"):
             if self.k % 2 == 0:
                 self.all_result_table.insert("", "end", values=row, tags="all_result_table_tag_1")
             else:
@@ -155,7 +156,7 @@ class AllResultsFrame(ctk.CTkFrame):
             self.k += 1
 
         self.k = 1
-        for row in hd.get_rows("max_result_table"):
+        for row in dbh.get_rows("max_result_table"):
             if self.k % 2 == 0:
                 self.max_result_table.insert("", "end", values=row, tags="max_result_table_tag_1")
             else:
@@ -167,6 +168,6 @@ class AllResultsFrame(ctk.CTkFrame):
     def back_to_result(self):
         self.destroy()
 
-        import Classes.Class_ResultFrame
-        result_frame = Classes.Class_ResultFrame.ResultFrame(self.window_attribute, border_width=15, border_color="#006600",
-                                        fg_color="#FFFFFF", corner_radius=30)
+        import frames.Result
+        result_frame = frames.Result.Result(self.window_attribute, border_width=15, border_color="#006600",
+                                                       fg_color="#FFFFFF", corner_radius=30)
