@@ -1,7 +1,10 @@
-name = ""  # Example output "Максим"
-tasks_type = ""  # Example output "Квадратные уравнения"
-count_tasks = 0  # Example output 5
-general_task_dict = {"Линейные уравнения": {"x + 1 = 1": {0},
+from typing import Dict, Set, Any
+
+
+name: str = ""  # Example output "Максим"
+tasks_type: str = ""  # Example output "Квадратные уравнения"
+count_tasks: int = 0  # Example output 5
+general_task_dict: Dict[str, Dict[str, Set[Any]]] = {"Линейные уравнения": {"x + 1 = 1": {0},
                                             "x - 5 = 9": {14},
                                             "2x + 1 = 1": {0},
                                             "4x - 1 = 1": {0.5},
@@ -23,11 +26,6 @@ exercise = {"Линейные уравнения": "Решите уравнен�
 
 # Blok database work
 database_abs_path = ""  # Example output 'C:\Users\Mi\PycharmProjects\Math_train\math_simulator_database.db'
-
-name_table = {'student': 'Студент',
-              'max_score': 'Максимальный результат',
-              'score': 'Все результаты',
-              'errors_and_wrong': 'Ошибки и неправильные ответы'}
 
 explanation = 'Записывайте по образцу: несколько ответов "12, -6", \nдесятичные дроби "1.21", обыкновенные дроби "5/4" и смешанные дроби "11 3/4"'
 answer = {}  # Example output {1: '0', 2: '56, 8', 3: '0, 1 4/5', 4: '-3', 5: '14'}

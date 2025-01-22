@@ -1,5 +1,6 @@
+from typing import NoReturn
 import customtkinter as ctk
-import image_initialization as Ii
+import image_initialization as ii
 
 import frames.Info
 
@@ -19,7 +20,7 @@ class App(ctk.CTk):
                                        fg_color="#FFFFFF", corner_radius=30)
         self.main_frame.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
-        self.hallo_label = ctk.CTkLabel(self.main_frame, image=Ii.get_first_display_image(),
+        self.hallo_label = ctk.CTkLabel(self.main_frame, image=ii.get_first_display_image(),
                                         fg_color="#FFFFFF", text="")
         self.hallo_label.pack(side="top", pady=[50, 0])
         self.go_button = ctk.CTkButton(self.main_frame, command=self.goto_info, text="Начать",
@@ -28,7 +29,7 @@ class App(ctk.CTk):
                                        text_color="#FFF", font=("Fira Sans Bold", 70))
         self.go_button.pack(side="bottom", pady=[0, 150])
 
-    def goto_info(self):
+    def goto_info(self) -> NoReturn:
         self.main_frame.destroy()
 
         info_frame = frames.Info.Info(self, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)

@@ -1,12 +1,13 @@
 import customtkinter as ctk
 import global_variable as gv
 from random import sample
+from typing import Any, NoReturn
 
 import frames.Task
 
 
 class Info(ctk.CTkFrame):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master: Any, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
@@ -84,7 +85,7 @@ class Info(ctk.CTkFrame):
                                        font=("Fira Sans SemiBold", 33), hover_color="#007D00")
         self.go_button.grid(row=4, column=0, sticky="ne", padx=30, pady=[15, 28])
 
-    def get_name(self, event):
+    def get_name(self, event: Any) -> NoReturn:
         gv.name = self.name_entry.get().strip()  # save username for table column "name_student"
         if len(gv.name) == 0:
             self.name_error.configure(text="Имя не должно быть пустым\nПожалуйста, напишите ещё раз")
@@ -96,7 +97,7 @@ class Info(ctk.CTkFrame):
             self.name_error.configure(text="")
             self.name_entry.configure(fg_color="#d9ffdf")
 
-    def combobox_selected(self, event):
+    def combobox_selected(self, event: Any) -> NoReturn:
         if self.name_entry.get().strip() != "":
             self.info_label.configure(fg_color="#65bf65", text="Все поля заполнены")
         self.type_error.configure(text="")
@@ -106,10 +107,10 @@ class Info(ctk.CTkFrame):
         self.var.set(value=1)
         self.count_slider.unbind("<Button-1>")
 
-    def disabled_count_slider(self, event):
+    def disabled_count_slider(self, event: Any) -> NoReturn:
         self.type_error.configure(text="Сначала надо выбрать тип задач\nПожалуйста, выберите его здесь")
 
-    def goto_training(self):
+    def goto_training(self) -> NoReturn:
         if self.name_entry.get() == "":
             self.name_error.configure(text="Имя не должно быть пустым\nПожалуйста, напишите ещё раз")
             self.name_entry.configure(fg_color="#ffc9c9")

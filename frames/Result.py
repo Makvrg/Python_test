@@ -2,12 +2,13 @@ import customtkinter as ctk
 import global_variable as gv
 from tkinter import ttk
 from functions.handlers import finish
+from typing import Any, NoReturn
 
 import frames.AllResults
 
 
 class Result(ctk.CTkFrame):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master: Any, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
@@ -103,7 +104,7 @@ class Result(ctk.CTkFrame):
                                                    font=("Fira Sans Bold", 40), hover_color="#007D00")
         self.close_program_button.grid(row=4, column=1, columnspan=2, sticky="ne", padx=30, pady=[14, 28])
 
-    def go_to_all_results(self):
+    def go_to_all_results(self) -> NoReturn:
         self.destroy()
 
         all_results_frame = frames.AllResults.AllResults(self.window_attribute, border_width=15, border_color="#006600",

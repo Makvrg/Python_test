@@ -3,11 +3,12 @@ import global_variable as gv
 from functions import handlers as hd
 from functions import db_handlers as dbh
 from tkinter import ttk
-import image_initialization as Ii
+import image_initialization as ii
+from typing import Any, NoReturn
 
 
 class AllResults(ctk.CTkFrame):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master: Any, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
@@ -50,8 +51,8 @@ class AllResults(ctk.CTkFrame):
         self.frame2.columnconfigure(index=0, weight=1)
 
         global n_star, n_trophy
-        n_star = Ii.get_notebook_star_image()
-        n_trophy = Ii.get_notebook_trophy_image()
+        n_star = ii.get_notebook_star_image()
+        n_trophy = ii.get_notebook_trophy_image()
 
         self.tabs.add(child=self.frame1, text="Все результаты", image=n_star, compound="left")
         self.tabs.add(child=self.frame2, text="Лучшие результаты", image=n_trophy, compound="left")
@@ -165,7 +166,7 @@ class AllResults(ctk.CTkFrame):
 
 
     # Methods
-    def back_to_result(self):
+    def back_to_result(self) -> NoReturn:
         self.destroy()
 
         import frames.Result

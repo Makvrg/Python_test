@@ -1,13 +1,16 @@
 import global_variable as gv
 import functions.db_handlers as dbh
+from typing import Tuple, Set, List, Dict, Any, NoReturn
 
 
-def finish(win):
+def finish(win: Any) -> None:
     win.destroy()  # Ручное закрытие окна и всего приложения
-    print('Закрытие приложения')
+    # print('Закрытие приложения')
 
 
-def answer_handler(answer_dict, task_dict):
+def answer_handler(answer_dict: Dict[int, str],
+                   task_dict: Dict[int, Tuple[str, Set[Any]]]) -> NoReturn:
+
     for index in range(1, gv.count_tasks + 1):
         answer = answer_dict[index].split(",")  # The answer to the task numbered index
         processed_answer = set()
@@ -104,7 +107,7 @@ def answer_handler(answer_dict, task_dict):
 #print("Результат:", gv.result)
 
 
-def get_true_in_a_row(iter_answer: list[int]):
+def get_true_in_a_row(iter_answer: List[int]) -> NoReturn:
     m = 0
     current = 0
     for i in iter_answer:

@@ -2,13 +2,14 @@ import customtkinter as ctk
 import global_variable as gv
 from functions import handlers as hd
 from functions import db_handlers as dbh
-import image_initialization as Ii
+import image_initialization as ii
+from typing import Any, NoReturn
 
 import frames.Result
 
 
 class Task(ctk.CTkFrame):
-    def __init__(self, master, **kwargs):
+    def __init__(self, master: Any, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
@@ -64,7 +65,7 @@ class Task(ctk.CTkFrame):
         self.save_button = ctk.CTkButton(self.task_frame, command=self.save_answer, height=70, width=70,
                                          fg_color="#009900", border_width=3,
                                          border_color="#006600", corner_radius=5, text="",
-                                         hover_color="#007D00", image=Ii.get_button_save_image())
+                                         hover_color="#007D00", image=ii.get_button_save_image())
         self.save_button.pack(expand=True, side="left", anchor="w", padx=[8, 95], pady=[0, 154])
 
         self.previous_button = ctk.CTkButton(self, command=self.previous_task, text="Назад",
@@ -88,14 +89,16 @@ class Task(ctk.CTkFrame):
 
         self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
 
-    def save_answer(self):
+    def save_answer(self) -> NoReturn:
         gv.answer[gv.counter] = (self.task_entry.get().strip())
         self.task_entry.configure(fg_color="#d9ffdf")
 
-    def change_answer(self, event):
+    def change_answer(self, event: Any) -> NoReturn:
         self.task_entry.configure(fg_color="#ffffff")
 
-    def next_task(self):
+    def next_task(self) -> NoReturn:
+        self.save_answer()
+
         gv.counter += 1
         self.progress_var.set(value=(gv.counter - 1) / gv.count_tasks)
 
@@ -117,7 +120,7 @@ class Task(ctk.CTkFrame):
         if gv.counter == gv.count_tasks:
             self.next_button.configure(text="Завершить", command=self.go_to_result)
 
-    def previous_task(self):
+    def previous_task(self) -> NoReturn:
         if gv.counter == gv.count_tasks:
             self.next_button.configure(text="Далее", command=self.next_task)
 
@@ -140,7 +143,9 @@ class Task(ctk.CTkFrame):
         if gv.counter == 1:
             self.previous_button.configure(state="disabled")
 
-    def go_to_result(self):
+    def go_to_result(self) -> NoReturn:
+        self.save_answer()
+
         dbh.create_database()
 
         hd.answer_handler(gv.answer, gv.officer_task_dict)  # Getting the value of a variable gv.result
@@ -154,7 +159,7 @@ class Task(ctk.CTkFrame):
 
 
         # Проверка базы данных для разработчика
-        dbh.print_table()
+        # dbh.print_table()
 
 
         self.destroy()

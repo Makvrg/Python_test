@@ -1,8 +1,9 @@
 import global_variable as gv
 import sqlite3
+from typing import Tuple, List, Any, NoReturn
 
 
-def get_new_score_id():
+def get_new_score_id() -> int:
     db = sqlite3.connect(gv.database_abs_path)
     c = db.cursor()
 
@@ -15,7 +16,13 @@ def get_new_score_id():
     return new_score_id
 
 
-def errors_and_wrong_update(*, score_id, task_id, student_answer, true_answer, comment):
+def errors_and_wrong_update(*,
+                            score_id: int,
+                            task_id: int,
+                            student_answer: str,
+                            true_answer: str,
+                            comment: str) -> NoReturn:
+
     db = sqlite3.connect(gv.database_abs_path)
     c = db.cursor()
 
@@ -27,7 +34,7 @@ def errors_and_wrong_update(*, score_id, task_id, student_answer, true_answer, c
     db.close()
 
 
-def create_database():  # Create database
+def create_database() -> NoReturn:  # Create database
     db = sqlite3.connect(gv.database_abs_path)
     c = db.cursor()
 
@@ -73,7 +80,14 @@ def create_database():  # Create database
     db.close()
 
 
-def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, ratio, result):
+def database_update(*,
+                    name_student: str,
+                    topic_of_test: str,
+                    abs_quantity: int,
+                    all_quantity: int,
+                    ratio: float,
+                    result: int) -> NoReturn:
+
     db = sqlite3.connect(gv.database_abs_path)
     c = db.cursor()
 
@@ -123,7 +137,7 @@ def database_update(*, name_student, topic_of_test, abs_quantity, all_quantity, 
     db.close()
 
 
-def table_editor():  # Edit database
+def table_editor() -> NoReturn:  # Edit database
     db = sqlite3.connect(gv.database_abs_path)
     c = db.cursor()
 
@@ -171,12 +185,14 @@ def table_editor():  # Edit database
     db.close()
 
 
-def print_table():  # For developer (can using in Task.py)
+def print_table() -> NoReturn:  # For developer (can will using in Task.py)
     db = sqlite3.connect(gv.database_abs_path)
     c = db.cursor()
 
-    print()
-    for t_name in gv.name_table:
+    print("\nПроверка базы данных\n")
+    for t_name in c.execute('''SELECT name FROM sqlite_master;''').fetchall():
+        t_name = t_name[0]
+        if t_name == "sqlite_sequence": continue
         c.execute(f'''SELECT * FROM {t_name};''')
 
         print(f'Таблица: {t_name}')
@@ -189,7 +205,7 @@ def print_table():  # For developer (can using in Task.py)
     db.close()
 
 
-def get_rows(treeview_name):  # treeview_name is an "all_result_table" or "max_result_table"
+def get_rows(treeview_name: str) -> List[Tuple[Any]]:  # treeview_name is an "all_result_table" or "max_result_table"
     db = sqlite3.connect(gv.database_abs_path)
     c = db.cursor()
 
