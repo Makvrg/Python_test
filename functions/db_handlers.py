@@ -1,6 +1,7 @@
 import global_variable as gv
 import sqlite3
 from typing import Tuple, List, Any, NoReturn
+import json
 
 
 def get_new_score_id() -> int:
@@ -39,45 +40,122 @@ def create_database() -> NoReturn:  # Create database
     c = db.cursor()
 
     c.execute('PRAGMA foreign_keys = ON;')
-    c.execute('''CREATE TABLE IF NOT EXISTS student (
+
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS student (
         student_id INTEGER PRIMARY KEY AUTOINCREMENT,
         name_student TEXT
         );''')
-    c.execute('''CREATE TABLE IF NOT EXISTS max_score (
+
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS topic (
+        topic_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        topic_name TEXT
+        );''')
+
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS max_score (
         max_score_id INTEGER PRIMARY KEY AUTOINCREMENT,
         student_id INTEGER NOT NULL,
-        topic_of_test TEXT,
-        max_result INTEGER,
+        topic_id INTEGER NOT NULL,
+        in_a_row INTEGER,
+        date TEXT,
         FOREIGN KEY (student_id)
         REFERENCES student(student_id)
+        ON DELETE CASCADE,
+        FOREIGN KEY (topic_id)
+        REFERENCES topic(topic_id)
         ON DELETE CASCADE
         );''')
-    c.execute('''CREATE TABLE IF NOT EXISTS score (
+
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS score (
         score_id INTEGER PRIMARY KEY AUTOINCREMENT,
         student_id INTEGER NOT NULL,
-        topic_of_test TEXT,
+        topic_id INTEGER NOT NULL,
         abs_quantity INTEGER,
         all_quantity INTEGER,
         ratio REAL,
-        result INTEGER,
+        in_a_row INTEGER,
+        date TEXT,
         FOREIGN KEY (student_id)
         REFERENCES student(student_id)
+        ON DELETE CASCADE,
+        FOREIGN KEY (topic_id)
+        REFERENCES topic(topic_id)
         ON DELETE CASCADE
         );''')
-    c.execute('''CREATE TABLE IF NOT EXISTS errors_and_wrong (
+
+    c.execute('''
+            CREATE TABLE IF NOT EXISTS task_linear_equations (
+            task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            task TEXT,
+            task_answer TEXT
+            );''')
+
+    c.execute('''
+            CREATE TABLE IF NOT EXISTS task_quadratic_equations (
+            task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            task TEXT,
+            task_answer TEXT
+            );''')
+
+    c.execute('''
+        CREATE TABLE IF NOT EXISTS errors_and_wrong (
         errors_and_wrong_id INTEGER PRIMARY KEY AUTOINCREMENT,
         score_id INTEGER NOT NULL,
-        task_id INTEGER,
+        task_id INTEGER NOT NULL,
         student_answer TEXT,
         true_answer TEXT,
         comment TEXT,
         FOREIGN KEY (score_id)
-        REFERENCES score(score_id)
+        REFERENCES score(score_id),
+        FOREIGN KEY (task_id)
+        REFERENCES task_linear_equations(task_id)
+        ON DELETE CASCADE,
+        FOREIGN KEY (task_id)
+        REFERENCES task_quadratic_equations(task_id)
         ON DELETE CASCADE
         );''')
 
+    check_database(c)
+
     db.commit()
     db.close()
+
+
+def check_database(c: sqlite3.Cursor) -> NoReturn:  # Check database
+    if c.execute('''SELECT COUNT(*) FROM topic LIMIT 1;''').fetchone() != (1, ):
+        print("Таблица 'topic' пуста")
+        c.execute('''DELETE FROM topic;''')
+        c.executemany('''
+        INSERT INTO topic (topic_name)
+        VALUES (?)
+        ;''', [("Линейные уравнения", ), ("Квадратные уравнения", )])
+
+    if c.execute('''SELECT COUNT(*) FROM task_linear_equations LIMIT 1;''').fetchone() != (1, ):
+        print("Таблица 'task_linear_equations' пуста")
+        c.execute('''DELETE FROM task_linear_equations;''')
+
+        insert_from_admin(c)
+
+    if c.execute('''SELECT COUNT(*) FROM task_quadratic_equations LIMIT 1;''').fetchone() != (1, ):
+        print("Таблица 'task_quadratic_equations' пуста")
+        c.execute('''DELETE FROM task_quadratic_equations;''')
+
+        insert_from_admin(c)
+
+
+def insert_from_admin(c: sqlite3.Cursor):  # Admin can add new task, restore old task and old topic of test
+    table_name = input()
+
+    admin_values = tuple(input().split(","))
+    while admin_values not in [("end", ), ("End", ), ("stop", ), ("Stop", )]:
+        c.execute(f'''INSERT INTO {table_name}
+                      VALUES ({"?" * len(admin_values)})''', admin_values)
+
+        admin_values = tuple(input().split(","))
+
 
 
 def database_update(*,
