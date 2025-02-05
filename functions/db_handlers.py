@@ -2,6 +2,7 @@ import global_variable as gv
 import sqlite3
 from typing import Tuple, List, Any, NoReturn
 import json
+import admin_file as af
 
 
 def get_new_score_id() -> int:
@@ -124,38 +125,46 @@ def create_database() -> NoReturn:  # Create database
     db.close()
 
 
-def check_database(c: sqlite3.Cursor) -> NoReturn:  # Check database
-    if c.execute('''SELECT COUNT(*) FROM topic LIMIT 1;''').fetchone() != (1, ):
+def check_database(c: sqlite3.Cursor) -> NoReturn:
+    """Check database and back-up insertion tasks and topics into the database from admin_file.py if necessary"""
+    if c.execute('''SELECT 1 FROM topic LIMIT 1;''').fetchone() is None:
         print("Таблица 'topic' пуста")
-        c.execute('''DELETE FROM topic;''')
+        #c.execute("DELETE FROM sqlite_sequence WHERE name = 'topic';")  # Cleaning autoincrement parameter for table "topic"
         c.executemany('''
         INSERT INTO topic (topic_name)
         VALUES (?)
-        ;''', [("Линейные уравнения", ), ("Квадратные уравнения", )])
+        ;''', af.topics)
 
-    if c.execute('''SELECT COUNT(*) FROM task_linear_equations LIMIT 1;''').fetchone() != (1, ):
+    if c.execute('''SELECT 1 FROM task_linear_equations LIMIT 1;''').fetchone() is None:
         print("Таблица 'task_linear_equations' пуста")
-        c.execute('''DELETE FROM task_linear_equations;''')
+        c.executemany('''
+                INSERT INTO task_linear_equations (task, task_answer)
+                VALUES (?, ?)
+                ;''', af.task_linear_equations)
 
-        insert_from_admin(c)
-
-    if c.execute('''SELECT COUNT(*) FROM task_quadratic_equations LIMIT 1;''').fetchone() != (1, ):
+    if c.execute('''SELECT 1 FROM task_quadratic_equations LIMIT 1;''').fetchone() is None:
         print("Таблица 'task_quadratic_equations' пуста")
-        c.execute('''DELETE FROM task_quadratic_equations;''')
+        c.executemany('''
+                        INSERT INTO task_quadratic_equations (task, task_answer)
+                        VALUES (?, ?)
+                        ;''', af.task_quadratic_equations)
 
-        insert_from_admin(c)
 
+def insert_data_from_admin(*,
+                           table_name: str,
+                           list_with_values: List[Tuple[str, ...]]) -> NoReturn:
+    """Admin can add new tasks or topics, restore old tasks or old topics of test.
+    Need to start program, because required get global_variable.database_abs_path
+    For example: insert_data_from_admin(table_name="task_linear_equations", list_with_values=[("999x - 999 = 0", "[1]"), ("x - 999 = 1", "[1000]")])"""
 
-def insert_from_admin(c: sqlite3.Cursor):  # Admin can add new task, restore old task and old topic of test
-    table_name = input()
+    db = sqlite3.connect(gv.database_abs_path)
+    c = db.cursor()
 
-    admin_values = tuple(input().split(","))
-    while admin_values not in [("end", ), ("End", ), ("stop", ), ("Stop", )]:
-        c.execute(f'''INSERT INTO {table_name}
-                      VALUES ({"?" * len(admin_values)})''', admin_values)
+    c.executemany(f'''INSERT INTO {table_name}
+                      VALUES (NULL, {"?" + ", ?" * (len(list_with_values[0]) - 1)})''', list_with_values)
 
-        admin_values = tuple(input().split(","))
-
+    db.commit()
+    db.close()
 
 
 def database_update(*,
