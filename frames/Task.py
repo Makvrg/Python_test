@@ -152,10 +152,10 @@ class Task(ctk.CTkFrame):
         hd.get_true_in_a_row(gv.result)  # Getting the value of a variable gv.true_in_a_row
 
         # Database work
-        dbh.database_update(name_student=gv.name, topic_of_test=gv.tasks_type,
+        dbh.database_update(name_student=gv.name, topic_id=gv.tasks_type,
                            abs_quantity=sum(gv.result), all_quantity=gv.count_tasks,
                            ratio=round(sum(gv.result) / gv.count_tasks * 100, 2),
-                           result=gv.true_in_a_row)
+                           in_a_row=gv.true_in_a_row, date=None)
 
 
         # Проверка базы данных для разработчика

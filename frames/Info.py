@@ -2,6 +2,8 @@ import customtkinter as ctk
 import global_variable as gv
 from random import sample
 from typing import Any, NoReturn
+import admin_files.topics as aft
+from functions.db_handlers import get_amount_tasks
 
 import frames.Task
 
@@ -52,7 +54,7 @@ class Info(ctk.CTkFrame):
                                              dropdown_fg_color="#FFF",
                                              dropdown_font=("Tahoma", 17), dropdown_hover_color="#dee3de",
                                              dropdown_text_color="#212121", state="readonly",
-                                             values=list(gv.general_task_dict.keys()),
+                                             values=[tp[0] for tp in aft.topics],
                                              command=self.combobox_selected)
         self.type_combobox.pack(side="left", anchor="nw", padx=10)
         #self.type_combobox.set(value="Квадратные уравнения")
@@ -102,8 +104,11 @@ class Info(ctk.CTkFrame):
             self.info_label.configure(fg_color="#65bf65", text="Все поля заполнены")
         self.type_error.configure(text="")
         self.type_combobox.configure(fg_color="#d9ffdf")
-        self.count_slider.configure(state="normal", to=len(gv.general_task_dict[self.type_combobox.get()]),
-                                    number_of_steps=len(gv.general_task_dict[self.type_combobox.get()]) - 1)
+
+        gv.amount_tasks_this_topic = get_amount_tasks(self.type_combobox.get())
+
+        self.count_slider.configure(state="normal", to=gv.amount_tasks_this_topic,
+                                    number_of_steps=gv.amount_tasks_this_topic - 1)
         self.var.set(value=1)
         self.count_slider.unbind("<Button-1>")
 

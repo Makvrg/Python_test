@@ -2,7 +2,7 @@ import global_variable as gv
 import sqlite3
 from typing import Tuple, List, Any, NoReturn
 import json
-import admin_file as af
+import random
 
 
 def get_new_score_id() -> int:
@@ -16,6 +16,32 @@ def get_new_score_id() -> int:
     db.close()
 
     return new_score_id
+
+
+def get_amount_tasks(name_table: str) -> int:
+    db = sqlite3.connect(gv.database_abs_path)
+    c = db.cursor()
+
+    name_table = gv.db_names[name_table]
+
+    amount_tasks = c.execute(f'''SELECT COUNT(*) FROM {name_table};''').fetchone()[0]
+
+    db.commit()
+    db.close()
+
+    return amount_tasks
+
+
+def random_tasks():      # Номера могут не начинаться с 1, если были удалены до этого, надо переписать функцию либо придумать новую удобную и быструю систему индексации заданий в базе данных
+    db = sqlite3.connect(gv.database_abs_path)
+    c = db.cursor()
+
+    random_ids = random.sample([i for i in range(1, gv.amount_tasks_this_topic + 1)], gv.count_tasks)
+
+    # Receipt random tasks given topic
+    c.execute(f'''SELECT * FROM {gv.db_names[gv.tasks_type]}
+                      WHERE task_id IN ({random_ids})
+                      ;''')
 
 
 def errors_and_wrong_update(*,
@@ -129,25 +155,33 @@ def check_database(c: sqlite3.Cursor) -> NoReturn:
     """Check database and back-up insertion tasks and topics into the database from admin_file.py if necessary"""
     if c.execute('''SELECT 1 FROM topic LIMIT 1;''').fetchone() is None:
         print("Таблица 'topic' пуста")
-        #c.execute("DELETE FROM sqlite_sequence WHERE name = 'topic';")  # Cleaning autoincrement parameter for table "topic"
+
+        import admin_files.topics as aft
+
         c.executemany('''
         INSERT INTO topic (topic_name)
         VALUES (?)
-        ;''', af.topics)
+        ;''', aft.topics)
 
     if c.execute('''SELECT 1 FROM task_linear_equations LIMIT 1;''').fetchone() is None:
         print("Таблица 'task_linear_equations' пуста")
+
+        import admin_files.task_linear_equations as afl
+
         c.executemany('''
                 INSERT INTO task_linear_equations (task, task_answer)
                 VALUES (?, ?)
-                ;''', af.task_linear_equations)
+                ;''', afl.task_linear_equations)
 
     if c.execute('''SELECT 1 FROM task_quadratic_equations LIMIT 1;''').fetchone() is None:
         print("Таблица 'task_quadratic_equations' пуста")
+
+        import admin_files.task_quadratic_equations as afq
+
         c.executemany('''
                         INSERT INTO task_quadratic_equations (task, task_answer)
                         VALUES (?, ?)
-                        ;''', af.task_quadratic_equations)
+                        ;''', afq.task_quadratic_equations)
 
 
 def insert_data_from_admin(*,
@@ -169,107 +203,118 @@ def insert_data_from_admin(*,
 
 def database_update(*,
                     name_student: str,
-                    topic_of_test: str,
+                    topic_id: int,
                     abs_quantity: int,
                     all_quantity: int,
                     ratio: float,
-                    result: int) -> NoReturn:
+                    in_a_row: int,
+                    date: str) -> NoReturn:
 
     db = sqlite3.connect(gv.database_abs_path)
     c = db.cursor()
 
     if name_student in map(lambda x: x[0], c.execute('SELECT name_student FROM student;')):
-        c.execute('''INSERT INTO score (student_id, topic_of_test, abs_quantity, all_quantity, ratio, result)
-                           VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?, ?, ?, ?
+        c.execute('''INSERT INTO score (student_id, topic_id, abs_quantity, all_quantity, ratio, in_a_row, date)
+                           VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?, ?, ?, ?, ?
                            );
-                           ''', (name_student, topic_of_test, abs_quantity, all_quantity, ratio, result))
-        if topic_of_test in map(lambda x: x[0], c.execute('''SELECT topic_of_test FROM max_score
+                           ''', (name_student, topic_id, abs_quantity, all_quantity, ratio, in_a_row, date))
+        if topic_id in map(lambda x: x[0], c.execute('''SELECT topic_id FROM max_score
                                WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?)
                                ;''', (name_student, ))):
-            old_max_result = int(c.execute('''SELECT max_result FROM max_score
-                                   WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?) 
-                                   AND topic_of_test = ?
-                                   ;''', (name_student, topic_of_test)).fetchone()[0])
-            new_max_result = result
-            if new_max_result > old_max_result:  # New record
-                gv.new_record_flag = True
-                gv.old_true_in_a_row = old_max_result
-                #print("gv.old_true_in_a_row", gv.old_true_in_a_row, type(gv.old_true_in_a_row))
-                c.execute('''UPDATE max_score
-                             SET max_result = ?
-                             WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?) 
-                             AND topic_of_test = ?;
-                             ''', (new_max_result, name_student, topic_of_test))
+            new_record(c, name_student=name_student, topic_id=topic_id, in_a_row=in_a_row, date=date)
+
         else:
-            c.execute('''INSERT INTO max_score (student_id, topic_of_test, max_result)
-                                       VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?
+            c.execute('''INSERT INTO max_score (student_id, topic_id, in_a_row, date)
+                                       VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?, ?
                                        );
-                                       ''', (name_student, topic_of_test, result))
+                                       ''', (name_student, topic_id, in_a_row, date))
 
     else:
         c.execute('''INSERT INTO student (name_student)
                      VALUES (?
                      );
                      ''', (name_student, ))
-        c.execute('''INSERT INTO max_score (student_id, topic_of_test, max_result)
-                           VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?
+        c.execute('''INSERT INTO max_score (student_id, topic_id, in_a_row, date)
+                           VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?, ?
                            );
-                           ''', (name_student, topic_of_test, result))
-        c.execute('''INSERT INTO score (student_id, topic_of_test, abs_quantity, all_quantity, ratio, result)
-                           VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?, ?, ?, ?
+                           ''', (name_student, topic_id, in_a_row, date))
+        c.execute('''INSERT INTO score (student_id, topic_id, abs_quantity, all_quantity, ratio, in_a_row, date)
+                           VALUES ((SELECT student_id FROM student WHERE name_student = ?), ?, ?, ?, ?, ?, ?
                            );
-                           ''', (name_student, topic_of_test, abs_quantity, all_quantity, ratio, result))
+                           ''', (name_student, topic_id, abs_quantity, all_quantity, ratio, in_a_row, date))
 
     db.commit()
     db.close()
 
 
-def table_editor() -> NoReturn:  # Edit database
-    db = sqlite3.connect(gv.database_abs_path)
-    c = db.cursor()
+def new_record(c: sqlite3.Cursor,
+               *,
+               name_student: str,
+               topic_id: int,
+               in_a_row: int,
+               date: str) -> NoReturn:
+    old_max_in_a_row = int(c.execute('''SELECT in_a_row FROM max_score
+                                       WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?) 
+                                       AND topic_id = ?
+                                       ;''', (name_student, topic_id)).fetchone()[0])
+    new_max_in_a_row = in_a_row
+    if new_max_in_a_row > old_max_in_a_row:  # New record
+        gv.new_record_flag = True
+        gv.old_true_in_a_row = old_max_in_a_row
 
-    c.executescript('''
-        ALTER TABLE max_score
-        RENAME TO max_score1;
-        ALTER TABLE student
-        RENAME TO student1;
-        ALTER TABLE score
-        RENAME TO score1;
+        c.execute('''UPDATE max_score
+                                 SET in_a_row = ?, date = ?
+                                 WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?) 
+                                 AND topic_id = ?;
+                                 ''', (new_max_in_a_row, date, name_student, topic_id))
 
-        CREATE TABLE IF NOT EXISTS student (
-        student_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name_student TEXT
-        );
-        INSERT INTO student
-        SELECT * FROM student1;
 
-        CREATE TABLE IF NOT EXISTS max_score (
-        max_score_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER NOT NULL,
-        max_result REAL,
-        FOREIGN KEY (student_id)
-        REFERENCES student(student_id)
-        ON DELETE CASCADE
-        );
-        INSERT INTO max_score
-        SELECT * FROM max_score1;
-
-        CREATE TABLE IF NOT EXISTS score (
-        score_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER NOT NULL,
-        result REAL,
-        FOREIGN KEY (student_id)
-        REFERENCES student(student_id)
-        ON DELETE CASCADE
-        );
-        INSERT INTO score
-        SELECT * FROM score1;
-        DROP TABLE student1;
-        DROP TABLE max_score1;
-        DROP TABLE score1;''')
-
-    db.commit()
-    db.close()
+# def table_editor() -> NoReturn:  # Edit database
+#     db = sqlite3.connect(gv.database_abs_path)
+#     c = db.cursor()
+#
+#     c.executescript('''
+#         ALTER TABLE max_score
+#         RENAME TO max_score1;
+#         ALTER TABLE student
+#         RENAME TO student1;
+#         ALTER TABLE score
+#         RENAME TO score1;
+#
+#         CREATE TABLE IF NOT EXISTS student (
+#         student_id INTEGER PRIMARY KEY AUTOINCREMENT,
+#         name_student TEXT
+#         );
+#         INSERT INTO student
+#         SELECT * FROM student1;
+#
+#         CREATE TABLE IF NOT EXISTS max_score (
+#         max_score_id INTEGER PRIMARY KEY AUTOINCREMENT,
+#         student_id INTEGER NOT NULL,
+#         max_result REAL,
+#         FOREIGN KEY (student_id)
+#         REFERENCES student(student_id)
+#         ON DELETE CASCADE
+#         );
+#         INSERT INTO max_score
+#         SELECT * FROM max_score1;
+#
+#         CREATE TABLE IF NOT EXISTS score (
+#         score_id INTEGER PRIMARY KEY AUTOINCREMENT,
+#         student_id INTEGER NOT NULL,
+#         result REAL,
+#         FOREIGN KEY (student_id)
+#         REFERENCES student(student_id)
+#         ON DELETE CASCADE
+#         );
+#         INSERT INTO score
+#         SELECT * FROM score1;
+#         DROP TABLE student1;
+#         DROP TABLE max_score1;
+#         DROP TABLE score1;''')
+#
+#     db.commit()
+#     db.close()
 
 
 def print_table() -> NoReturn:  # For developer (can will using in Task.py)

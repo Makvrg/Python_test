@@ -2,7 +2,7 @@ import global_variable as gv
 from functions.path_handlers import get_path
 from functions.handlers import finish
 import frames.App
-from functions.db_handlers import create_database, insert_from_admin_file
+from functions.db_handlers import create_database
 
 
 if __name__ == "__main__":
