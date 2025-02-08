@@ -3,7 +3,7 @@ print("AD quad_eq is active")
 
 
 
-task_quadratic_equations: List[Tuple[str, ...]] = [("x² + x - 2 = 0", "[-2, 1]"),
+task_quadratic_equations: List[Tuple[str, str]] = [("x² + x - 2 = 0", "[-2, 1]"),
                                                         ("x² + 2x - 99 = 0", "[9, -11]"),
                                                         ("x² - 7x = 0", "[0, 7]"),
                                                         ("x² - 17x + 52 = 0", "[13, 4]"),

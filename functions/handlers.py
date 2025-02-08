@@ -8,13 +8,13 @@ def finish(win: Any) -> None:
     # print('Закрытие приложения')
 
 
-def answer_handler(answer_dict: Dict[int, str],
-                   task_dict: Dict[int, Tuple[str, Set[Any]]]) -> NoReturn:
+def answer_handler(student_answer_dict: Dict[int, str],
+                   of_task_dict: Dict[int, Tuple[int, str, Set[Any]]]) -> NoReturn:
 
     for index in range(1, gv.count_tasks + 1):
-        answer = answer_dict[index].split(",")  # The answer to the task numbered index
+        answer = student_answer_dict[index].split(",")  # The answer to the task numbered index
         processed_answer = set()
-        true_answer = task_dict[index][1]
+        true_answer = of_task_dict[index][2]
         gv.er_wg_comment = "Wrong answer or writing"
         for x in answer:  # Set of answer for task
             x = x.strip()
@@ -39,12 +39,12 @@ def answer_handler(answer_dict: Dict[int, str],
                     x = x.split()
                     x[1] = x[1].split("/")
                     if int(x[0]) < 0:
-                        x = (-1) * (abs(int(x[0])) + int(x[1][0]) / int(x[1][1]))
+                        account = (-1) * (abs(int(x[0])) + int(x[1][0]) / int(x[1][1]))
                     else:
-                        x = int(x[0]) + int(x[1][0]) / int(x[1][1])
-                    if x not in true_answer:
+                        account = int(x[0]) + int(x[1][0]) / int(x[1][1])
+                    if account not in true_answer:
                         break
-                    processed_answer.add(x)
+                    processed_answer.add(account)
                 except ZeroDivisionError:
                     gv.er_wg_comment = "ZeroDivisionError"
                     break
@@ -91,16 +91,16 @@ def answer_handler(answer_dict: Dict[int, str],
                 continue
             else:
                 gv.result.append(0)
-                dbh.errors_and_wrong_update(score_id=dbh.get_new_score_id(), task_id=task_dict[index][0],
-                                        student_answer=answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
-                                        comment=gv.er_wg_comment)
+                dbh.errors_and_wrong_update(score_id=dbh.get_new_score_id(), task_id=of_task_dict[index][0],
+                                            student_answer=student_answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
+                                            comment=gv.er_wg_comment)
                 continue
         gv.result.append(0)
 
         # Add information about error or wrong answer
-        dbh.errors_and_wrong_update(score_id=dbh.get_new_score_id(), task_id=task_dict[index][0],
-                                student_answer=answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
-                                comment=gv.er_wg_comment)
+        dbh.errors_and_wrong_update(score_id=dbh.get_new_score_id(), task_id=of_task_dict[index][0],
+                                    student_answer=student_answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
+                                    comment=gv.er_wg_comment)
 
 
 #answer_handler({1: '-11.5, 9', 2: "0", 3: "-3"}, {1: ('x**2 + 2*x - 99 = 0', {-11.5, 9}), 2: ("x = 4", {0}), 3: ("x = 3", {-3})})

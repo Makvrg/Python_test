@@ -20,7 +20,7 @@ count_tasks: int  # Example output 5
 #                                         "-x² - 2x + 63 = 0": {-9, 7}
 #                                         }
 #                      }
-officer_task_dict = {}  # Example output {1: ('2x + 1 = 1', {0}), 2: ('4x - 1 = 1', {0.5}), 3: ('x + 1 = 1', {0}), 4: ('x + 2 = -1', {-3}), 5: ('x - 5 = 9', {14})}
+officer_task_dict: Dict[int, Tuple[int, str, Set[Any]]]  # Example output
 exercise = {"Линейные уравнения": "Решите уравнение в действительных числах:",
             "Квадратные уравнения": "Решите уравнение в действительных числах:"
             }

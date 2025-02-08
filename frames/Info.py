@@ -3,7 +3,7 @@ import global_variable as gv
 from random import sample
 from typing import Any, NoReturn
 import admin_files.topics as aft
-from functions.db_handlers import get_amount_tasks
+import functions.db_handlers as dbh
 
 import frames.Task
 
@@ -105,7 +105,7 @@ class Info(ctk.CTkFrame):
         self.type_error.configure(text="")
         self.type_combobox.configure(fg_color="#d9ffdf")
 
-        gv.amount_tasks_this_topic = get_amount_tasks(self.type_combobox.get())
+        gv.amount_tasks_this_topic = dbh.get_amount_tasks(self.type_combobox.get())  # Maybe make value to local?
 
         self.count_slider.configure(state="normal", to=gv.amount_tasks_this_topic,
                                     number_of_steps=gv.amount_tasks_this_topic - 1)
@@ -125,7 +125,7 @@ class Info(ctk.CTkFrame):
         if self.name_entry.get() != "" and self.type_combobox.get() != "":
             gv.tasks_type = self.type_combobox.get()
             gv.count_tasks = int(self.count_slider.get())
-            gv.officer_task_dict = dict(enumerate(sample(list(gv.general_task_dict[gv.tasks_type].items()), gv.count_tasks), start=1))
+            gv.officer_task_dict = dbh.get_random_tasks()
 
             self.destroy()
 

@@ -1,6 +1,6 @@
 import global_variable as gv
 import sqlite3
-from typing import Tuple, List, Any, NoReturn
+from typing import Tuple, List, Dict, Set, Any, NoReturn
 import json
 import random
 
@@ -32,16 +32,46 @@ def get_amount_tasks(name_table: str) -> int:
     return amount_tasks
 
 
-def random_tasks():      # Номера могут не начинаться с 1, если были удалены до этого, надо переписать функцию либо придумать новую удобную и быструю систему индексации заданий в базе данных
+def get_list_task_id() -> List[int]:  # Need for random_tasks()
     db = sqlite3.connect(gv.database_abs_path)
     c = db.cursor()
 
-    random_ids = random.sample([i for i in range(1, gv.amount_tasks_this_topic + 1)], gv.count_tasks)
+    name_table = gv.db_names[gv.tasks_type]
+
+    list_task_id = c.execute(f'''SELECT task_id FROM {name_table};''').fetchall()
+
+    db.commit()
+    db.close()
+
+    list_task_id = list(map(lambda x: x[0], list_task_id))
+
+    return list_task_id
+
+
+def get_random_tasks() -> Dict[int, Tuple[int, str, Set[Any]]]:
+    db = sqlite3.connect(gv.database_abs_path)
+    c = db.cursor()
+
+    random_ids = random.sample(get_list_task_id(), gv.count_tasks)
 
     # Receipt random tasks given topic
     c.execute(f'''SELECT * FROM {gv.db_names[gv.tasks_type]}
-                      WHERE task_id IN ({random_ids})
+                      WHERE task_id IN ({", ".join(map(str, random_ids))})
                       ;''')
+
+    of_task_dict = {}
+    number = 1
+
+    for row in c.fetchall():
+        of_task_dict[number] = (row[0], row[1], set(json.loads(row[2])))
+        number += 1
+        print(row[0], type(row[0]))
+    print(of_task_dict)
+
+    db.commit()
+    db.close()
+
+    return of_task_dict
 
 
 def errors_and_wrong_update(*,
