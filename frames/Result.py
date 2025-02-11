@@ -48,7 +48,7 @@ class Result(ctk.CTkFrame):
         self.table_style.map("1.Treeview.Heading", background=[('active', '#5cd649')])
 
         # Treeview creating
-        self.result_table = ttk.Treeview(self, style="1.Treeview", columns=gv.columns,
+        self.result_table = ttk.Treeview(self, style="1.Treeview", columns=gv.columns_result,
                                          show="headings", selectmode="extended")
         self.result_table_scrollbar = ctk.CTkScrollbar(self, border_spacing=6, minimum_pixel_length=100,
                                                            bg_color="transparent", fg_color="#e4ffcf",
@@ -63,13 +63,13 @@ class Result(ctk.CTkFrame):
         self.result_table.tag_configure("table_tag_false", font=("Fira Sans SemiBold", 23, "bold"), background="#fca4a4")
 
         # Setting columns
-        self.result_table.heading(gv.columns[0], text="Задача", anchor="c")
-        self.result_table.heading(gv.columns[1], text="Ваш ответ", anchor="c")
-        self.result_table.heading(gv.columns[2], text="Правильный ответ", anchor="c")
+        self.result_table.heading(gv.columns_result[0], text="Задача", anchor="c")
+        self.result_table.heading(gv.columns_result[1], text="Ваш ответ", anchor="c")
+        self.result_table.heading(gv.columns_result[2], text="Правильный ответ", anchor="c")
 
-        self.result_table.column(column=gv.columns[0], width=100)
-        self.result_table.column(column=gv.columns[1], width=300)
-        self.result_table.column(column=gv.columns[2], width=300)
+        self.result_table.column(column=gv.columns_result[0], width=100)
+        self.result_table.column(column=gv.columns_result[1], width=300)
+        self.result_table.column(column=gv.columns_result[2], width=300)
 
         self.result_table.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=(30, 0), pady=(0, 25))
 
@@ -77,11 +77,11 @@ class Result(ctk.CTkFrame):
         for num in range(1, gv.count_tasks + 1):
             if gv.result[num - 1] == 1:  # True answer, so table row - green (use tags="table_tag_true")
                 self.result_table.insert("", "end",
-                                         values=(num, gv.answer[num], ", ".join(map(str, sorted(list(gv.officer_task_dict[num][1]))))),
+                                         values=(num, gv.answer[num], ", ".join(map(str, sorted(list(gv.officer_task_dict[num][2]))))),
                                          tags="table_tag_true")
             else:  # False answer, so table row - red (use tags="table_tag_false")
                 self.result_table.insert("", "end",
-                                         values=(num, gv.answer[num], ", ".join(map(str, sorted(list(gv.officer_task_dict[num][1]))))),
+                                         values=(num, gv.answer[num], ", ".join(map(str, sorted(list(gv.officer_task_dict[num][2]))))),
                                          tags="table_tag_false")
 
         # Label congratulations on new record

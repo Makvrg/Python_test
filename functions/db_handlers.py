@@ -299,52 +299,14 @@ def new_record(c: sqlite3.Cursor,
                                  ''', (new_max_in_a_row, date, name_student, topic_id))
 
 
-# def table_editor() -> NoReturn:  # Edit database
-#     db = sqlite3.connect(gv.database_abs_path)
-#     c = db.cursor()
-#
-#     c.executescript('''
-#         ALTER TABLE max_score
-#         RENAME TO max_score1;
-#         ALTER TABLE student
-#         RENAME TO student1;
-#         ALTER TABLE score
-#         RENAME TO score1;
-#
-#         CREATE TABLE IF NOT EXISTS student (
-#         student_id INTEGER PRIMARY KEY AUTOINCREMENT,
-#         name_student TEXT
-#         );
-#         INSERT INTO student
-#         SELECT * FROM student1;
-#
-#         CREATE TABLE IF NOT EXISTS max_score (
-#         max_score_id INTEGER PRIMARY KEY AUTOINCREMENT,
-#         student_id INTEGER NOT NULL,
-#         max_result REAL,
-#         FOREIGN KEY (student_id)
-#         REFERENCES student(student_id)
-#         ON DELETE CASCADE
-#         );
-#         INSERT INTO max_score
-#         SELECT * FROM max_score1;
-#
-#         CREATE TABLE IF NOT EXISTS score (
-#         score_id INTEGER PRIMARY KEY AUTOINCREMENT,
-#         student_id INTEGER NOT NULL,
-#         result REAL,
-#         FOREIGN KEY (student_id)
-#         REFERENCES student(student_id)
-#         ON DELETE CASCADE
-#         );
-#         INSERT INTO score
-#         SELECT * FROM score1;
-#         DROP TABLE student1;
-#         DROP TABLE max_score1;
-#         DROP TABLE score1;''')
-#
-#     db.commit()
-#     db.close()
+def get_topic_id(name_type: str) -> int:
+    db = sqlite3.connect(gv.database_abs_path)
+    c = db.cursor()
+
+    return c.execute('''SELECT topic_id FROM topic WHERE topic_name = ?;''', (name_type, )).fetchone()[0]
+
+    db.commit()
+    db.close()
 
 
 def print_table() -> NoReturn:  # For developer (can will using in Task.py)
@@ -373,16 +335,18 @@ def get_rows(treeview_name: str) -> List[Tuple[Any]]:  # treeview_name is an "al
 
     list_rows = []
     if treeview_name == "all_result_table":
-        all_rows = c.execute('''SELECT score_id, name_student, topic_of_test, abs_quantity, all_quantity, ratio, result 
-                                FROM score JOIN student USING(student_id);''').fetchall()
+        all_rows = c.execute('''SELECT score_id, name_student, topic_name, abs_quantity, all_quantity, ratio, in_a_row, date 
+                                FROM score JOIN student USING(student_id)
+                                JOIN topic USING(topic_id);''').fetchall()
 
         # Union for column "Результат" and conversion to percentage column "Качество"
         for row in all_rows:
             list_rows.append(tuple(list(row[0:3]) + [f'{str(row[3])} / {str(row[4])}'] + [f'{round(row[5])}%'] + list(row[6:])))
 
     elif treeview_name == "max_result_table":
-        list_rows = c.execute('''SELECT max_score_id, name_student, topic_of_test, max_result 
-                                 FROM max_score JOIN student USING(student_id);''').fetchall()
+        list_rows = c.execute('''SELECT max_score_id, name_student, topic_name, in_a_row, date 
+                                 FROM max_score JOIN student USING(student_id)
+                                 JOIN topic USING(topic_id);''').fetchall()
 
     db.commit()
     db.close()

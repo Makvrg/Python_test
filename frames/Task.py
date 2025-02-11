@@ -1,9 +1,9 @@
 import customtkinter as ctk
 import global_variable as gv
-from functions import handlers as hd
+from functions import handlers as hd, image_initialization as ii
 from functions import db_handlers as dbh
-import image_initialization as ii
 from typing import Any, NoReturn
+from datetime import datetime
 
 import frames.Result
 
@@ -152,10 +152,10 @@ class Task(ctk.CTkFrame):
         hd.get_true_in_a_row(gv.result)  # Getting the value of a variable gv.true_in_a_row
 
         # Database work
-        dbh.database_update(name_student=gv.name, topic_id=gv.tasks_type,
+        dbh.database_update(name_student=gv.name, topic_id=dbh.get_topic_id(gv.tasks_type),
                            abs_quantity=sum(gv.result), all_quantity=gv.count_tasks,
                            ratio=round(sum(gv.result) / gv.count_tasks * 100, 2),
-                           in_a_row=gv.true_in_a_row, date=None)
+                           in_a_row=gv.true_in_a_row, date=datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
 
 
         # Проверка базы данных для разработчика

@@ -1,6 +1,5 @@
 import customtkinter as ctk
 import global_variable as gv
-from random import sample
 from typing import Any, NoReturn
 import admin_files.topics as aft
 import functions.db_handlers as dbh
@@ -105,10 +104,10 @@ class Info(ctk.CTkFrame):
         self.type_error.configure(text="")
         self.type_combobox.configure(fg_color="#d9ffdf")
 
-        gv.amount_tasks_this_topic = dbh.get_amount_tasks(self.type_combobox.get())  # Maybe make value to local?
+        amount_tasks_this_topic = dbh.get_amount_tasks(self.type_combobox.get())
 
-        self.count_slider.configure(state="normal", to=gv.amount_tasks_this_topic,
-                                    number_of_steps=gv.amount_tasks_this_topic - 1)
+        self.count_slider.configure(state="normal", to=amount_tasks_this_topic,
+                                    number_of_steps=amount_tasks_this_topic - 1)
         self.var.set(value=1)
         self.count_slider.unbind("<Button-1>")
 

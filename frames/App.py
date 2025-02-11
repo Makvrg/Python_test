@@ -1,6 +1,6 @@
 from typing import NoReturn
 import customtkinter as ctk
-import image_initialization as ii
+from functions import image_initialization as ii
 
 import frames.Info
 

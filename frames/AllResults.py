@@ -1,9 +1,8 @@
 import customtkinter as ctk
 import global_variable as gv
-from functions import handlers as hd
+from functions import handlers as hd, image_initialization as ii
 from functions import db_handlers as dbh
 from tkinter import ttk
-import image_initialization as ii
 from typing import Any, NoReturn
 
 
@@ -74,7 +73,7 @@ class AllResults(ctk.CTkFrame):
         # Information loading to frame1 and frame2
         # Treeview and Scrollbar creating №1
         self.all_result_table = ttk.Treeview(self.frame1, style="2.Treeview", columns=gv.columns_all_result,
-                                             show="headings", selectmode="extended")
+                                             show="headings", selectmode="extended")  # it is corresponding to table "score" in database
         self.all_result_table_scrollbar = ctk.CTkScrollbar(self.frame1, border_spacing=6, minimum_pixel_length=100,
                                                            bg_color="transparent", fg_color="#e4ffcf", button_color="#169c02",
                                                            orientation="vertical", command=self.all_result_table.yview,
@@ -88,12 +87,13 @@ class AllResults(ctk.CTkFrame):
         self.all_result_table.tag_configure("all_result_table_tag_2", font=("Fira Sans SemiBold", 19), background="#e6ffd4")
 
         # Setting columns
-        self.all_result_table.heading(gv.columns_all_result[0], text='№', anchor="c")
-        self.all_result_table.heading(gv.columns_all_result[1], text='Имя', anchor="c")
-        self.all_result_table.heading(gv.columns_all_result[2], text='Тип', anchor="c")
-        self.all_result_table.heading(gv.columns_all_result[3], text='Результат', anchor="c")
-        self.all_result_table.heading(gv.columns_all_result[4], text='Качество', anchor="c")
-        self.all_result_table.heading(gv.columns_all_result[5], text='Подряд', anchor="c")
+        self.all_result_table.heading(gv.columns_all_result[0], text='№', anchor="c")  # it is corresponding to column "score_id"
+        self.all_result_table.heading(gv.columns_all_result[1], text='Имя', anchor="c")  # it is corresponding to column "name_student"
+        self.all_result_table.heading(gv.columns_all_result[2], text='Тип', anchor="c")  # it is corresponding to column "topic_name"
+        self.all_result_table.heading(gv.columns_all_result[3], text='Результат', anchor="c")  # it is corresponding to columns "abs_quantity" and "all_quantity"
+        self.all_result_table.heading(gv.columns_all_result[4], text='Качество', anchor="c")  # it is corresponding to column "ratio"
+        self.all_result_table.heading(gv.columns_all_result[5], text='Подряд', anchor="c")  # it is corresponding to column "in_a_row"
+        self.all_result_table.heading(gv.columns_all_result[6], text='Дата и время', anchor="c")  # it is corresponding to column "date"
 
         self.all_result_table.column(column=gv.columns_all_result[0], width=30)
         self.all_result_table.column(column=gv.columns_all_result[1], width=150)
@@ -101,12 +101,13 @@ class AllResults(ctk.CTkFrame):
         self.all_result_table.column(column=gv.columns_all_result[3], width=100)
         self.all_result_table.column(column=gv.columns_all_result[4], width=90)
         self.all_result_table.column(column=gv.columns_all_result[5], width=80)
+        self.all_result_table.column(column=gv.columns_all_result[6], width=180)
 
         self.all_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
 
         # Treeview and Scrollbar creating №2
         self.max_result_table = ttk.Treeview(self.frame2, style="2.Treeview", columns=gv.columns_max_result,
-                                             show="headings", selectmode="extended")
+                                             show="headings", selectmode="extended")  # it is corresponding to table "max_score" in database
         self.max_result_table_scrollbar = ctk.CTkScrollbar(self.frame2, border_spacing=6, minimum_pixel_length=100,
                                                            bg_color="transparent", fg_color="#e4ffcf",
                                                            button_color="#169c02",
@@ -120,15 +121,17 @@ class AllResults(ctk.CTkFrame):
         self.max_result_table.tag_configure("max_result_table_tag_2", font=("Fira Sans SemiBold", 20), background="#e6ffd4")
 
         # Setting columns
-        self.max_result_table.heading(gv.columns_max_result[0], text='№', anchor="c")
-        self.max_result_table.heading(gv.columns_max_result[1], text='Имя', anchor="c")
-        self.max_result_table.heading(gv.columns_max_result[2], text='Тип', anchor="c")
-        self.max_result_table.heading(gv.columns_max_result[3], text='Подряд', anchor="c")
+        self.max_result_table.heading(gv.columns_max_result[0], text='№', anchor="c")  # it is corresponding to column "max_score_id"`
+        self.max_result_table.heading(gv.columns_max_result[1], text='Имя', anchor="c")  # it is corresponding to column "name_student"
+        self.max_result_table.heading(gv.columns_max_result[2], text='Тип', anchor="c")  # it is corresponding to column "topic_name"
+        self.max_result_table.heading(gv.columns_max_result[3], text='Подряд', anchor="c")  # it is corresponding to column "in_a_row"
+        self.max_result_table.heading(gv.columns_max_result[4], text='Дата и время', anchor="c")  # it is corresponding to column "date"
 
         self.max_result_table.column(column=gv.columns_max_result[0], width=100)
         self.max_result_table.column(column=gv.columns_max_result[1], width=200)
         self.max_result_table.column(column=gv.columns_max_result[2], width=350)
         self.max_result_table.column(column=gv.columns_max_result[3], width=150)
+        self.max_result_table.column(column=gv.columns_max_result[4], width=150)
 
         self.max_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
 
@@ -147,7 +150,7 @@ class AllResults(ctk.CTkFrame):
                                                     hover_color="#007D00", font=("Fira Sans Bold", 40))
         self.close_program_button_1.grid(row=1, column=1, columnspan=2, sticky="ne", padx=20, pady=[8, 6])
 
-        # Row insert
+        # Row insert (need bag fix)
         self.k = 1
         for row in dbh.get_rows("all_result_table"):
             if self.k % 2 == 0:
