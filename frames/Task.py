@@ -87,7 +87,7 @@ class Task(ctk.CTkFrame):
                                              corner_radius=5, hover_color="#007D00", text_color="#FFF")
         self.next_button.grid(row=3, column=1, sticky="e", padx=30, pady=[14, 28])
 
-        self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
+        self.task_label.configure(text=gv.officer_task_dict[gv.counter][1])
 
     def save_answer(self) -> NoReturn:
         gv.answer[gv.counter] = (self.task_entry.get().strip())
@@ -104,7 +104,7 @@ class Task(ctk.CTkFrame):
 
         self.previous_button.configure(state="normal")
 
-        self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
+        self.task_label.configure(text=gv.officer_task_dict[gv.counter][1])
         self.task_entry.delete(0, "end")
         if gv.answer[gv.counter] != "":
             self.task_entry.insert(0, gv.answer[gv.counter])
@@ -127,7 +127,7 @@ class Task(ctk.CTkFrame):
         gv.counter -= 1
         self.progress_var.set(value=(gv.counter - 1) / gv.count_tasks)
 
-        self.task_label.configure(text=gv.officer_task_dict[gv.counter][0])
+        self.task_label.configure(text=gv.officer_task_dict[gv.counter][1])
         self.task_entry.delete(0, "end")
         if gv.answer[gv.counter] != "":
             self.task_entry.insert(0, gv.answer[gv.counter])

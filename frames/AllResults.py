@@ -67,7 +67,7 @@ class AllResults(ctk.CTkFrame):
         self.table_style.map('2.Treeview', background=[('selected', '#f1ff94')], foreground=[("selected", "black")])
         self.table_style.configure("2.Treeview.Heading",
                                    background="#4bb519", foreground="black",
-                                   relief="flat", font=("Fira Sans SemiBold", 23))
+                                   relief="flat", font=("Fira Sans SemiBold", 21))
         self.table_style.map("2.Treeview.Heading", background=[('active', '#5cd649')])
 
         # Information loading to frame1 and frame2
@@ -90,8 +90,8 @@ class AllResults(ctk.CTkFrame):
         self.all_result_table.heading(gv.columns_all_result[0], text='№', anchor="c")  # it is corresponding to column "score_id"
         self.all_result_table.heading(gv.columns_all_result[1], text='Имя', anchor="c")  # it is corresponding to column "name_student"
         self.all_result_table.heading(gv.columns_all_result[2], text='Тип', anchor="c")  # it is corresponding to column "topic_name"
-        self.all_result_table.heading(gv.columns_all_result[3], text='Результат', anchor="c")  # it is corresponding to columns "abs_quantity" and "all_quantity"
-        self.all_result_table.heading(gv.columns_all_result[4], text='Качество', anchor="c")  # it is corresponding to column "ratio"
+        self.all_result_table.heading(gv.columns_all_result[3], text='Рез-т', anchor="c")  # it is corresponding to columns "abs_quantity" and "all_quantity"
+        self.all_result_table.heading(gv.columns_all_result[4], text='Кач-во', anchor="c")  # it is corresponding to column "ratio"
         self.all_result_table.heading(gv.columns_all_result[5], text='Подряд', anchor="c")  # it is corresponding to column "in_a_row"
         self.all_result_table.heading(gv.columns_all_result[6], text='Дата и время', anchor="c")  # it is corresponding to column "date"
 
@@ -173,5 +173,6 @@ class AllResults(ctk.CTkFrame):
         self.destroy()
 
         import frames.Result
+
         result_frame = frames.Result.Result(self.window_attribute, border_width=15, border_color="#006600",
                                                        fg_color="#FFFFFF", corner_radius=30)

@@ -5,10 +5,11 @@ from pathlib import Path
 name: str  # Example output "Максим"
 tasks_type: str  # Example output "Квадратные уравнения"
 count_tasks: int  # Example output 5
-officer_task_dict: Dict[int, Tuple[int, str, Set[Any]]]  # Example output
+officer_task_dict: Dict[int, Tuple[int, str, Set[Any]]]  # Example output {1: (1, 'x + 1 = 1', {0}), 2: (3, '2x + 1 = 1', {0}), 3: (4, '4x - 1 = 1', {0.5}), 4: (5, 'x + 2 = -1', {-3}), 5: (7, 'x - 999 = 1', {1000})}
 exercise = {"Линейные уравнения": "Решите уравнение в действительных числах:",
             "Квадратные уравнения": "Решите уравнение в действительных числах:"
             }
+# Надо добавить словарь с названиями типов задач в виде ключей и их сокращенными названиями в виде значений для AllResults
 
 # Blok database work
 database_abs_path: Path  # Example output 'C:\Users\Mi\PycharmProjects\Math_train\math_simulator_database.db'

@@ -10,7 +10,11 @@ def get_new_score_id() -> int:
     c = db.cursor()
 
     new_score_id = c.execute('''SELECT seq FROM sqlite_sequence
-                                WHERE name = 'score';''').fetchone()[0] + 1
+                                WHERE name = 'score';''').fetchone()
+    if new_score_id is None:
+        new_score_id = 1
+    else:
+        new_score_id = new_score_id[0] + 1
 
     db.commit()
     db.close()
@@ -65,8 +69,8 @@ def get_random_tasks() -> Dict[int, Tuple[int, str, Set[Any]]]:
     for row in c.fetchall():
         of_task_dict[number] = (row[0], row[1], set(json.loads(row[2])))
         number += 1
-        print(row[0], type(row[0]))
-    print(of_task_dict)
+        #print(row[0], type(row[0]))
+    #print(of_task_dict)
 
     db.commit()
     db.close()

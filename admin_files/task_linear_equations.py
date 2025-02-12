@@ -1,5 +1,5 @@
 from typing import List, Tuple
-print("AD lin_eq is active")
+#print("AD lin_eq is active")
 
 
 
