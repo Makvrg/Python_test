@@ -9,6 +9,7 @@ class App(ctk.CTk):
     def __init__(self):
         super().__init__()
         self.title("Математический тренажер")
+        #self.iconbitmap("")
         self.geometry("1000x700+360+150")
         self.configure(fg_color="#CCFFCC")
 

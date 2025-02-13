@@ -5,6 +5,7 @@ import admin_files.topics as aft
 import functions.db_handlers as dbh
 
 import frames.Task
+#import frames.AdminMenu
 
 
 class Info(ctk.CTkFrame):
@@ -56,7 +57,7 @@ class Info(ctk.CTkFrame):
                                              values=[tp[0] for tp in aft.topics],
                                              command=self.combobox_selected)
         self.type_combobox.pack(side="left", anchor="nw", padx=10)
-        #self.type_combobox.set(value="Квадратные уравнения")
+        #self.type_combobox.set(value="Линейные уравнения")
 
         self.type_error = ctk.CTkLabel(self.type_frame, text="",
                                        font=("Fira Sans", 20), text_color="#FF5555")
@@ -113,6 +114,9 @@ class Info(ctk.CTkFrame):
 
     def disabled_count_slider(self, event: Any) -> NoReturn:
         self.type_error.configure(text="Сначала надо выбрать тип задач\nПожалуйста, выберите его здесь")
+
+    def goto_admin_menu(self) -> NoReturn:
+        ...
 
     def goto_training(self) -> NoReturn:
         if self.name_entry.get() == "":

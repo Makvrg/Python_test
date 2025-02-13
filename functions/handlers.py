@@ -117,5 +117,7 @@ def get_true_in_a_row(iter_answer: List[int]) -> NoReturn:
             if current > m:
                 m = current
             current = 0
+    if current > m:
+        m = current
 
     gv.true_in_a_row = m

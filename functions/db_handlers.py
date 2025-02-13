@@ -69,8 +69,6 @@ def get_random_tasks() -> Dict[int, Tuple[int, str, Set[Any]]]:
     for row in c.fetchall():
         of_task_dict[number] = (row[0], row[1], set(json.loads(row[2])))
         number += 1
-        #print(row[0], type(row[0]))
-    #print(of_task_dict)
 
     db.commit()
     db.close()
@@ -188,7 +186,7 @@ def create_database() -> NoReturn:  # Create database
 def check_database(c: sqlite3.Cursor) -> NoReturn:
     """Check database and back-up insertion tasks and topics into the database from admin_file.py if necessary"""
     if c.execute('''SELECT 1 FROM topic LIMIT 1;''').fetchone() is None:
-        print("Таблица 'topic' пуста")
+        #print("Таблица 'topic' пуста")
 
         import admin_files.topics as aft
 
@@ -198,7 +196,7 @@ def check_database(c: sqlite3.Cursor) -> NoReturn:
         ;''', aft.topics)
 
     if c.execute('''SELECT 1 FROM task_linear_equations LIMIT 1;''').fetchone() is None:
-        print("Таблица 'task_linear_equations' пуста")
+        #print("Таблица 'task_linear_equations' пуста")
 
         import admin_files.task_linear_equations as afl
 
@@ -208,7 +206,7 @@ def check_database(c: sqlite3.Cursor) -> NoReturn:
                 ;''', afl.task_linear_equations)
 
     if c.execute('''SELECT 1 FROM task_quadratic_equations LIMIT 1;''').fetchone() is None:
-        print("Таблица 'task_quadratic_equations' пуста")
+        #print("Таблица 'task_quadratic_equations' пуста")
 
         import admin_files.task_quadratic_equations as afq
 
@@ -339,18 +337,22 @@ def get_rows(treeview_name: str) -> List[Tuple[Any]]:  # treeview_name is an "al
 
     list_rows = []
     if treeview_name == "all_result_table":
-        all_rows = c.execute('''SELECT score_id, name_student, topic_name, abs_quantity, all_quantity, ratio, in_a_row, date 
+        all_rows1 = c.execute('''SELECT score_id, name_student, topic_name, abs_quantity, all_quantity, ratio, in_a_row, date 
                                 FROM score JOIN student USING(student_id)
                                 JOIN topic USING(topic_id);''').fetchall()
 
-        # Union for column "Результат" and conversion to percentage column "Качество"
-        for row in all_rows:
-            list_rows.append(tuple(list(row[0:3]) + [f'{str(row[3])} / {str(row[4])}'] + [f'{round(row[5])}%'] + list(row[6:])))
+        # Union for column "Результат", conversion to percentage column "Качество", shortening length name_topic
+        for row in all_rows1:
+            list_rows.append(tuple(list(row[0:2]) + [gv.short_topic[row[2]]] + [f'{str(row[3])} / {str(row[4])}'] + [f'{round(row[5])}%'] + list(row[6:])))
 
     elif treeview_name == "max_result_table":
-        list_rows = c.execute('''SELECT max_score_id, name_student, topic_name, in_a_row, date 
+        all_rows2 = c.execute('''SELECT max_score_id, name_student, topic_name, in_a_row, date 
                                  FROM max_score JOIN student USING(student_id)
                                  JOIN topic USING(topic_id);''').fetchall()
+
+        # Shortening length name_topic
+        for row in all_rows2:
+            list_rows.append(tuple(list(row[0:2]) + [gv.short_topic[row[2]]] + list(row[3:])))
 
     db.commit()
     db.close()

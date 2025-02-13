@@ -67,7 +67,7 @@ class AllResults(ctk.CTkFrame):
         self.table_style.map('2.Treeview', background=[('selected', '#f1ff94')], foreground=[("selected", "black")])
         self.table_style.configure("2.Treeview.Heading",
                                    background="#4bb519", foreground="black",
-                                   relief="flat", font=("Fira Sans SemiBold", 21))
+                                   relief="flat", font=("Fira Sans SemiBold", 22))
         self.table_style.map("2.Treeview.Heading", background=[('active', '#5cd649')])
 
         # Information loading to frame1 and frame2
@@ -95,13 +95,13 @@ class AllResults(ctk.CTkFrame):
         self.all_result_table.heading(gv.columns_all_result[5], text='Подряд', anchor="c")  # it is corresponding to column "in_a_row"
         self.all_result_table.heading(gv.columns_all_result[6], text='Дата и время', anchor="c")  # it is corresponding to column "date"
 
-        self.all_result_table.column(column=gv.columns_all_result[0], width=30)
-        self.all_result_table.column(column=gv.columns_all_result[1], width=150)
-        self.all_result_table.column(column=gv.columns_all_result[2], width=250)
-        self.all_result_table.column(column=gv.columns_all_result[3], width=100)
-        self.all_result_table.column(column=gv.columns_all_result[4], width=90)
+        self.all_result_table.column(column=gv.columns_all_result[0], width=55)
+        self.all_result_table.column(column=gv.columns_all_result[1], width=200)
+        self.all_result_table.column(column=gv.columns_all_result[2], width=150)
+        self.all_result_table.column(column=gv.columns_all_result[3], width=85)
+        self.all_result_table.column(column=gv.columns_all_result[4], width=70)
         self.all_result_table.column(column=gv.columns_all_result[5], width=80)
-        self.all_result_table.column(column=gv.columns_all_result[6], width=180)
+        self.all_result_table.column(column=gv.columns_all_result[6], width=210)
 
         self.all_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
 
@@ -127,11 +127,11 @@ class AllResults(ctk.CTkFrame):
         self.max_result_table.heading(gv.columns_max_result[3], text='Подряд', anchor="c")  # it is corresponding to column "in_a_row"
         self.max_result_table.heading(gv.columns_max_result[4], text='Дата и время', anchor="c")  # it is corresponding to column "date"
 
-        self.max_result_table.column(column=gv.columns_max_result[0], width=100)
-        self.max_result_table.column(column=gv.columns_max_result[1], width=200)
-        self.max_result_table.column(column=gv.columns_max_result[2], width=350)
-        self.max_result_table.column(column=gv.columns_max_result[3], width=150)
-        self.max_result_table.column(column=gv.columns_max_result[4], width=150)
+        self.max_result_table.column(column=gv.columns_max_result[0], width=70)
+        self.max_result_table.column(column=gv.columns_max_result[1], width=270)
+        self.max_result_table.column(column=gv.columns_max_result[2], width=200)
+        self.max_result_table.column(column=gv.columns_max_result[3], width=100)
+        self.max_result_table.column(column=gv.columns_max_result[4], width=220)
 
         self.max_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
 
@@ -150,7 +150,6 @@ class AllResults(ctk.CTkFrame):
                                                     hover_color="#007D00", font=("Fira Sans Bold", 40))
         self.close_program_button_1.grid(row=1, column=1, columnspan=2, sticky="ne", padx=20, pady=[8, 6])
 
-        # Row insert (need bag fix)
         self.k = 1
         for row in dbh.get_rows("all_result_table"):
             if self.k % 2 == 0:
