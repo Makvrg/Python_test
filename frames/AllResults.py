@@ -22,7 +22,7 @@ class AllResults(ctk.CTkFrame):
                                       fieldbackground="white",
                                       bordercolor="#FFFFFF", relief="flat")
         self.notebook_style.configure('1.TNotebook.Tab', background='#73cf48', foreground='black',
-                                      font=("Fira Sans SemiBold", 16))
+                                      font=(gv.font_fira_sans_semibold, 16))
         self.notebook_style.map('1.TNotebook.Tab', background=[("selected", '#4bb519')])
 
         # Create Notebook
@@ -67,7 +67,7 @@ class AllResults(ctk.CTkFrame):
         self.table_style.map('2.Treeview', background=[('selected', '#f1ff94')], foreground=[("selected", "black")])
         self.table_style.configure("2.Treeview.Heading",
                                    background="#4bb519", foreground="black",
-                                   relief="flat", font=("Fira Sans SemiBold", 22))
+                                   relief="flat", font=(gv.font_fira_sans_semibold, 22))
         self.table_style.map("2.Treeview.Heading", background=[('active', '#5cd649')])
 
         # Information loading to frame1 and frame2
@@ -83,8 +83,8 @@ class AllResults(ctk.CTkFrame):
 
 
         # Tag create
-        self.all_result_table.tag_configure("all_result_table_tag_1", font=("Fira Sans SemiBold", 19))
-        self.all_result_table.tag_configure("all_result_table_tag_2", font=("Fira Sans SemiBold", 19), background="#e6ffd4")
+        self.all_result_table.tag_configure("all_result_table_tag_1", font=(gv.font_fira_sans_semibold, 19))
+        self.all_result_table.tag_configure("all_result_table_tag_2", font=(gv.font_fira_sans_semibold, 19), background="#e6ffd4")
 
         # Setting columns
         self.all_result_table.heading(gv.columns_all_result[0], text='№', anchor="c")  # it is corresponding to column "score_id"
@@ -117,8 +117,8 @@ class AllResults(ctk.CTkFrame):
         self.max_result_table.configure(yscrollcommand=self.max_result_table_scrollbar.set)
 
         # Tag create
-        self.max_result_table.tag_configure("max_result_table_tag_1", font=("Fira Sans SemiBold", 20))
-        self.max_result_table.tag_configure("max_result_table_tag_2", font=("Fira Sans SemiBold", 20), background="#e6ffd4")
+        self.max_result_table.tag_configure("max_result_table_tag_1", font=(gv.font_fira_sans_semibold, 20))
+        self.max_result_table.tag_configure("max_result_table_tag_2", font=(gv.font_fira_sans_semibold, 20), background="#e6ffd4")
 
         # Setting columns
         self.max_result_table.heading(gv.columns_max_result[0], text='№', anchor="c")  # it is corresponding to column "max_score_id"`
@@ -138,7 +138,7 @@ class AllResults(ctk.CTkFrame):
         # Button
         self.back_button = ctk.CTkButton(self, command=self.back_to_result, text="Назад",
                                          fg_color="#009900", height=50, width=330,
-                                         font=("Fira Sans Bold", 40), border_width=3,
+                                         font=(gv.font_fira_sans_bold, 40), border_width=3,
                                          border_color="#006600", corner_radius=5,
                                          hover_color="#007D00", text_color="#FFF")
         self.back_button.grid(row=1, column=0, sticky="nw", padx=20, pady=[8, 6])
@@ -147,7 +147,7 @@ class AllResults(ctk.CTkFrame):
                                                     text="Выйти", text_color="#FFF", fg_color="#009900",
                                                     height=50, width=330, border_width=3,
                                                     border_color="#006600", corner_radius=5,
-                                                    hover_color="#007D00", font=("Fira Sans Bold", 40))
+                                                    hover_color="#007D00", font=(gv.font_fira_sans_bold, 40))
         self.close_program_button_1.grid(row=1, column=1, columnspan=2, sticky="ne", padx=20, pady=[8, 6])
 
         self.k = 1

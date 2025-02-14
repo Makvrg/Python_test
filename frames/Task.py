@@ -34,29 +34,29 @@ class Task(ctk.CTkFrame):
         self.task_progress.grid(row=0, column=0, columnspan=2, sticky="ew", padx=25, pady=[23, 5])
 
         self.exercise_label = ctk.CTkLabel(self, text=gv.exercise[gv.tasks_type], height=45,
-                                           width=390, font=("Fira Sans SemiBold", 35), text_color="#000000")
+                                           width=390, font=(gv.font_fira_sans_semibold, 35), text_color="#000000")
         self.exercise_label.grid(row=1, column=0, columnspan=2, sticky="nw", padx=28)
 
         self.task_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=300)
         self.task_frame.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30)
 
-        self.number_entry = ctk.CTkEntry(self.task_frame, font=("Fira Sans", 35),
+        self.number_entry = ctk.CTkEntry(self.task_frame, font=(gv.font_fira_sans, 35),
                                          fg_color="#FFFFFF", text_color="#212121",
                                          border_color="#818c81", width=100,
                                          justify="center")
         self.number_entry.insert(0, "1 / " + str(gv.count_tasks))
         self.number_entry.configure(state="disabled")
         self.number_entry.pack(anchor="nw", padx=20, pady=[20, 10])
-        self.task_label = ctk.CTkLabel(self.task_frame, text="", font=("Fira Sans SemiBold", 55),
+        self.task_label = ctk.CTkLabel(self.task_frame, text="", font=(gv.font_fira_sans_semibold, 55),
                                        text_color="#000000")
         self.task_label.pack(anchor="center", padx=20, pady=[20, 20])
 
         self.answer_info = ctk.CTkLabel(self.task_frame, width=390, text=gv.explanation,
-                                        font=("Fira Sans Mdium", 15), text_color="#000000",
+                                        font=(gv.font_fira_sans_medium, 15), text_color="#000000",
                                         justify="left")
         self.answer_info.pack(expand=True, anchor="sw", padx=70, pady=[0, 6])
 
-        self.task_entry = ctk.CTkEntry(self.task_frame, font=("Tahoma", 40), width=650, height=70,
+        self.task_entry = ctk.CTkEntry(self.task_frame, font=(gv.font_tahoma, 40), width=650, height=70,
                                        fg_color="#FFFFFF", text_color="#212121",
                                        border_color="#818c81")
         self.task_entry.bind("<KeyRelease>", self.change_answer)
@@ -69,7 +69,7 @@ class Task(ctk.CTkFrame):
         self.save_button.pack(expand=True, side="left", anchor="w", padx=[8, 95], pady=[0, 154])
 
         self.previous_button = ctk.CTkButton(self, command=self.previous_task, text="Назад",
-                                             fg_color="#009900", font=("Fira Sans Bold", 40),
+                                             fg_color="#009900", font=(gv.font_fira_sans_bold, 40),
                                              height=60, width=330, border_width=3, text_color="#FFF",
                                              border_color="#006600", corner_radius=5,
                                              hover_color="#007D00", state="disabled")
@@ -77,12 +77,12 @@ class Task(ctk.CTkFrame):
 
         if gv.count_tasks == 1:
             self.next_button = ctk.CTkButton(self, command=self.go_to_result, text="Завершить",
-                                             fg_color="#009900", font=("Fira Sans Bold", 40),
+                                             fg_color="#009900", font=(gv.font_fira_sans_bold, 40),
                                              height=60, width=330, border_width=3, border_color="#006600",
                                              corner_radius=5, hover_color="#007D00", text_color="#FFF")
         else:
             self.next_button = ctk.CTkButton(self, command=self.next_task, text="Далее",
-                                             fg_color="#009900", font=("Fira Sans Bold", 40),
+                                             fg_color="#009900", font=(gv.font_fira_sans_bold, 40),
                                              height=60, width=330, border_width=3, border_color="#006600",
                                              corner_radius=5, hover_color="#007D00", text_color="#FFF")
         self.next_button.grid(row=3, column=1, sticky="e", padx=30, pady=[14, 28])

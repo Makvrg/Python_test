@@ -24,35 +24,35 @@ class Info(ctk.CTkFrame):
         self.columnconfigure(index=0, weight=1)
 
         # Create widgets
-        self.info_label = ctk.CTkLabel(self, text="Заполните все поля", font=("Fira Sans SemiBold", 35) , height=45, corner_radius=10,
+        self.info_label = ctk.CTkLabel(self, text="Заполните все поля", font=(gv.font_fira_sans_bold, 35) , height=45, corner_radius=10,
                                        width=350, fg_color="#ff9191", text_color="#000000")
         self.info_label.grid(row=0, column=0, sticky="sw", padx=30, pady=[30, 13])
 
         self.name_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.name_frame.grid(row=1, column=0, sticky="nsew", padx=30, pady=5)
-        self.name_label = ctk.CTkLabel(self.name_frame, text="Напишите своё имя", font=("Fira Sans", 30),
+        self.name_label = ctk.CTkLabel(self.name_frame, text="Напишите своё имя", font=(gv.font_fira_sans, 35),
                                        text_color="#6b6b6b")
         self.name_label.pack(anchor="nw", padx=10, pady=8)
-        self.name_entry = ctk.CTkEntry(self.name_frame, font=("Tahoma", 35), width=500, height=60,
+        self.name_entry = ctk.CTkEntry(self.name_frame, font=(gv.font_tahoma, 35), width=500, height=60,
                                        fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
         self.name_entry.bind("<KeyRelease>", self.get_name)
         self.name_entry.pack(side="left", anchor="nw", padx=10)
         #self.name_entry.insert(0, "Тестовое имя")
 
         self.name_error = ctk.CTkLabel(self.name_frame, text="",
-                                       font=("Fira Sans", 20), text_color="#FF5555")
+                                       font=(gv.font_fira_sans, 20), text_color="#FF5555")
         self.name_error.pack(side="left", anchor="nw", padx=10, pady=7)
 
         self.type_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.type_frame.grid(row=2, column=0, sticky="nsew", padx=30, pady=5)
-        self.type_label = ctk.CTkLabel(self.type_frame, text="Выберите тип задач", font=("Fira Sans", 30),
+        self.type_label = ctk.CTkLabel(self.type_frame, text="Выберите тип задач", font=(gv.font_fira_sans, 30),
                                        text_color="#6b6b6b")
         self.type_label.pack(anchor="nw", padx=10, pady=8)
-        self.type_combobox = ctk.CTkComboBox(self.type_frame, hover=True, font=("Tahoma", 35), width=450, height=60,
+        self.type_combobox = ctk.CTkComboBox(self.type_frame, hover=True, font=(gv.font_tahoma, 35), width=450, height=60,
                                              fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
                                              button_color="#818c81", button_hover_color="#6f7f6f",
                                              dropdown_fg_color="#FFF",
-                                             dropdown_font=("Tahoma", 17), dropdown_hover_color="#dee3de",
+                                             dropdown_font=(gv.font_tahoma, 17), dropdown_hover_color="#dee3de",
                                              dropdown_text_color="#212121", state="readonly",
                                              values=[tp[0] for tp in aft.topics],
                                              command=self.combobox_selected)
@@ -60,16 +60,16 @@ class Info(ctk.CTkFrame):
         #self.type_combobox.set(value="Линейные уравнения")
 
         self.type_error = ctk.CTkLabel(self.type_frame, text="",
-                                       font=("Fira Sans", 20), text_color="#FF5555")
+                                       font=(gv.font_fira_sans, 20), text_color="#FF5555")
         self.type_error.pack(side="left", anchor="nw", padx=10, pady=7)
 
         self.count_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=100)
         self.count_frame.grid(row=3, column=0, sticky="nsew", padx=30, pady=5)
-        self.count_label = ctk.CTkLabel(self.count_frame, text="Установите количество задач",  font=("Fira Sans", 30),
+        self.count_label = ctk.CTkLabel(self.count_frame, text="Установите количество задач",  font=(gv.font_fira_sans, 30),
                                         text_color="#6b6b6b")
         self.count_label.pack(anchor="nw", padx=10, pady=8)
         self.var = ctk.IntVar(value=1)
-        self.count_entry = ctk.CTkEntry(self.count_frame, font=("Fira Sans", 45), width=100, height=60,
+        self.count_entry = ctk.CTkEntry(self.count_frame, font=(gv.font_fira_sans, 45), width=100, height=60,
                                         fg_color="#FFFFFF", text_color="#212121", border_color="#818c81",
                                         textvariable=self.var, state="disabled", justify="center")
         self.count_entry.pack(side="left", anchor="n", padx=10)
@@ -84,7 +84,7 @@ class Info(ctk.CTkFrame):
         self.go_button = ctk.CTkButton(self, command=self.goto_training, text="Приступить к выполнению",
                                        fg_color="#009900", height=70, width=445, text_color="#FFF",
                                        border_width=3, border_color="#006600", corner_radius=5,
-                                       font=("Fira Sans SemiBold", 33), hover_color="#007D00")
+                                       font=(gv.font_fira_sans_semibold, 33), hover_color="#007D00")
         self.go_button.grid(row=4, column=0, sticky="ne", padx=30, pady=[15, 28])
 
     def get_name(self, event: Any) -> NoReturn:

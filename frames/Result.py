@@ -25,11 +25,11 @@ class Result(ctk.CTkFrame):
         self.columnconfigure(index=1, weight=1)
 
         self.title_label = ctk.CTkLabel(self, text="Ознакомьтесь с вашими результатами:",
-                                        font=("Fira Sans SemiBold", 35), text_color="#000000")
+                                        font=(gv.font_fira_sans_semibold, 35), text_color="#000000")
         self.title_label.grid(row=0, column=0, columnspan=2, sticky="sw", padx=30, pady=[19, 13])
 
         self.result_label = ctk.CTkLabel(self, text=f"Вы решили {sum(gv.result)} из {gv.count_tasks} задач",
-                                         font=("Fira Sans SemiBold", 35), text_color="#000000",
+                                         font=(gv.font_fira_sans_semibold, 35), text_color="#000000",
                                          height=45, corner_radius=10, width=390, fg_color="#a5faa5")
         self.result_label.grid(row=1, column=0, columnspan=2, sticky="n", padx=30, pady=[0, 10])
 
@@ -44,7 +44,7 @@ class Result(ctk.CTkFrame):
         self.table_style.map('1.Treeview', background=[('selected', '#f1ff94')], foreground=[("selected", "black")])
         self.table_style.configure("1.Treeview.Heading",
                                    background="#4bb519", foreground="black",
-                                   relief="flat", font=("Fira Sans SemiBold", 28))
+                                   relief="flat", font=(gv.font_fira_sans_semibold, 28))
         self.table_style.map("1.Treeview.Heading", background=[('active', '#5cd649')])
 
         # Treeview creating
@@ -59,8 +59,8 @@ class Result(ctk.CTkFrame):
         self.result_table.configure(yscrollcommand=self.result_table_scrollbar.set)
 
         # Tag create
-        self.result_table.tag_configure("table_tag_true", font=("Fira Sans SemiBold", 23), background="#c5faac")
-        self.result_table.tag_configure("table_tag_false", font=("Fira Sans SemiBold", 23, "bold"), background="#fca4a4")
+        self.result_table.tag_configure("table_tag_true", font=(gv.font_fira_sans_semibold, 23), background="#c5faac")
+        self.result_table.tag_configure("table_tag_false", font=(gv.font_fira_sans_semibold, 23), background="#fca4a4")
 
         # Setting columns
         self.result_table.heading(gv.columns_result[0], text="Задача", anchor="c")
@@ -87,7 +87,7 @@ class Result(ctk.CTkFrame):
         # Label congratulations on new record
         if gv.new_record_flag is True:
             self.new_record_label = ctk.CTkLabel(self, text=f"Поздравляю! Вы побили свой рекорд по решённым\nподряд заданиям: {gv.old_true_in_a_row} >>> {gv.true_in_a_row}",
-                                             font=("Fira Sans SemiBold", 33), text_color="#000000",
+                                             font=(gv.font_fira_sans_semibold, 33), text_color="#000000",
                                              height=45, corner_radius=7, width=390, fg_color="#a5faa5")
             self.new_record_label.grid(row=3, column=0, columnspan=2, sticky="s", padx=35, pady=[0, 5])
 
@@ -95,13 +95,13 @@ class Result(ctk.CTkFrame):
         self.all_results_button = ctk.CTkButton(self, command=self.go_to_all_results, text="Все результаты",
                                                 fg_color="#009900", height=60, width=330, border_width=3,
                                                 border_color="#006600", corner_radius=5, text_color="#FFF",
-                                                font=("Fira Sans Bold", 40), hover_color="#007D00")
+                                                font=(gv.font_fira_sans_bold, 40), hover_color="#007D00")
         self.all_results_button.grid(row=4, column=0, sticky="nw", padx=30, pady=[14, 28])
 
         self. close_program_button = ctk.CTkButton(self, command=lambda: finish(self.window_attribute), text="Выйти",
                                                    fg_color="#009900", height=60, width=330, border_width=3,
                                                    border_color="#006600", corner_radius=5, text_color="#FFF",
-                                                   font=("Fira Sans Bold", 40), hover_color="#007D00")
+                                                   font=(gv.font_fira_sans_bold, 40), hover_color="#007D00")
         self.close_program_button.grid(row=4, column=1, columnspan=2, sticky="ne", padx=30, pady=[14, 28])
 
     def go_to_all_results(self) -> NoReturn:

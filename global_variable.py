@@ -1,5 +1,6 @@
 from typing import Dict, Set, Any, Tuple, List
 from pathlib import Path
+from PIL import ImageFont
 
 
 name: str  # Example output "Максим"
@@ -13,7 +14,15 @@ short_topic = {"Линейные уравнения": "Лин-ые ур-я",
                "Квадратные уравнения": "Квад-ые ур-я"
                }
 
-# Blok database work
+# Block fonts work
+font_tahoma = ImageFont.truetype("fonts/tahoma.ttf", size=35).font.family
+
+font_fira_sans_bold = ImageFont.truetype("fonts/FiraSans-Bold.ttf", size=35).font.family
+font_fira_sans_semibold = ImageFont.truetype("fonts/FiraSans-SemiBold.ttf", size=35).font.family
+font_fira_sans = ImageFont.truetype("fonts/FiraSans-Regular.ttf", size=35).font.family
+font_fira_sans_medium = ImageFont.truetype("fonts/FiraSans-Medium.ttf", size=35).font.family
+
+# Block database work
 database_abs_path: Path  # Example output 'C:\Users\Mi\PycharmProjects\Math_train\math_simulator_database.db'
 db_names = {"Линейные уравнения": "task_linear_equations",
             "Квадратные уравнения": "task_quadratic_equations"}
