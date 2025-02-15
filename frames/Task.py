@@ -52,7 +52,7 @@ class Task(ctk.CTkFrame):
         self.task_label.pack(anchor="center", padx=20, pady=[20, 20])
 
         self.answer_info = ctk.CTkLabel(self.task_frame, width=390, text=gv.explanation,
-                                        font=("Fira Sans Mdium", 15), text_color="#000000",
+                                        font=("Fira Sans Medium", 15), text_color="#000000",
                                         justify="left")
         self.answer_info.pack(expand=True, anchor="sw", padx=70, pady=[0, 6])
 
@@ -156,6 +156,8 @@ class Task(ctk.CTkFrame):
                            abs_quantity=sum(gv.result), all_quantity=gv.count_tasks,
                            ratio=round(sum(gv.result) / gv.count_tasks * 100, 2),
                            in_a_row=gv.true_in_a_row, date=datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
+
+        self.window_attribute.protocol('WM_DELETE_WINDOW', lambda: hd.finish(self.window_attribute))  # Regular closing of program
 
 
         # Проверка базы данных для разработчика

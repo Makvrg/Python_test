@@ -60,7 +60,7 @@ class Result(ctk.CTkFrame):
 
         # Tag create
         self.result_table.tag_configure("table_tag_true", font=("Fira Sans SemiBold", 23), background="#c5faac")
-        self.result_table.tag_configure("table_tag_false", font=("Fira Sans SemiBold", 23, "bold"), background="#fca4a4")
+        self.result_table.tag_configure("table_tag_false", font=("Fira Sans SemiBold", 23), background="#fca4a4")
 
         # Setting columns
         self.result_table.heading(gv.columns_result[0], text="Задача", anchor="c")

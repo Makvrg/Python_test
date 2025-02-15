@@ -1,11 +1,27 @@
 import global_variable as gv
 import functions.db_handlers as dbh
 from typing import Tuple, Set, List, Dict, Any, NoReturn
+from datetime import datetime
 
 
-def finish(win: Any) -> None:
-    win.destroy()  # Ручное закрытие окна и всего приложения
-    # print('Закрытие приложения')
+def finish(win: Any, frame_for_save: Any = None) -> None:
+    if frame_for_save is None:  # Expected application closure
+        win.destroy()
+    else:  # Intercepting premature program closure
+        gv.answer[gv.counter] = (frame_for_save.task_entry.get().strip())  # Save the last answer
+
+        dbh.create_database()
+
+        answer_handler(gv.answer, gv.officer_task_dict)  # Getting the value of a variable gv.result
+        get_true_in_a_row(gv.result)  # Getting the value of a variable gv.true_in_a_row
+
+        # Database work
+        dbh.database_update(name_student=gv.name, topic_id=dbh.get_topic_id(gv.tasks_type),
+                           abs_quantity=sum(gv.result), all_quantity=gv.count_tasks,
+                           ratio=round(sum(gv.result) / gv.count_tasks * 100, 2),
+                           in_a_row=gv.true_in_a_row, date=datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
+
+        win.destroy()
 
 
 def answer_handler(student_answer_dict: Dict[int, str],

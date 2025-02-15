@@ -3,6 +3,7 @@ import global_variable as gv
 from typing import Any, NoReturn
 import admin_files.topics as aft
 import functions.db_handlers as dbh
+from functions.handlers import finish
 
 import frames.Task
 #import frames.AdminMenu
@@ -134,3 +135,5 @@ class Info(ctk.CTkFrame):
 
             task_frame = frames.Task.Task(self.window_attribute, border_width=15, border_color="#006600",
                                           fg_color="#FFFFFF", corner_radius=30)
+
+            self.window_attribute.protocol('WM_DELETE_WINDOW', lambda: finish(self.window_attribute, task_frame))  # # Intercepting premature program closure
