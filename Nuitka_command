@@ -1,0 +1,18 @@
+#python -m nuitka --follow-imports --jobs=4 --standalone --onefile --windows-console-mode=disable --include-package-data=customtkinter --include-package-data=PIL --include-data-dir=./images=./images executor_file.py
+
+#python -m nuitka --windows-console-mode=force --follow-imports executor_file.py
+
+#python -m nuitka --windows-console-mode=force --follow-imports --onefile --standalone --jobs=4 --include-data-dir=./images=./images executor_file.py
+
+#python -m nuitka --windows-console-mode=force --follow-imports --onefile --standalone --jobs=4 --include-data-dir=./images=./images --enable-plugin=tk-inter executor_file.py
+
+#python -m nuitka --windows-console-mode=force --follow-imports --onefile --standalone --jobs=4  --enable-plugin=tk-inter --include-data-files=./images/*=images/ executor_file.py
+
+#python -m nuitka --windows-console-mode=force --follow-imports --onefile --standalone --jobs=4 --enable-plugin=tk-inter --include-package-data=images executor_file.py
+
+
+
+
+
+main command
+python -m nuitka --windows-console-mode=force --follow-imports --onefile --standalone --jobs=4 --enable-plugin=tk-inter --include-package-data=images executor_file.py
