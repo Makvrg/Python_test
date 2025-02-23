@@ -146,8 +146,6 @@ class Task(ctk.CTkFrame):
     def go_to_result(self) -> NoReturn:
         self.save_answer()
 
-        dbh.create_database()
-
         hd.answer_handler(gv.answer, gv.officer_task_dict)  # Getting the value of a variable gv.result
         hd.get_true_in_a_row(gv.result)  # Getting the value of a variable gv.true_in_a_row
 

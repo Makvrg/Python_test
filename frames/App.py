@@ -1,6 +1,7 @@
 from typing import NoReturn
 import customtkinter as ctk
 from functions import image_initialization as ii
+import functions.db_handlers as dbh
 
 import frames.Info
 
@@ -11,6 +12,7 @@ class App(ctk.CTk):
         self.title("Математический тренажер")
         #self.iconbitmap("")
         self.geometry("1000x700+360+150")
+        self.resizable(False, False)
         self.configure(fg_color="#CCFFCC")
 
         # Theme and mode setting
@@ -31,6 +33,8 @@ class App(ctk.CTk):
         self.go_button.pack(side="bottom", pady=[0, 150])
 
     def goto_info(self) -> NoReturn:
+        dbh.create_database()  # Connect or create and check database
+
         self.main_frame.destroy()
 
         info_frame = frames.Info.Info(self, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
