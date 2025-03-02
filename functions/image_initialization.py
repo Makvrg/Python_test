@@ -20,6 +20,21 @@ def get_first_display_image() -> ctk.CTkImage:
 
     return first_display_image
 
+def get_admin_image() -> ctk.CTkImage:
+    try:
+        admin_im = Image.open("images/admin.png")
+    except FileNotFoundError:
+        # Opening the resource as binary data
+        with importlib.resources.open_binary('images', 'admin.png') as resource_file:
+            img_data = resource_file.read()
+
+        # Loading an image from bytes
+        admin_im = Image.open(BytesIO(img_data))
+
+    first_display_image = ctk.CTkImage(admin_im, size=(82, 82))
+
+    return first_display_image
+
 
 # Task
 def get_button_save_image() -> ctk.CTkImage:
