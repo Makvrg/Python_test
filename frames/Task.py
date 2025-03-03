@@ -121,6 +121,8 @@ class Task(ctk.CTkFrame):
             self.next_button.configure(text="Завершить", command=self.go_to_result)
 
     def previous_task(self) -> NoReturn:
+        self.save_answer()
+
         if gv.counter == gv.count_tasks:
             self.next_button.configure(text="Далее", command=self.next_task)
 

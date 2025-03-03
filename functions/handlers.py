@@ -4,7 +4,7 @@ from typing import Tuple, Set, List, Dict, Any, NoReturn
 from datetime import datetime
 
 
-def finish(win: Any, frame_for_save: Any = None) -> None:
+def finish(win: Any, frame_for_save: Any = None) -> NoReturn:
     if frame_for_save is None:  # Expected application closure
         win.destroy()
     else:  # Intercepting premature program closure

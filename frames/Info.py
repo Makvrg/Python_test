@@ -116,9 +116,6 @@ class Info(ctk.CTkFrame):
     def disabled_count_slider(self, event: Any) -> NoReturn:
         self.type_error.configure(text="Сначала надо выбрать тип задач\nПожалуйста, выберите его здесь")
 
-    def goto_admin_menu(self) -> NoReturn:
-        ...
-
     def goto_training(self) -> NoReturn:
         if self.name_entry.get() == "":
             self.name_error.configure(text="Имя не должно быть пустым\nПожалуйста, напишите ещё раз")
@@ -136,4 +133,4 @@ class Info(ctk.CTkFrame):
             task_frame = frames.Task.Task(self.window_attribute, border_width=15, border_color="#006600",
                                           fg_color="#FFFFFF", corner_radius=30)
 
-            self.window_attribute.protocol('WM_DELETE_WINDOW', lambda: finish(self.window_attribute, task_frame))  # # Intercepting premature program closure
+            self.window_attribute.protocol('WM_DELETE_WINDOW', lambda: finish(self.window_attribute, task_frame))  # Intercepting premature program closure
