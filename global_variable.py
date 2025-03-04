@@ -14,6 +14,9 @@ short_topic: Dict[str, str] = {"Линейные уравнения": "Лин-ы
                }
 
 
+hash_admin_password: bytes = "$2b$12$7STjEQhOc1wMnS6wFPFAjuPM3VhX7kGK/rBD.2EswVEjsrJ.9vt76".encode('utf-8')
+
+
 # Blok database work
 database_abs_path: Path  # Example output 'C:\Users\Mi\PycharmProjects\Math_train\math_simulator_database.db'
 db_names: Dict[str, str] = {"Линейные уравнения": "task_linear_equations",

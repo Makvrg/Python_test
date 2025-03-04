@@ -1,5 +1,6 @@
 import customtkinter as ctk
 from typing import Any, NoReturn
+from functions import password_security as ps
 
 
 class Password(ctk.CTkFrame):
@@ -30,7 +31,11 @@ class Password(ctk.CTkFrame):
         self.info_label_2.pack(anchor="nw", padx=10, pady=[8, 10])
         self.password_entry = ctk.CTkEntry(self.password_frame, font=("Tahoma", 40), width=700, height=75,
                                        fg_color="#FFFFFF", text_color="#212121", border_color="#818c81")
+        self.password_entry.bind("<KeyRelease>", self.input_password)
         self.password_entry.pack(anchor="nw", padx=10)
+        self.password_error = ctk.CTkLabel(self.password_frame, text="",
+                                       font=("Fira Sans", 20), text_color="#FF5555")
+        self.password_error.pack(side="left", anchor="nw", padx=10, pady=[10, 7])
 
         # Button
         self.back_button = ctk.CTkButton(self, command=self.back_to_first, text="Назад",
@@ -54,11 +59,21 @@ class Password(ctk.CTkFrame):
         import frames.First
 
         first_frame = frames.First.First(self.window_attribute, border_width=15, border_color="#006600",
-                                  fg_color="#FFFFFF", corner_radius=30)
+                                         fg_color="#FFFFFF", corner_radius=30)
+
+
+    def input_password(self, event: Any) -> NoReturn:
+        self.password_entry.configure(fg_color="#FFFFFF")
+        self.password_error.configure(text="")
+
 
     def go_admin(self) -> NoReturn:
-        self.destroy()
+        if ps.verify_password(self.password_entry.get()):
+            self.destroy()
 
-        import frames.AdminMenu
+            import frames.AdminMenu
 
-        admin_frame = frames.AdminMenu.AdminMenu(self.window_attribute, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
+            admin_frame = frames.AdminMenu.AdminMenu(self.window_attribute, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
+        else:
+            self.password_entry.configure(fg_color="#ffc9c9")
+            self.password_error.configure(text="Неверный пароль. Пожалуйста, напишите ещё раз")
