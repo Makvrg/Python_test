@@ -17,6 +17,9 @@ class Info(ctk.CTkFrame):
         # Create attribute from window
         self.window_attribute = master
 
+        # Create attribute with context_user
+        ...
+
         # Grid configuration
         self.rowconfigure(index=0, weight=1)
         for i in range(1, 4):

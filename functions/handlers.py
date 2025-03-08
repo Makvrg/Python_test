@@ -8,7 +8,7 @@ def finish(win: Any, frame_for_save: Any = None) -> NoReturn:
     if frame_for_save is None:  # Expected application closure
         win.destroy()
     else:  # Intercepting premature program closure
-        gv.answer[gv.counter] = (frame_for_save.task_entry.get().strip())  # Save the last answer
+        gv.answer[gv.current_task] = (frame_for_save.task_entry.get().strip())  # Save the last answer
 
         dbh.create_database()
 

@@ -27,7 +27,7 @@ class Task(ctk.CTkFrame):
         self.columnconfigure(index=0, weight=1)
         self.columnconfigure(index=1, weight=1)
 
-        self.progress_var = ctk.DoubleVar(value=(gv.counter - 1) / gv.count_tasks)
+        self.progress_var = ctk.DoubleVar(value=(gv.current_task - 1) / gv.count_tasks)
         self.task_progress = ctk.CTkProgressBar(self, height=30, corner_radius=30, border_width=3, fg_color="#d9ffdf",
                                                 progress_color="#1bc21b", border_color="#818c81",
                                                 variable=self.progress_var)
@@ -87,10 +87,10 @@ class Task(ctk.CTkFrame):
                                              corner_radius=5, hover_color="#007D00", text_color="#FFF")
         self.next_button.grid(row=3, column=1, sticky="e", padx=30, pady=[14, 28])
 
-        self.task_label.configure(text=gv.officer_task_dict[gv.counter][1])
+        self.task_label.configure(text=gv.officer_task_dict[gv.current_task][1])
 
     def save_answer(self) -> NoReturn:
-        gv.answer[gv.counter] = (self.task_entry.get().strip())
+        gv.answer[gv.current_task] = (self.task_entry.get().strip())
         self.task_entry.configure(fg_color="#d9ffdf")
 
     def change_answer(self, event: Any) -> NoReturn:
@@ -99,50 +99,50 @@ class Task(ctk.CTkFrame):
     def next_task(self) -> NoReturn:
         self.save_answer()
 
-        gv.counter += 1
-        self.progress_var.set(value=(gv.counter - 1) / gv.count_tasks)
+        gv.current_task += 1
+        self.progress_var.set(value=(gv.current_task - 1) / gv.count_tasks)
 
         self.previous_button.configure(state="normal")
 
-        self.task_label.configure(text=gv.officer_task_dict[gv.counter][1])
+        self.task_label.configure(text=gv.officer_task_dict[gv.current_task][1])
         self.task_entry.delete(0, "end")
-        if gv.answer[gv.counter] != "":
-            self.task_entry.insert(0, gv.answer[gv.counter])
+        if gv.answer[gv.current_task] != "":
+            self.task_entry.insert(0, gv.answer[gv.current_task])
             self.task_entry.configure(fg_color="#d9ffdf")
         else:
             self.task_entry.configure(fg_color="#ffffff")
 
         self.number_entry.configure(state="normal")
         self.number_entry.delete(0, "end")
-        self.number_entry.insert(0, f'{gv.counter} / {gv.count_tasks}')
+        self.number_entry.insert(0, f'{gv.current_task} / {gv.count_tasks}')
         self.number_entry.configure(state="disabled")
 
-        if gv.counter == gv.count_tasks:
+        if gv.current_task == gv.count_tasks:
             self.next_button.configure(text="Завершить", command=self.go_to_result)
 
     def previous_task(self) -> NoReturn:
         self.save_answer()
 
-        if gv.counter == gv.count_tasks:
+        if gv.current_task == gv.count_tasks:
             self.next_button.configure(text="Далее", command=self.next_task)
 
-        gv.counter -= 1
-        self.progress_var.set(value=(gv.counter - 1) / gv.count_tasks)
+        gv.current_task -= 1
+        self.progress_var.set(value=(gv.current_task - 1) / gv.count_tasks)
 
-        self.task_label.configure(text=gv.officer_task_dict[gv.counter][1])
+        self.task_label.configure(text=gv.officer_task_dict[gv.current_task][1])
         self.task_entry.delete(0, "end")
-        if gv.answer[gv.counter] != "":
-            self.task_entry.insert(0, gv.answer[gv.counter])
+        if gv.answer[gv.current_task] != "":
+            self.task_entry.insert(0, gv.answer[gv.current_task])
             self.task_entry.configure(fg_color="#d9ffdf")
         else:
             self.task_entry.configure(fg_color="#ffffff")
 
         self.number_entry.configure(state="normal")
         self.number_entry.delete(0, "end")
-        self.number_entry.insert(0, f'{gv.counter} / {gv.count_tasks}')
+        self.number_entry.insert(0, f'{gv.current_task} / {gv.count_tasks}')
         self.number_entry.configure(state="disabled")
 
-        if gv.counter == 1:
+        if gv.current_task == 1:
             self.previous_button.configure(state="disabled")
 
     def go_to_result(self) -> NoReturn:
