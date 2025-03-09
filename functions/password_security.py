@@ -1,8 +1,8 @@
 import bcrypt
-import global_variable as gv
+import global_variables as gv
 
 
-"Hash password be kept in global_variable.py"
+"Hash password be kept in global_variables.py"
 
 
 def hash_password(password: str) -> bytes:

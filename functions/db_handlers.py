@@ -1,4 +1,4 @@
-import global_variable as gv
+from global_variables import for_data_base
 import sqlite3
 from typing import Tuple, List, Dict, Set, Any, NoReturn
 import json
@@ -6,7 +6,7 @@ import random
 
 
 def get_new_score_id() -> int:
-    db = sqlite3.connect(gv.database_abs_path)
+    db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
     new_score_id = c.execute('''SELECT seq FROM sqlite_sequence
@@ -23,10 +23,10 @@ def get_new_score_id() -> int:
 
 
 def get_amount_tasks(name_table: str) -> int:
-    db = sqlite3.connect(gv.database_abs_path)
+    db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
-    name_table = gv.db_names[name_table]
+    name_table = for_data_base.db_names[name_table]
 
     amount_tasks = c.execute(f'''SELECT COUNT(*) FROM {name_table};''').fetchone()[0]
 
@@ -36,11 +36,11 @@ def get_amount_tasks(name_table: str) -> int:
     return amount_tasks
 
 
-def get_list_task_id() -> List[int]:  # Need for random_tasks()
-    db = sqlite3.connect(gv.database_abs_path)
+def get_list_task_id(tasks_type: str) -> List[int]:  # Need for random_tasks()
+    db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
-    name_table = gv.db_names[gv.tasks_type]
+    name_table = for_data_base.db_names[tasks_type]
 
     list_task_id = c.execute(f'''SELECT task_id FROM {name_table};''').fetchall()
 
@@ -52,14 +52,14 @@ def get_list_task_id() -> List[int]:  # Need for random_tasks()
     return list_task_id
 
 
-def get_random_tasks() -> Dict[int, Tuple[int, str, Set[Any]]]:
-    db = sqlite3.connect(gv.database_abs_path)
+def get_random_tasks(tasks_type: str, count_tasks: int) -> Dict[int, Tuple[int, str, Set[Any]]]:
+    db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
-    random_ids = random.sample(get_list_task_id(), gv.count_tasks)
+    random_ids = random.sample(get_list_task_id(tasks_type), count_tasks)
 
     # Receipt random tasks given topic
-    c.execute(f'''SELECT * FROM {gv.db_names[gv.tasks_type]}
+    c.execute(f'''SELECT * FROM {for_data_base.db_names[tasks_type]}
                       WHERE task_id IN ({", ".join(map(str, random_ids))})
                       ;''')
 
@@ -83,7 +83,7 @@ def errors_and_wrong_update(*,
                             true_answer: str,
                             comment: str) -> NoReturn:
 
-    db = sqlite3.connect(gv.database_abs_path)
+    db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
     c.execute('''INSERT INTO errors_and_wrong (score_id, task_id, student_answer, true_answer, comment)
@@ -95,7 +95,7 @@ def errors_and_wrong_update(*,
 
 
 def create_database() -> NoReturn:  # Create database
-    db = sqlite3.connect(gv.database_abs_path)
+    db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
     c.execute('PRAGMA foreign_keys = ON;')
@@ -223,7 +223,7 @@ def insert_data_from_admin(*,
     Need to start program, because required get global_variable.database_abs_path
     For example: insert_data_from_admin(table_name="task_linear_equations", list_with_values=[("999x - 999 = 0", "[1]"), ("x - 999 = 1", "[1000]")])"""
 
-    db = sqlite3.connect(gv.database_abs_path)
+    db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
     c.executemany(f'''INSERT INTO {table_name}
@@ -233,7 +233,8 @@ def insert_data_from_admin(*,
     db.close()
 
 
-def database_update(*,
+def database_update(frame_object: Any,
+                    *,
                     name_student: str,
                     topic_id: int,
                     abs_quantity: int,
@@ -242,7 +243,7 @@ def database_update(*,
                     in_a_row: int,
                     date: str) -> NoReturn:
 
-    db = sqlite3.connect(gv.database_abs_path)
+    db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
     if name_student in map(lambda x: x[0], c.execute('SELECT name_student FROM student;')):
@@ -253,7 +254,7 @@ def database_update(*,
         if topic_id in map(lambda x: x[0], c.execute('''SELECT topic_id FROM max_score
                                WHERE student_id = (SELECT student_id FROM student WHERE name_student = ?)
                                ;''', (name_student, ))):
-            new_record(c, name_student=name_student, topic_id=topic_id, in_a_row=in_a_row, date=date)
+            new_record(c, frame_object, name_student=name_student, topic_id=topic_id, in_a_row=in_a_row, date=date)
 
         else:
             c.execute('''INSERT INTO max_score (student_id, topic_id, in_a_row, date)
@@ -280,6 +281,7 @@ def database_update(*,
 
 
 def new_record(c: sqlite3.Cursor,
+               frame_object: Any,
                *,
                name_student: str,
                topic_id: int,
@@ -291,8 +293,8 @@ def new_record(c: sqlite3.Cursor,
                                        ;''', (name_student, topic_id)).fetchone()[0])
     new_max_in_a_row = in_a_row
     if new_max_in_a_row > old_max_in_a_row:  # New record
-        gv.new_record_flag = True
-        gv.old_true_in_a_row = old_max_in_a_row
+        frame_object.context_user.new_record_flag = True
+        frame_object.context_user.old_true_in_a_row = old_max_in_a_row
 
         c.execute('''UPDATE max_score
                                  SET in_a_row = ?, date = ?
@@ -302,7 +304,7 @@ def new_record(c: sqlite3.Cursor,
 
 
 def get_topic_id(name_type: str) -> int:
-    db = sqlite3.connect(gv.database_abs_path)
+    db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
     return c.execute('''SELECT topic_id FROM topic WHERE topic_name = ?;''', (name_type, )).fetchone()[0]
@@ -312,7 +314,7 @@ def get_topic_id(name_type: str) -> int:
 
 
 def print_table() -> NoReturn:  # For developer (can will using in Task.py)
-    db = sqlite3.connect(gv.database_abs_path)
+    db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
     print("\nПроверка базы данных\n")
@@ -331,8 +333,8 @@ def print_table() -> NoReturn:  # For developer (can will using in Task.py)
     db.close()
 
 
-def get_rows(treeview_name: str) -> List[Tuple[Any]]:  # treeview_name is an "all_result_table" or "max_result_table"
-    db = sqlite3.connect(gv.database_abs_path)
+def get_rows(treeview_name: str) -> List[Tuple[Any, ...]]:  # treeview_name is an "all_result_table" or "max_result_table"
+    db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
     list_rows = []
@@ -343,7 +345,7 @@ def get_rows(treeview_name: str) -> List[Tuple[Any]]:  # treeview_name is an "al
 
         # Union for column "Результат", conversion to percentage column "Качество", shortening length name_topic
         for row in all_rows1:
-            list_rows.append(tuple(list(row[0:2]) + [gv.short_topic[row[2]]] + [f'{str(row[3])} / {str(row[4])}'] + [f'{round(row[5])}%'] + list(row[6:])))
+            list_rows.append(tuple(list(row[0:2]) + [for_data_base.short_topic[row[2]]] + [f'{str(row[3])} / {str(row[4])}'] + [f'{round(row[5])}%'] + list(row[6:])))
 
     elif treeview_name == "max_result_table":
         all_rows2 = c.execute('''SELECT max_score_id, name_student, topic_name, in_a_row, date 
@@ -352,7 +354,7 @@ def get_rows(treeview_name: str) -> List[Tuple[Any]]:  # treeview_name is an "al
 
         # Shortening length name_topic
         for row in all_rows2:
-            list_rows.append(tuple(list(row[0:2]) + [gv.short_topic[row[2]]] + list(row[3:])))
+            list_rows.append(tuple(list(row[0:2]) + [for_data_base.short_topic[row[2]]] + list(row[3:])))
 
     db.commit()
     db.close()

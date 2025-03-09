@@ -5,8 +5,8 @@ from tkinter import ttk
 from typing import Any, NoReturn
 
 
-class AllResults(ctk.CTkFrame):
-    def __init__(self, master: Any, columns_names, context_user, **kwargs):
+class AdminAllResults(ctk.CTkFrame):
+    def __init__(self, master: Any, columns_names, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
@@ -15,9 +15,6 @@ class AllResults(ctk.CTkFrame):
 
         # Create attribute with columns_names
         self.columns_names = columns_names
-
-        # Create attribute with columns_names
-        self.context_user = context_user
 
         # Create style
         self.notebook_style = ttk.Style()
@@ -44,8 +41,11 @@ class AllResults(ctk.CTkFrame):
                                    fg_color="#FFFFFF", border_color="#FFFFFF")
         self.frame2 = ctk.CTkFrame(master=self.tabs, border_width=3, bg_color="transparent",
                                    fg_color="#FFFFFF", border_color="#FFFFFF")
+        self.frame3 = ctk.CTkFrame(master=self.tabs, border_width=3, bg_color="transparent",
+                                   fg_color="#FFFFFF", border_color="#FFFFFF")
         self.frame1.pack(expand=True, fill="both")
         self.frame2.pack(expand=True, fill="both")
+        self.frame3.pack(expand=True, fill="both")
 
         # Grid setting
         self.frame1.rowconfigure(index=0, weight=1)
@@ -54,12 +54,17 @@ class AllResults(ctk.CTkFrame):
         self.frame2.rowconfigure(index=0, weight=1)
         self.frame2.columnconfigure(index=0, weight=1)
 
+        self.frame3.rowconfigure(index=0, weight=1)
+        self.frame3.columnconfigure(index=0, weight=1)
+
         global n_star, n_trophy
         n_star = ii.get_notebook_star_image()
         n_trophy = ii.get_notebook_trophy_image()
+        # error png
 
         self.tabs.add(child=self.frame1, text="Все результаты", image=n_star, compound="left")
         self.tabs.add(child=self.frame2, text="Лучшие результаты", image=n_trophy, compound="left")
+        self.tabs.add(child=self.frame3, text="Ошибки")
 
         # Create style
         self.table_style = ttk.Style()
@@ -75,7 +80,7 @@ class AllResults(ctk.CTkFrame):
                                    relief="flat", font=("Fira Sans SemiBold", 22))
         self.table_style.map("2.Treeview.Heading", background=[('active', '#5cd649')])
 
-        # Information loading to frame1 and frame2
+        # Information loading to frame1, frame2 and frame3
         # Treeview and Scrollbar creating №1
         self.all_result_table = ttk.Treeview(self.frame1, style="2.Treeview", columns=self.columns_names.columns_all_result,
                                              show="headings", selectmode="extended")  # it is corresponding to table "score" in database
@@ -139,6 +144,9 @@ class AllResults(ctk.CTkFrame):
         self.max_result_table.column(column=self.columns_names.columns_max_result[4], width=220)
 
         self.max_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
+
+        # Treeview and Scrollbar creating №3
+
 
         # Button
         self.back_button = ctk.CTkButton(self, command=self.back_to_result, text="Назад",

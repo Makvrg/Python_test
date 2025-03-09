@@ -1,5 +1,5 @@
 import customtkinter as ctk
-import global_variable as gv
+import global_variables as gv
 from functions import handlers as hd, image_initialization as ii
 from functions import db_handlers as dbh
 from typing import Any, NoReturn
@@ -9,15 +9,21 @@ import frames.Result
 
 
 class Task(ctk.CTkFrame):
-    def __init__(self, master: Any, **kwargs):
+    def __init__(self, master: Any, context_user, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
-        for i in range(1, gv.count_tasks + 1):
-            gv.answer[i] = ""
-
         # Create attribute from window
         self.window_attribute = master
+
+        # Create attribute with context_user
+        self.context_user = context_user
+
+        # Create attribute with context_test
+        self.context_test = gv.context_test
+
+        for i in range(1, self.context_user.count_tasks + 1):
+            self.context_user.answer[i] = ""
 
         # Grid configuration
         self.rowconfigure(index=0, weight=1)
@@ -27,13 +33,13 @@ class Task(ctk.CTkFrame):
         self.columnconfigure(index=0, weight=1)
         self.columnconfigure(index=1, weight=1)
 
-        self.progress_var = ctk.DoubleVar(value=(gv.current_task - 1) / gv.count_tasks)
+        self.progress_var = ctk.DoubleVar(value=(self.context_test.current_task - 1) / self.context_user.count_tasks)
         self.task_progress = ctk.CTkProgressBar(self, height=30, corner_radius=30, border_width=3, fg_color="#d9ffdf",
                                                 progress_color="#1bc21b", border_color="#818c81",
                                                 variable=self.progress_var)
         self.task_progress.grid(row=0, column=0, columnspan=2, sticky="ew", padx=25, pady=[23, 5])
 
-        self.exercise_label = ctk.CTkLabel(self, text=gv.exercise[gv.tasks_type], height=45,
+        self.exercise_label = ctk.CTkLabel(self, text=self.context_test.exercise[self.context_user.tasks_type], height=45,
                                            width=390, font=("Fira Sans SemiBold", 35), text_color="#000000")
         self.exercise_label.grid(row=1, column=0, columnspan=2, sticky="nw", padx=28)
 
@@ -44,14 +50,14 @@ class Task(ctk.CTkFrame):
                                          fg_color="#FFFFFF", text_color="#212121",
                                          border_color="#818c81", width=100,
                                          justify="center")
-        self.number_entry.insert(0, "1 / " + str(gv.count_tasks))
+        self.number_entry.insert(0, "1 / " + str(self.context_user.count_tasks))
         self.number_entry.configure(state="disabled")
         self.number_entry.pack(anchor="nw", padx=20, pady=[20, 10])
         self.task_label = ctk.CTkLabel(self.task_frame, text="", font=("Fira Sans SemiBold", 55),
                                        text_color="#000000")
         self.task_label.pack(anchor="center", padx=20, pady=[20, 20])
 
-        self.answer_info = ctk.CTkLabel(self.task_frame, width=390, text=gv.explanation,
+        self.answer_info = ctk.CTkLabel(self.task_frame, width=390, text=self.context_test.explanation,
                                         font=("Fira Sans Medium", 15), text_color="#000000",
                                         justify="left")
         self.answer_info.pack(expand=True, anchor="sw", padx=70, pady=[0, 6])
@@ -75,7 +81,7 @@ class Task(ctk.CTkFrame):
                                              hover_color="#007D00", state="disabled")
         self.previous_button.grid(row=3, column=0, sticky="w", padx=30, pady=[14, 28])
 
-        if gv.count_tasks == 1:
+        if self.context_user.count_tasks == 1:
             self.next_button = ctk.CTkButton(self, command=self.go_to_result, text="Завершить",
                                              fg_color="#009900", font=("Fira Sans Bold", 40),
                                              height=60, width=330, border_width=3, border_color="#006600",
@@ -87,10 +93,10 @@ class Task(ctk.CTkFrame):
                                              corner_radius=5, hover_color="#007D00", text_color="#FFF")
         self.next_button.grid(row=3, column=1, sticky="e", padx=30, pady=[14, 28])
 
-        self.task_label.configure(text=gv.officer_task_dict[gv.current_task][1])
+        self.task_label.configure(text=self.context_user.officer_task_dict[self.context_test.current_task][1])
 
     def save_answer(self) -> NoReturn:
-        gv.answer[gv.current_task] = (self.task_entry.get().strip())
+        self.context_user.answer[self.context_test.current_task] = (self.task_entry.get().strip())
         self.task_entry.configure(fg_color="#d9ffdf")
 
     def change_answer(self, event: Any) -> NoReturn:
@@ -99,63 +105,63 @@ class Task(ctk.CTkFrame):
     def next_task(self) -> NoReturn:
         self.save_answer()
 
-        gv.current_task += 1
-        self.progress_var.set(value=(gv.current_task - 1) / gv.count_tasks)
+        self.context_test.current_task += 1
+        self.progress_var.set(value=(self.context_test.current_task - 1) / self.context_user.count_tasks)
 
         self.previous_button.configure(state="normal")
 
-        self.task_label.configure(text=gv.officer_task_dict[gv.current_task][1])
+        self.task_label.configure(text=self.context_user.officer_task_dict[self.context_test.current_task][1])
         self.task_entry.delete(0, "end")
-        if gv.answer[gv.current_task] != "":
-            self.task_entry.insert(0, gv.answer[gv.current_task])
+        if self.context_user.answer[self.context_test.current_task] != "":
+            self.task_entry.insert(0, self.context_user.answer[self.context_test.current_task])
             self.task_entry.configure(fg_color="#d9ffdf")
         else:
             self.task_entry.configure(fg_color="#ffffff")
 
         self.number_entry.configure(state="normal")
         self.number_entry.delete(0, "end")
-        self.number_entry.insert(0, f'{gv.current_task} / {gv.count_tasks}')
+        self.number_entry.insert(0, f'{self.context_test.current_task} / {self.context_user.count_tasks}')
         self.number_entry.configure(state="disabled")
 
-        if gv.current_task == gv.count_tasks:
+        if self.context_test.current_task == self.context_user.count_tasks:
             self.next_button.configure(text="Завершить", command=self.go_to_result)
 
     def previous_task(self) -> NoReturn:
         self.save_answer()
 
-        if gv.current_task == gv.count_tasks:
+        if self.context_test.current_task == self.context_user.count_tasks:
             self.next_button.configure(text="Далее", command=self.next_task)
 
-        gv.current_task -= 1
-        self.progress_var.set(value=(gv.current_task - 1) / gv.count_tasks)
+        self.context_test.current_task -= 1
+        self.progress_var.set(value=(self.context_test.current_task - 1) / self.context_user.count_tasks)
 
-        self.task_label.configure(text=gv.officer_task_dict[gv.current_task][1])
+        self.task_label.configure(text=self.context_user.officer_task_dict[self.context_test.current_task][1])
         self.task_entry.delete(0, "end")
-        if gv.answer[gv.current_task] != "":
-            self.task_entry.insert(0, gv.answer[gv.current_task])
+        if self.context_user.answer[self.context_test.current_task] != "":
+            self.task_entry.insert(0, self.context_user.answer[self.context_test.current_task])
             self.task_entry.configure(fg_color="#d9ffdf")
         else:
             self.task_entry.configure(fg_color="#ffffff")
 
         self.number_entry.configure(state="normal")
         self.number_entry.delete(0, "end")
-        self.number_entry.insert(0, f'{gv.current_task} / {gv.count_tasks}')
+        self.number_entry.insert(0, f'{self.context_test.current_task} / {self.context_user.count_tasks}')
         self.number_entry.configure(state="disabled")
 
-        if gv.current_task == 1:
+        if self.context_test.current_task == 1:
             self.previous_button.configure(state="disabled")
 
     def go_to_result(self) -> NoReturn:
         self.save_answer()
 
-        hd.answer_handler(gv.answer, gv.officer_task_dict)  # Getting the value of a variable gv.result
-        hd.get_true_in_a_row(gv.result)  # Getting the value of a variable gv.true_in_a_row
+        hd.answer_handler(self, self.context_user.answer, self.context_user.officer_task_dict)  # Getting the value of a variable gv.result
+        hd.get_true_in_a_row(self, self.context_user.result)  # Getting the value of a variable gv.true_in_a_row
 
         # Database work
-        dbh.database_update(name_student=gv.name, topic_id=dbh.get_topic_id(gv.tasks_type),
-                           abs_quantity=sum(gv.result), all_quantity=gv.count_tasks,
-                           ratio=round(sum(gv.result) / gv.count_tasks * 100, 2),
-                           in_a_row=gv.true_in_a_row, date=datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
+        dbh.database_update(self, name_student=self.context_user.name, topic_id=dbh.get_topic_id(self.context_user.tasks_type),
+                           abs_quantity=sum(self.context_user.result), all_quantity=self.context_user.count_tasks,
+                           ratio=round(sum(self.context_user.result) / self.context_user.count_tasks * 100, 2),
+                           in_a_row=self.context_user.true_in_a_row, date=datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
 
         self.window_attribute.protocol('WM_DELETE_WINDOW', lambda: hd.finish(self.window_attribute))  # Regular closing of program
 
@@ -166,5 +172,5 @@ class Task(ctk.CTkFrame):
 
         self.destroy()
 
-        result_frame = frames.Result.Result(self.window_attribute, border_width=15, border_color="#006600",
-                                                       fg_color="#FFFFFF", corner_radius=30)
+        result_frame = frames.Result.Result(self.window_attribute, self.context_user, border_width=15,
+                                            border_color="#006600", fg_color="#FFFFFF", corner_radius=30)

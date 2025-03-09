@@ -1,3 +1,4 @@
+import global_variables as gv
 import customtkinter as ctk
 from typing import Any, NoReturn
 
@@ -9,6 +10,9 @@ class AdminMenu(ctk.CTkFrame):
 
         # Create attribute from window
         self.window_attribute = master
+
+        # Create attribute with columns_names
+        self.columns_names = gv.columns_names
 
         # Grid configuration
         self.rowconfigure(index=0, weight=1)
@@ -25,12 +29,11 @@ class AdminMenu(ctk.CTkFrame):
                                          hover_color="#007D00", text_color="#FFF")
         self.back_button.grid(row=2, column=0, sticky="sw", padx=30, pady=[14, 36])
 
-        self.go_admin_button = ctk.CTkButton(self, text="None",
-                                             text_color="#FFF", fg_color="#009900",
-                                             height=50, width=330, border_width=3,
-                                             border_color="#006600", corner_radius=5,
-                                             hover_color="#007D00", font=("Fira Sans Bold", 50))
-        self.go_admin_button.grid(row=2, column=1, sticky="se", padx=30, pady=[14, 36])
+        self.all_results_button = ctk.CTkButton(self, command=self.go_to_all_results, text="Все результаты",
+                                                fg_color="#009900", height=60, width=330, border_width=3,
+                                                border_color="#006600", corner_radius=5, text_color="#FFF",
+                                                font=("Fira Sans Bold", 40), hover_color="#007D00")
+        self.all_results_button.grid(row=0, column=0, sticky="nw", padx=30, pady=[28, 28])
 
 
     def back_to_password(self) -> NoReturn:
@@ -40,3 +43,12 @@ class AdminMenu(ctk.CTkFrame):
 
         first_frame = frames.Password.Password(self.window_attribute, border_width=15, border_color="#006600",
                                                fg_color="#FFFFFF", corner_radius=30)
+
+    def go_to_all_results(self) -> NoReturn:
+        self.destroy()
+
+        import frames.AdminAllResults
+
+        all_results_frame = frames.AdminAllResults.AdminAllResults(self.window_attribute, self.columns_names,
+                                                         border_width=15, border_color="#006600",
+                                                         fg_color="#FFFFFF", corner_radius=30)

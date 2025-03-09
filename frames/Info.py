@@ -1,12 +1,11 @@
 import customtkinter as ctk
-import global_variable as gv
+import global_variables as gv
 from typing import Any, NoReturn
 import admin_files.topics as aft
 import functions.db_handlers as dbh
 from functions.handlers import finish
 
 import frames.Task
-#import frames.AdminMenu
 
 
 class Info(ctk.CTkFrame):
@@ -18,7 +17,7 @@ class Info(ctk.CTkFrame):
         self.window_attribute = master
 
         # Create attribute with context_user
-        ...
+        self.context_user = gv.context_user
 
         # Grid configuration
         self.rowconfigure(index=0, weight=1)
@@ -98,8 +97,8 @@ class Info(ctk.CTkFrame):
         self.go_button.grid(row=4, column=1, sticky="ne", padx=30, pady=[15, 28])
 
     def get_name(self, event: Any) -> NoReturn:
-        gv.name = self.name_entry.get().strip()  # save username for table column "name_student"
-        if len(gv.name) == 0:
+        self.context_user.name = self.name_entry.get().strip()  # save username for table column "name_student"
+        if len(self.context_user.name) == 0:
             self.name_error.configure(text="Имя не должно быть пустым\nПожалуйста, напишите ещё раз")
             self.name_entry.configure(fg_color="#ffc9c9")
             self.info_label.configure(fg_color="#ff9191", text="Заполните все поля")
@@ -141,13 +140,13 @@ class Info(ctk.CTkFrame):
             self.type_error.configure(text="Тип задач не должен быть пустым\nПожалуйста, выберите его из списка")
             self.type_combobox.configure(fg_color="#ffc9c9")
         if self.name_entry.get() != "" and self.type_combobox.get() != "":
-            gv.tasks_type = self.type_combobox.get()
-            gv.count_tasks = int(self.count_slider.get())
-            gv.officer_task_dict = dbh.get_random_tasks()
+            self.context_user.tasks_type = self.type_combobox.get()
+            self.context_user.count_tasks = int(self.count_slider.get())
+            self.context_user.officer_task_dict = dbh.get_random_tasks(self.context_user.tasks_type, self.context_user.count_tasks)
 
             self.destroy()
 
-            task_frame = frames.Task.Task(self.window_attribute, border_width=15, border_color="#006600",
-                                          fg_color="#FFFFFF", corner_radius=30)
+            task_frame = frames.Task.Task(self.window_attribute, self.context_user, border_width=15,
+                                          border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
 
             self.window_attribute.protocol('WM_DELETE_WINDOW', lambda: finish(self.window_attribute, task_frame))  # Intercepting premature program closure

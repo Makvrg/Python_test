@@ -1,5 +1,5 @@
 import customtkinter as ctk
-import global_variable as gv
+import global_variables as gv
 from tkinter import ttk
 from functions.handlers import finish
 from typing import Any, NoReturn
@@ -8,12 +8,18 @@ import frames.AllResults
 
 
 class Result(ctk.CTkFrame):
-    def __init__(self, master: Any, **kwargs):
+    def __init__(self, master: Any, context_user, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
         # Create attribute from window
         self.window_attribute = master
+
+        # Create attribute with context_user
+        self.context_user = context_user
+
+        # Create attribute with columns_names
+        self.columns_names = gv.columns_names
 
         # Grid configuration
         self.rowconfigure(index=0, weight=1)
@@ -28,7 +34,7 @@ class Result(ctk.CTkFrame):
                                         font=("Fira Sans SemiBold", 35), text_color="#000000")
         self.title_label.grid(row=0, column=0, columnspan=2, sticky="sw", padx=30, pady=[19, 13])
 
-        self.result_label = ctk.CTkLabel(self, text=f"Вы решили {sum(gv.result)} из {gv.count_tasks} задач",
+        self.result_label = ctk.CTkLabel(self, text=f"Вы решили {sum(self.context_user.result)} из {self.context_user.count_tasks} задач",
                                          font=("Fira Sans SemiBold", 35), text_color="#000000",
                                          height=45, corner_radius=10, width=390, fg_color="#a5faa5")
         self.result_label.grid(row=1, column=0, columnspan=2, sticky="n", padx=30, pady=[0, 10])
@@ -48,7 +54,7 @@ class Result(ctk.CTkFrame):
         self.table_style.map("1.Treeview.Heading", background=[('active', '#5cd649')])
 
         # Treeview creating
-        self.result_table = ttk.Treeview(self, style="1.Treeview", columns=gv.columns_result,
+        self.result_table = ttk.Treeview(self, style="1.Treeview", columns=self.columns_names.columns_result,
                                          show="headings", selectmode="extended")
         self.result_table_scrollbar = ctk.CTkScrollbar(self, border_spacing=6, minimum_pixel_length=100,
                                                            bg_color="transparent", fg_color="#e4ffcf",
@@ -63,30 +69,30 @@ class Result(ctk.CTkFrame):
         self.result_table.tag_configure("table_tag_false", font=("Fira Sans SemiBold", 23), background="#fca4a4")
 
         # Setting columns
-        self.result_table.heading(gv.columns_result[0], text="Задача", anchor="c")
-        self.result_table.heading(gv.columns_result[1], text="Ваш ответ", anchor="c")
-        self.result_table.heading(gv.columns_result[2], text="Правильный ответ", anchor="c")
+        self.result_table.heading(self.columns_names.columns_result[0], text="Задача", anchor="c")
+        self.result_table.heading(self.columns_names.columns_result[1], text="Ваш ответ", anchor="c")
+        self.result_table.heading(self.columns_names.columns_result[2], text="Правильный ответ", anchor="c")
 
-        self.result_table.column(column=gv.columns_result[0], width=100)
-        self.result_table.column(column=gv.columns_result[1], width=300)
-        self.result_table.column(column=gv.columns_result[2], width=300)
+        self.result_table.column(column=self.columns_names.columns_result[0], width=100)
+        self.result_table.column(column=self.columns_names.columns_result[1], width=300)
+        self.result_table.column(column=self.columns_names.columns_result[2], width=300)
 
         self.result_table.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=(30, 0), pady=(0, 25))
 
         # Insert rows
-        for num in range(1, gv.count_tasks + 1):
-            if gv.result[num - 1] == 1:  # True answer, so table row - green (use tags="table_tag_true")
+        for num in range(1, self.context_user.count_tasks + 1):
+            if self.context_user.result[num - 1] == 1:  # True answer, so table row - green (use tags="table_tag_true")
                 self.result_table.insert("", "end",
-                                         values=(num, gv.answer[num], ", ".join(map(str, sorted(list(gv.officer_task_dict[num][2]))))),
+                                         values=(num, self.context_user.answer[num], ", ".join(map(str, sorted(list(self.context_user.officer_task_dict[num][2]))))),
                                          tags="table_tag_true")
             else:  # False answer, so table row - red (use tags="table_tag_false")
                 self.result_table.insert("", "end",
-                                         values=(num, gv.answer[num], ", ".join(map(str, sorted(list(gv.officer_task_dict[num][2]))))),
+                                         values=(num, self.context_user.answer[num], ", ".join(map(str, sorted(list(self.context_user.officer_task_dict[num][2]))))),
                                          tags="table_tag_false")
 
         # Label congratulations on new record
-        if gv.new_record_flag is True:
-            self.new_record_label = ctk.CTkLabel(self, text=f"Поздравляю! Вы побили свой рекорд по решённым\nподряд заданиям: {gv.old_true_in_a_row} >>> {gv.true_in_a_row}",
+        if self.context_user.new_record_flag is True:
+            self.new_record_label = ctk.CTkLabel(self, text=f"Поздравляю! Вы побили свой рекорд по решённым\nподряд заданиям: {self.context_user.old_true_in_a_row} >>> {self.context_user.true_in_a_row}",
                                              font=("Fira Sans SemiBold", 33), text_color="#000000",
                                              height=45, corner_radius=7, width=390, fg_color="#a5faa5")
             self.new_record_label.grid(row=3, column=0, columnspan=2, sticky="s", padx=35, pady=[0, 5])
@@ -107,5 +113,5 @@ class Result(ctk.CTkFrame):
     def go_to_all_results(self) -> NoReturn:
         self.destroy()
 
-        all_results_frame = frames.AllResults.AllResults(self.window_attribute, border_width=15, border_color="#006600",
-                                                                    fg_color="#FFFFFF", corner_radius=30)
+        all_results_frame = frames.AllResults.AllResults(self.window_attribute, self.columns_names, self.context_user, border_width=15, border_color="#006600",
+                                                         fg_color="#FFFFFF", corner_radius=30)
