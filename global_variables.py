@@ -6,7 +6,7 @@ class User:
     def __init__(self):
         self.name: str  # Example output "Максим"
         self.tasks_type: str  # Example output "Квадратные уравнения"
-        self.count_tasks: str  # Example output 5
+        self.count_tasks: int  # Example output 5
 
         self.officer_task_dict: Dict[int, Tuple[int, str, Set[Any]]]  # Example output {1: (1, 'x + 1 = 1', {0}), 2: (3, '2x + 1 = 1', {0}), 3: (4, '4x - 1 = 1', {0.5}), 4: (5, 'x + 2 = -1', {-3}), 5: (7, 'x - 999 = 1', {1000})}
         self.answer: Dict[int, str] = {}  # Example output {1: '0', 2: '56, 8', 3: '0, 1 4/5', 4: '-3', 5: '14'}
@@ -49,6 +49,7 @@ class ColumnsNames:
         self.columns_result: Tuple[str, ...] = ("number", "your answer", "true answer")
         self.columns_all_result: Tuple[str, ...] = ("score_id", "name_student", "topic_name", "abs_and_all_quantity", "ratio", "in_a_row", "date")
         self.columns_max_result: Tuple[str, ...] = ("max_score_id", "name_student", "topic_name", "in_a_row", "date")
+        self.columns_wrong_result: Tuple[str, ...] = ("errors_and_wrong_id", "score_id", "name_student", "topic_name", "task", "student_answer", "true_answer", "comment")
 
 columns_names: ColumnsNames = ColumnsNames()
 

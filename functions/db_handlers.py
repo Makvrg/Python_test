@@ -333,16 +333,15 @@ def print_table() -> NoReturn:  # For developer (can will using in Task.py)
     db.close()
 
 
-def get_rows(treeview_name: str) -> List[Tuple[Any, ...]]:  # treeview_name is an "all_result_table" or "max_result_table"
+def get_rows(treeview_name: str) -> List[Tuple[Any, ...]]:  # treeview_name is an "all_result_table" or "max_result_table" or "wrong_result_table"
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
-    list_rows = []
+    list_rows: List[Tuple[Any, ...]] = []
     if treeview_name == "all_result_table":
         all_rows1 = c.execute('''SELECT score_id, name_student, topic_name, abs_quantity, all_quantity, ratio, in_a_row, date 
                                 FROM score JOIN student USING(student_id)
                                 JOIN topic USING(topic_id);''').fetchall()
-
         # Union for column "Результат", conversion to percentage column "Качество", shortening length name_topic
         for row in all_rows1:
             list_rows.append(tuple(list(row[0:2]) + [for_data_base.short_topic[row[2]]] + [f'{str(row[3])} / {str(row[4])}'] + [f'{round(row[5])}%'] + list(row[6:])))
@@ -351,10 +350,24 @@ def get_rows(treeview_name: str) -> List[Tuple[Any, ...]]:  # treeview_name is a
         all_rows2 = c.execute('''SELECT max_score_id, name_student, topic_name, in_a_row, date 
                                  FROM max_score JOIN student USING(student_id)
                                  JOIN topic USING(topic_id);''').fetchall()
-
         # Shortening length name_topic
         for row in all_rows2:
             list_rows.append(tuple(list(row[0:2]) + [for_data_base.short_topic[row[2]]] + list(row[3:])))
+
+    elif treeview_name == "wrong_result_table":
+        all_rows3 = c.execute(f'''SELECT errors_and_wrong_id, score_id, name_student, topic_name, 
+                                  CASE WHEN topic_name = 'Линейные уравнения' THEN task_linear_equations.task  
+                                  WHEN topic_name = 'Квадратные уравнения' THEN task_quadratic_equations.task END AS task, 
+                                  student_answer, true_answer, comment 
+                                  FROM topic JOIN score USING(topic_id)
+                                  JOIN student USING(student_id)
+                                  JOIN errors_and_wrong USING(score_id)
+                                  JOIN task_linear_equations USING(task_id)
+                                  JOIN task_quadratic_equations USING(task_id);''').fetchall()
+        # Shortening length name_topic
+        for row in all_rows3:
+            list_rows.append(tuple(list(row[0:3]) + [for_data_base.short_topic[row[3]]] + list(row[4:])))
+
 
     db.commit()
     db.close()

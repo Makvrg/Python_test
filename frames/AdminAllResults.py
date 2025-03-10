@@ -3,6 +3,7 @@ from functions import handlers as hd, image_initialization as ii
 from functions import db_handlers as dbh
 from tkinter import ttk
 from typing import Any, NoReturn
+import tables.AllResultTable, tables.MaxResultTable, tables.WrongResultTable
 
 
 class AdminAllResults(ctk.CTkFrame):
@@ -57,14 +58,15 @@ class AdminAllResults(ctk.CTkFrame):
         self.frame3.rowconfigure(index=0, weight=1)
         self.frame3.columnconfigure(index=0, weight=1)
 
-        global n_star, n_trophy
+        # Image initialization
+        global n_star, n_trophy, n_wrong_error
         n_star = ii.get_notebook_star_image()
         n_trophy = ii.get_notebook_trophy_image()
-        # error png
+        n_wrong_error = ii.get_wrong_error_image()
 
         self.tabs.add(child=self.frame1, text="Все результаты", image=n_star, compound="left")
         self.tabs.add(child=self.frame2, text="Лучшие результаты", image=n_trophy, compound="left")
-        self.tabs.add(child=self.frame3, text="Ошибки")
+        self.tabs.add(child=self.frame3, text="Ошибки", image=n_wrong_error, compound="left")
 
         # Create style
         self.table_style = ttk.Style()
@@ -82,74 +84,44 @@ class AdminAllResults(ctk.CTkFrame):
 
         # Information loading to frame1, frame2 and frame3
         # Treeview and Scrollbar creating №1
-        self.all_result_table = ttk.Treeview(self.frame1, style="2.Treeview", columns=self.columns_names.columns_all_result,
-                                             show="headings", selectmode="extended")  # it is corresponding to table "score" in database
-        self.all_result_table_scrollbar = ctk.CTkScrollbar(self.frame1, border_spacing=6, minimum_pixel_length=100,
-                                                           bg_color="transparent", fg_color="#e4ffcf", button_color="#169c02",
-                                                           orientation="vertical", command=self.all_result_table.yview,
-                                                           width=25, hover=True, button_hover_color="#007D00")
-        self.all_result_table_scrollbar.grid(row=0, column=1, sticky="ns", pady=0)
-        self.all_result_table.configure(yscrollcommand=self.all_result_table_scrollbar.set)
+        self.all_result_table = tables.AllResultTable.AllResultTable(self.frame1, self, style="2.Treeview",
+                                                                     columns=self.columns_names.columns_all_result,
+                                                                     show="headings",
+                                                                     selectmode="extended")  # it is corresponding to table "score" in database
+        self.all_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
+
+
+        # Treeview and Scrollbar creating №2
+        self.max_result_table = tables.MaxResultTable.MaxResultTable(self.frame2, self, style="2.Treeview",
+                                                                     columns=self.columns_names.columns_max_result,
+                                                                     show="headings",
+                                                                     selectmode="extended")  # it is corresponding to table "max_score" in database
+        self.max_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
+
+        # Treeview and Scrollbar creating №3
+        self.wrong_result_table = tables.WrongResultTable.WrongResultTable(self.frame3, self, style="2.Treeview",
+                                             columns=self.columns_names.columns_wrong_result,
+                                             show="headings",
+                                             selectmode="extended")  # it is corresponding to table "errors_and_wrong" in database
+        self.wrong_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
 
 
         # Tag create
         self.all_result_table.tag_configure("all_result_table_tag_1", font=("Fira Sans SemiBold", 19))
-        self.all_result_table.tag_configure("all_result_table_tag_2", font=("Fira Sans SemiBold", 19), background="#e6ffd4")
+        self.all_result_table.tag_configure("all_result_table_tag_2", font=("Fira Sans SemiBold", 19),
+                           background="#e6ffd4")
 
-        # Setting columns
-        self.all_result_table.heading(self.columns_names.columns_all_result[0], text='№', anchor="c")  # it is corresponding to column "score_id"
-        self.all_result_table.heading(self.columns_names.columns_all_result[1], text='Имя', anchor="c")  # it is corresponding to column "name_student"
-        self.all_result_table.heading(self.columns_names.columns_all_result[2], text='Тип', anchor="c")  # it is corresponding to column "topic_name"
-        self.all_result_table.heading(self.columns_names.columns_all_result[3], text='Рез-т', anchor="c")  # it is corresponding to columns "abs_quantity" and "all_quantity"
-        self.all_result_table.heading(self.columns_names.columns_all_result[4], text='Кач-во', anchor="c")  # it is corresponding to column "ratio"
-        self.all_result_table.heading(self.columns_names.columns_all_result[5], text='Подряд', anchor="c")  # it is corresponding to column "in_a_row"
-        self.all_result_table.heading(self.columns_names.columns_all_result[6], text='Дата и время', anchor="c")  # it is corresponding to column "date"
-
-        self.all_result_table.column(column=self.columns_names.columns_all_result[0], width=55)
-        self.all_result_table.column(column=self.columns_names.columns_all_result[1], width=200)
-        self.all_result_table.column(column=self.columns_names.columns_all_result[2], width=150)
-        self.all_result_table.column(column=self.columns_names.columns_all_result[3], width=85)
-        self.all_result_table.column(column=self.columns_names.columns_all_result[4], width=70)
-        self.all_result_table.column(column=self.columns_names.columns_all_result[5], width=80)
-        self.all_result_table.column(column=self.columns_names.columns_all_result[6], width=210)
-
-        self.all_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
-
-        # Treeview and Scrollbar creating №2
-        self.max_result_table = ttk.Treeview(self.frame2, style="2.Treeview", columns=self.columns_names.columns_max_result,
-                                             show="headings", selectmode="extended")  # it is corresponding to table "max_score" in database
-        self.max_result_table_scrollbar = ctk.CTkScrollbar(self.frame2, border_spacing=6, minimum_pixel_length=100,
-                                                           bg_color="transparent", fg_color="#e4ffcf",
-                                                           button_color="#169c02",
-                                                           orientation="vertical", command=self.max_result_table.yview,
-                                                           width=25, hover=True, button_hover_color="#007D00")
-        self.max_result_table_scrollbar.grid(row=0, column=1, sticky="ns", pady=0)
-        self.max_result_table.configure(yscrollcommand=self.max_result_table_scrollbar.set)
-
-        # Tag create
         self.max_result_table.tag_configure("max_result_table_tag_1", font=("Fira Sans SemiBold", 20))
-        self.max_result_table.tag_configure("max_result_table_tag_2", font=("Fira Sans SemiBold", 20), background="#e6ffd4")
+        self.max_result_table.tag_configure("max_result_table_tag_2", font=("Fira Sans SemiBold", 20),
+                           background="#e6ffd4")
 
-        # Setting columns
-        self.max_result_table.heading(self.columns_names.columns_max_result[0], text='№', anchor="c")  # it is corresponding to column "max_score_id"`
-        self.max_result_table.heading(self.columns_names.columns_max_result[1], text='Имя', anchor="c")  # it is corresponding to column "name_student"
-        self.max_result_table.heading(self.columns_names.columns_max_result[2], text='Тип', anchor="c")  # it is corresponding to column "topic_name"
-        self.max_result_table.heading(self.columns_names.columns_max_result[3], text='Подряд', anchor="c")  # it is corresponding to column "in_a_row"
-        self.max_result_table.heading(self.columns_names.columns_max_result[4], text='Дата и время', anchor="c")  # it is corresponding to column "date"
-
-        self.max_result_table.column(column=self.columns_names.columns_max_result[0], width=70)
-        self.max_result_table.column(column=self.columns_names.columns_max_result[1], width=270)
-        self.max_result_table.column(column=self.columns_names.columns_max_result[2], width=200)
-        self.max_result_table.column(column=self.columns_names.columns_max_result[3], width=100)
-        self.max_result_table.column(column=self.columns_names.columns_max_result[4], width=220)
-
-        self.max_result_table.grid(row=0, column=0, sticky="nsew", pady=0)
-
-        # Treeview and Scrollbar creating №3
+        self.wrong_result_table.tag_configure("wrong_result_table_tag_1", font=("Fira Sans SemiBold", 18))
+        self.wrong_result_table.tag_configure("wrong_result_table_tag_2", font=("Fira Sans SemiBold", 18),
+                           background="#e6ffd4")
 
 
         # Button
-        self.back_button = ctk.CTkButton(self, command=self.back_to_result, text="Назад",
+        self.back_button = ctk.CTkButton(self, command=self.back_to_admin_menu, text="Назад",
                                          fg_color="#009900", height=50, width=330,
                                          font=("Fira Sans Bold", 40), border_width=3,
                                          border_color="#006600", corner_radius=5,
@@ -163,6 +135,7 @@ class AdminAllResults(ctk.CTkFrame):
                                                     hover_color="#007D00", font=("Fira Sans Bold", 40))
         self.close_program_button_1.grid(row=1, column=1, columnspan=2, sticky="ne", padx=20, pady=[8, 6])
 
+        # Filling all_result_table
         self.k = 1
         for row in dbh.get_rows("all_result_table"):
             if self.k % 2 == 0:
@@ -171,6 +144,7 @@ class AdminAllResults(ctk.CTkFrame):
                 self.all_result_table.insert("", "end", values=row, tags="all_result_table_tag_2")
             self.k += 1
 
+        # Filling max_result_table
         self.k = 1
         for row in dbh.get_rows("max_result_table"):
             if self.k % 2 == 0:
@@ -179,12 +153,21 @@ class AdminAllResults(ctk.CTkFrame):
                 self.max_result_table.insert("", "end", values=row, tags="max_result_table_tag_2")
             self.k += 1
 
+        # Filling wrong_result_table
+        self.k = 1
+        for row in dbh.get_rows("wrong_result_table"):
+            if self.k % 2 == 0:
+                self.wrong_result_table.insert("", "end", values=row, tags="wrong_result_table_tag_1")
+            else:
+                self.wrong_result_table.insert("", "end", values=row, tags="wrong_result_table_tag_2")
+            self.k += 1
+
 
     # Methods
-    def back_to_result(self) -> NoReturn:
+    def back_to_admin_menu(self) -> NoReturn:
         self.destroy()
 
-        import frames.Result
+        import frames.AdminMenu
 
-        result_frame = frames.Result.Result(self.window_attribute, self.context_user, border_width=15, border_color="#006600",
+        result_frame = frames.AdminMenu.AdminMenu(self.window_attribute, border_width=15, border_color="#006600",
                                                        fg_color="#FFFFFF", corner_radius=30)

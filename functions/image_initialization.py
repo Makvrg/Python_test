@@ -53,7 +53,7 @@ def get_button_save_image() -> ctk.CTkImage:
     return button_save_image
 
 
-# AllResults
+# AllResults and AdminAllResults
 def get_notebook_star_image() -> ImageTk.PhotoImage:
     try:
         notebook_star = Image.open("images/notebook_star.png")
@@ -87,3 +87,20 @@ def get_notebook_trophy_image() -> ImageTk.PhotoImage:
     notebook_trophy_image = ImageTk.PhotoImage(notebook_trophy)
 
     return notebook_trophy_image
+
+def get_wrong_error_image() -> ImageTk.PhotoImage:
+    try:
+        notebook_wrong_error = Image.open("images/wrong_error.png")
+        notebook_wrong_error.thumbnail(size=(24, 28))
+    except FileNotFoundError:
+        # Opening the resource as binary data
+        with importlib.resources.open_binary('images', 'wrong_error.png') as resource_file:
+            img_data = resource_file.read()
+
+        # Loading an image from bytes
+        notebook_wrong_error = Image.open(BytesIO(img_data))
+        notebook_wrong_error.thumbnail(size=(26, 28))
+
+    notebook_wrong_error_image = ImageTk.PhotoImage(notebook_wrong_error)
+
+    return notebook_wrong_error_image
