@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from typing import Any, NoReturn
 from functions import password_security as ps
+from functions import db_handlers as dbh
 
 
 class Password(ctk.CTkFrame):
@@ -69,6 +70,9 @@ class Password(ctk.CTkFrame):
 
     def go_admin(self) -> NoReturn:
         if ps.verify_password(self.password_entry.get()):
+
+            dbh.create_database()  # Connect or create and check database
+
             self.destroy()
 
             import frames.AdminMenu

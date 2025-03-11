@@ -43,8 +43,6 @@ class First(ctk.CTkFrame):
         info_frame = frames.Info.Info(self.window_attribute, border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
 
     def goto_password_check(self) -> NoReturn:
-        #dbh.create_database()  # Connect or create and check database
-
         self.destroy()
 
         import frames.Password

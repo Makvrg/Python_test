@@ -143,6 +143,7 @@ class Info(ctk.CTkFrame):
             self.context_user.tasks_type = self.type_combobox.get()
             self.context_user.count_tasks = int(self.count_slider.get())
             self.context_user.officer_task_dict = dbh.get_random_tasks(self.context_user.tasks_type, self.context_user.count_tasks)
+            print(self.context_user.officer_task_dict)
 
             self.destroy()
 

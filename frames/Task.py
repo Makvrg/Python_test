@@ -158,10 +158,10 @@ class Task(ctk.CTkFrame):
         hd.get_true_in_a_row(self, self.context_user.result)  # Getting the value of a variable gv.true_in_a_row
 
         # Database work
-        dbh.database_update(self, name_student=self.context_user.name, topic_id=dbh.get_topic_id(self.context_user.tasks_type),
-                           abs_quantity=sum(self.context_user.result), all_quantity=self.context_user.count_tasks,
-                           ratio=round(sum(self.context_user.result) / self.context_user.count_tasks * 100, 2),
-                           in_a_row=self.context_user.true_in_a_row, date=datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
+        dbh.database_insert(self, name_student=self.context_user.name, topic_id=dbh.get_topic_id(self.context_user.tasks_type),
+                            abs_quantity=sum(self.context_user.result), all_quantity=self.context_user.count_tasks,
+                            ratio=round(sum(self.context_user.result) / self.context_user.count_tasks * 100, 2),
+                            in_a_row=self.context_user.true_in_a_row, date=datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
 
         self.window_attribute.protocol('WM_DELETE_WINDOW', lambda: hd.finish(self.window_attribute))  # Regular closing of program
 

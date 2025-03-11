@@ -27,9 +27,10 @@ def get_amount_tasks(tasks_type: str) -> int:
     c = db.cursor()
 
     amount_tasks = c.execute(f'''SELECT COUNT(*) 
-                                 FROM task_and_exercise JOIN topic
-                                 WHERE topic_name = {tasks_type}
-                                 ;''').fetchone()[0]
+                                 FROM task_and_exercise 
+                                 JOIN topic USING (topic_id)
+                                 WHERE topic_name = ?
+                                 ;''', (tasks_type, )).fetchone()[0]
 
     db.commit()
     db.close()
@@ -42,9 +43,10 @@ def get_list_task_id(tasks_type: str) -> List[int]:  # Need for random_tasks()
     c = db.cursor()
 
     list_task_id = c.execute(f'''SELECT task_and_exercise_id 
-                                 FROM task_and_exercise JOIN topic
-                                 WHERE topic_name = {tasks_type}
-                                 ;''').fetchall()
+                                 FROM task_and_exercise 
+                                 JOIN topic USING (topic_id)
+                                 WHERE topic_name = ?
+                                 ;''', (tasks_type, )).fetchall()
 
     db.commit()
     db.close()
@@ -62,19 +64,20 @@ def get_random_tasks(tasks_type: str, count_tasks: int) -> Dict[int, Tuple[int, 
 
     # Receipt random tasks given topic
     c.execute(f'''SELECT * FROM task_and_exercise
-                      WHERE task_and_exercise.task_and_exercise_id IN ({", ".join(map(str, random_ids))})
-                      ;''')
+                  WHERE task_and_exercise.task_and_exercise_id IN ('{", ".join(map(str, random_ids))}')
+                  ;''')
 
     of_task_dict = {}
     number = 1
 
     for row in c.fetchall():
+        print(row[2])
         of_task_dict[number] = (row[0], row[1], set(json.loads(row[2])))
         number += 1
 
     db.commit()
     db.close()
-
+    print(of_task_dict)
     return of_task_dict
 
 
@@ -88,7 +91,7 @@ def errors_and_wrong_insert(*,
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
-    c.execute('''INSERT INTO errors_and_wrong (score_id, task_id, student_answer, true_answer, comment)
+    c.execute('''INSERT INTO errors_and_wrong (score_id, task_and_exercise_id, student_answer, true_answer, comment)
     VALUES (?, ?, ?, ?, ?)
         ;''', (score_id, task_and_exercise_id, student_answer, true_answer, comment))
 
@@ -178,7 +181,7 @@ def create_database() -> NoReturn:  # Create database
         CREATE TABLE IF NOT EXISTS errors_and_wrong (
             errors_and_wrong_id INTEGER PRIMARY KEY AUTOINCREMENT,
             score_id INTEGER NOT NULL,
-            task_id INTEGER NOT NULL,
+            task_and_exercise_id INTEGER NOT NULL,
             student_answer TEXT,
             true_answer TEXT,
             comment TEXT,
@@ -186,7 +189,7 @@ def create_database() -> NoReturn:  # Create database
             REFERENCES score(score_id)
             ON DELETE CASCADE
             ON UPDATE CASCADE,
-            FOREIGN KEY (task_id)
+            FOREIGN KEY (task_and_exercise_id)
             REFERENCES task_and_exercise(task_and_exercise_id)
             ON DELETE CASCADE
             ON UPDATE CASCADE
@@ -227,7 +230,7 @@ def check_database(c: sqlite3.Cursor) -> NoReturn:
                         WHERE NOT EXISTS (SELECT 1 FROM task_and_exercise 
                         WHERE topic_id = (SELECT topic_id FROM topic WHERE topic_name = 'Линейные уравнения') AND task = ? AND 
                         exercise_id = (SELECT exercise_id FROM exercise WHERE exercise_name = 'Решите уравнение в действительных числах:') 
-                        AND ?)
+                        AND task_answer = ?)
                         ;''', (l[0], l[1], l[0], l[1]))
 
         for q in afq.task_quadratic_equations:
@@ -239,10 +242,11 @@ def check_database(c: sqlite3.Cursor) -> NoReturn:
                             WHERE NOT EXISTS (SELECT 1 FROM task_and_exercise 
                             WHERE topic_id = (SELECT topic_id FROM topic WHERE topic_name = 'Квадратные уравнения') AND task = ? AND 
                             exercise_id = (SELECT exercise_id FROM exercise WHERE exercise_name = 'Решите уравнение в действительных числах:') 
-                            AND ?)
+                            AND task_answer = ?)
                             ;''', (q[0], q[1], q[0], q[1]))
 
 
+# Need comment
 def insert_task_from_admin(*,
                            tasks_type: str,
                            task_type_is_exist: bool = False,
@@ -270,14 +274,15 @@ def insert_task_from_admin(*,
                                  ;''', (task_exercise, task_exercise))
 
     c.executemany(f'''INSERT INTO task_and_exercise (topic_id, task, exercise_id, task_answer)
-                      VALUES ((SELECT topic_id FROM topic WHERE topic_name = ), {"?" + ", ?" * (len(list_with_values[0]) - 1)})
+                      VALUES ((SELECT topic_id FROM topic WHERE topic_name = '{tasks_type}'), ?, 
+                      (SELECT exercise_id FROM exercise WHERE exercise_name = '{task_exercise}'), ?)
                       ;''', list_with_values)
 
     db.commit()
     db.close()
 
 
-def database_update(frame_object: Any,
+def database_insert(frame_object: Any,
                     *,
                     name_student: str,
                     topic_id: int,
@@ -365,7 +370,7 @@ def print_table() -> NoReturn:  # For developer (can will using in Task.py)
     for t_name in c.execute('''SELECT name FROM sqlite_master;''').fetchall():
         t_name = t_name[0]
         if t_name == "sqlite_sequence": continue
-        c.execute(f'''SELECT * FROM {t_name};''')
+        c.execute(f'''SELECT * FROM ?;''', (t_name, ))
 
         print(f'Таблица: {t_name}')
 
@@ -404,9 +409,8 @@ def get_rows(treeview_name: str) -> List[Tuple[Any, ...]]:  # treeview_name is a
                                   FROM topic JOIN score USING(topic_id)
                                   JOIN student USING(student_id)
                                   JOIN errors_and_wrong USING(score_id)
-                                  JOIN task_linear_equations USING(task_id)
-                                  JOIN task_quadratic_equations USING(task_id)
-                                  WHERE score.topic_id = ;''').fetchall()
+                                  JOIN task_and_exercise USING(task_and_exercise_id)
+                                  ;''').fetchall()
         # Shortening length name_topic
         for row in all_rows3:
             list_rows.append(tuple(list(row[0:3]) + [for_data_base.short_topic[row[3]]] + list(row[4:])))

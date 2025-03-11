@@ -15,7 +15,7 @@ def finish(win: Any, frame_for_save: Any = None) -> NoReturn:
         get_true_in_a_row(frame_for_save, frame_for_save.context_user.result)  # Getting the value of an attribute context_user.true_in_a_row
 
         # Database work
-        dbh.database_update(frame_for_save, name_student=frame_for_save.context_user.name,
+        dbh.database_insert(frame_for_save, name_student=frame_for_save.context_user.name,
                             topic_id=dbh.get_topic_id(frame_for_save.context_user.tasks_type),
                             abs_quantity=sum(frame_for_save.context_user.result),
                             all_quantity=frame_for_save.context_user.count_tasks,
@@ -110,14 +110,14 @@ def answer_handler(frame_object: Any,
                 continue
             else:
                 frame_object.context_user.result.append(0)
-                dbh.errors_and_wrong_insert(score_id=dbh.get_new_score_id(), task_id=of_task_dict[index][0],
+                dbh.errors_and_wrong_insert(score_id=dbh.get_new_score_id(), task_and_exercise_id=of_task_dict[index][0],
                                             student_answer=student_answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
                                             comment=er_wg_comment)
                 continue
         frame_object.context_user.result.append(0)
 
         # Add information about error or wrong answer
-        dbh.errors_and_wrong_insert(score_id=dbh.get_new_score_id(), task_id=of_task_dict[index][0],
+        dbh.errors_and_wrong_insert(score_id=dbh.get_new_score_id(), task_and_exercise_id=of_task_dict[index][0],
                                     student_answer=student_answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
                                     comment=er_wg_comment)
 
