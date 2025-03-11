@@ -22,13 +22,14 @@ def get_new_score_id() -> int:
     return new_score_id
 
 
-def get_amount_tasks(name_table: str) -> int:
+def get_amount_tasks(tasks_type: str) -> int:
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
-    name_table = for_data_base.db_names[name_table]
-
-    amount_tasks = c.execute(f'''SELECT COUNT(*) FROM {name_table};''').fetchone()[0]
+    amount_tasks = c.execute(f'''SELECT COUNT(*) 
+                                 FROM task_and_exercise JOIN topic
+                                 WHERE topic_name = {tasks_type}
+                                 ;''').fetchone()[0]
 
     db.commit()
     db.close()
@@ -40,9 +41,10 @@ def get_list_task_id(tasks_type: str) -> List[int]:  # Need for random_tasks()
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
-    name_table = for_data_base.db_names[tasks_type]
-
-    list_task_id = c.execute(f'''SELECT task_id FROM {name_table};''').fetchall()
+    list_task_id = c.execute(f'''SELECT task_and_exercise_id 
+                                 FROM task_and_exercise JOIN topic
+                                 WHERE topic_name = {tasks_type}
+                                 ;''').fetchall()
 
     db.commit()
     db.close()
@@ -59,8 +61,8 @@ def get_random_tasks(tasks_type: str, count_tasks: int) -> Dict[int, Tuple[int, 
     random_ids = random.sample(get_list_task_id(tasks_type), count_tasks)
 
     # Receipt random tasks given topic
-    c.execute(f'''SELECT * FROM {for_data_base.db_names[tasks_type]}
-                      WHERE task_id IN ({", ".join(map(str, random_ids))})
+    c.execute(f'''SELECT * FROM task_and_exercise
+                      WHERE task_and_exercise.task_and_exercise_id IN ({", ".join(map(str, random_ids))})
                       ;''')
 
     of_task_dict = {}
@@ -76,9 +78,9 @@ def get_random_tasks(tasks_type: str, count_tasks: int) -> Dict[int, Tuple[int, 
     return of_task_dict
 
 
-def errors_and_wrong_update(*,
+def errors_and_wrong_insert(*,
                             score_id: int,
-                            task_id: int,
+                            task_and_exercise_id: int,
                             student_answer: str,
                             true_answer: str,
                             comment: str) -> NoReturn:
@@ -88,7 +90,7 @@ def errors_and_wrong_update(*,
 
     c.execute('''INSERT INTO errors_and_wrong (score_id, task_id, student_answer, true_answer, comment)
     VALUES (?, ?, ?, ?, ?)
-        ;''', (score_id, task_id, student_answer, true_answer, comment))
+        ;''', (score_id, task_and_exercise_id, student_answer, true_answer, comment))
 
     db.commit()
     db.close()
@@ -102,79 +104,92 @@ def create_database() -> NoReturn:  # Create database
 
     c.execute('''
         CREATE TABLE IF NOT EXISTS student (
-        student_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name_student TEXT
+            student_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name_student TEXT
         );''')
 
     c.execute('''
         CREATE TABLE IF NOT EXISTS topic (
-        topic_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        topic_name TEXT
+            topic_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            topic_name TEXT
         );''')
 
     c.execute('''
         CREATE TABLE IF NOT EXISTS max_score (
-        max_score_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER NOT NULL,
-        topic_id INTEGER NOT NULL,
-        in_a_row INTEGER,
-        date TEXT,
-        FOREIGN KEY (student_id)
-        REFERENCES student(student_id)
-        ON DELETE CASCADE,
-        FOREIGN KEY (topic_id)
-        REFERENCES topic(topic_id)
-        ON DELETE CASCADE
+            max_score_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id INTEGER NOT NULL,
+            topic_id INTEGER NOT NULL,
+            in_a_row INTEGER,
+            date TEXT,
+            FOREIGN KEY (student_id)
+            REFERENCES student(student_id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+            FOREIGN KEY (topic_id)
+            REFERENCES topic(topic_id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
         );''')
 
     c.execute('''
         CREATE TABLE IF NOT EXISTS score (
-        score_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        student_id INTEGER NOT NULL,
-        topic_id INTEGER NOT NULL,
-        abs_quantity INTEGER,
-        all_quantity INTEGER,
-        ratio REAL,
-        in_a_row INTEGER,
-        date TEXT,
-        FOREIGN KEY (student_id)
-        REFERENCES student(student_id)
-        ON DELETE CASCADE,
-        FOREIGN KEY (topic_id)
-        REFERENCES topic(topic_id)
-        ON DELETE CASCADE
+            score_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            student_id INTEGER NOT NULL,
+            topic_id INTEGER NOT NULL,
+            abs_quantity INTEGER,
+            all_quantity INTEGER,
+            ratio REAL,
+            in_a_row INTEGER,
+            date TEXT,
+            FOREIGN KEY (student_id)
+            REFERENCES student(student_id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+            FOREIGN KEY (topic_id)
+            REFERENCES topic(topic_id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
         );''')
 
     c.execute('''
-            CREATE TABLE IF NOT EXISTS task_linear_equations (
-            task_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            task TEXT,
-            task_answer TEXT
-            );''')
+        CREATE TABLE IF NOT EXISTS exercise (
+            exercise_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            exercise_name TEXT
+        );''')
 
     c.execute('''
-            CREATE TABLE IF NOT EXISTS task_quadratic_equations (
-            task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        CREATE TABLE IF NOT EXISTS task_and_exercise (
+            task_and_exercise_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            topic_id INTEGER NOT NULL,
             task TEXT,
-            task_answer TEXT
-            );''')
+            exercise_id INTEGER,
+            task_answer TEXT,
+            FOREIGN KEY (topic_id) 
+            REFERENCES topic(topic_id)
+            ON UPDATE CASCADE 
+            ON DELETE CASCADE,
+            FOREIGN KEY (exercise_id)
+            REFERENCES exercise (exercise_id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
+        );''')
 
     c.execute('''
         CREATE TABLE IF NOT EXISTS errors_and_wrong (
-        errors_and_wrong_id INTEGER PRIMARY KEY AUTOINCREMENT,
-        score_id INTEGER NOT NULL,
-        task_id INTEGER NOT NULL,
-        student_answer TEXT,
-        true_answer TEXT,
-        comment TEXT,
-        FOREIGN KEY (score_id)
-        REFERENCES score(score_id),
-        FOREIGN KEY (task_id)
-        REFERENCES task_linear_equations(task_id)
-        ON DELETE CASCADE,
-        FOREIGN KEY (task_id)
-        REFERENCES task_quadratic_equations(task_id)
-        ON DELETE CASCADE
+            errors_and_wrong_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            score_id INTEGER NOT NULL,
+            task_id INTEGER NOT NULL,
+            student_answer TEXT,
+            true_answer TEXT,
+            comment TEXT,
+            FOREIGN KEY (score_id)
+            REFERENCES score(score_id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE,
+            FOREIGN KEY (task_id)
+            REFERENCES task_and_exercise(task_and_exercise_id)
+            ON DELETE CASCADE
+            ON UPDATE CASCADE
         );''')
 
     check_database(c)
@@ -185,49 +200,78 @@ def create_database() -> NoReturn:  # Create database
 
 def check_database(c: sqlite3.Cursor) -> NoReturn:
     """Check database and back-up insertion tasks and topics into the database from admin_file.py if necessary"""
-    if c.execute('''SELECT 1 FROM topic LIMIT 1;''').fetchone() is None:
-        #print("Таблица 'topic' пуста")
 
-        import admin_files.topics as aft
+    import admin_files.topics as aftop
+    import admin_files.exercise as afe
+    import admin_files.task_linear_equations as afl
+    import admin_files.task_quadratic_equations as afq
 
-        c.executemany('''
-        INSERT INTO topic (topic_name)
-        VALUES (?)
-        ;''', aft.topics)
+    for t in aftop.topics:
+        c.execute('''INSERT INTO topic (topic_name)
+                            SELECT ?
+                            WHERE NOT EXISTS (SELECT 1 FROM topic WHERE topic_name = ?)
+                            ;''', (t[0], t[0]))
 
-    if c.execute('''SELECT 1 FROM task_linear_equations LIMIT 1;''').fetchone() is None:
-        #print("Таблица 'task_linear_equations' пуста")
+    for e in afe.exercise:
+        c.execute('''INSERT INTO exercise (exercise_name)
+                         SELECT ?
+                         WHERE NOT EXISTS (SELECT 1 FROM exercise WHERE exercise_name = ?)
+                         ;''', (e[0], e[0]))
 
-        import admin_files.task_linear_equations as afl
+    for l in afl.task_linear_equations:
+        c.execute('''
+                        INSERT INTO task_and_exercise (topic_id, task, exercise_id, task_answer)
+                        SELECT (SELECT topic_id FROM topic WHERE topic_name = 'Линейные уравнения'), ?, 
+                        (SELECT exercise_id FROM exercise WHERE exercise_name = 'Решите уравнение в действительных числах:'), 
+                        ?
+                        WHERE NOT EXISTS (SELECT 1 FROM task_and_exercise 
+                        WHERE topic_id = (SELECT topic_id FROM topic WHERE topic_name = 'Линейные уравнения') AND task = ? AND 
+                        exercise_id = (SELECT exercise_id FROM exercise WHERE exercise_name = 'Решите уравнение в действительных числах:') 
+                        AND ?)
+                        ;''', (l[0], l[1], l[0], l[1]))
 
-        c.executemany('''
-                INSERT INTO task_linear_equations (task, task_answer)
-                VALUES (?, ?)
-                ;''', afl.task_linear_equations)
-
-    if c.execute('''SELECT 1 FROM task_quadratic_equations LIMIT 1;''').fetchone() is None:
-        #print("Таблица 'task_quadratic_equations' пуста")
-
-        import admin_files.task_quadratic_equations as afq
-
-        c.executemany('''
-                        INSERT INTO task_quadratic_equations (task, task_answer)
-                        VALUES (?, ?)
-                        ;''', afq.task_quadratic_equations)
+        for q in afq.task_quadratic_equations:
+            c.execute('''
+                            INSERT INTO task_and_exercise (topic_id, task, exercise_id, task_answer)
+                            SELECT (SELECT topic_id FROM topic WHERE topic_name = 'Квадратные уравнения'), ?, 
+                            (SELECT exercise_id FROM exercise WHERE exercise_name = 'Решите уравнение в действительных числах:'), 
+                            ?
+                            WHERE NOT EXISTS (SELECT 1 FROM task_and_exercise 
+                            WHERE topic_id = (SELECT topic_id FROM topic WHERE topic_name = 'Квадратные уравнения') AND task = ? AND 
+                            exercise_id = (SELECT exercise_id FROM exercise WHERE exercise_name = 'Решите уравнение в действительных числах:') 
+                            AND ?)
+                            ;''', (q[0], q[1], q[0], q[1]))
 
 
-def insert_data_from_admin(*,
-                           table_name: str,
+def insert_task_from_admin(*,
+                           tasks_type: str,
+                           task_type_is_exist: bool = False,
+                           task_exercise: str,
+                           task_exercise_is_exist: bool = False,
                            list_with_values: List[Tuple[str, ...]]) -> NoReturn:
     """Admin can add new tasks or topics, restore old tasks or old topics of test.
     Need to start program, because required get global_variable.database_abs_path
-    For example: insert_data_from_admin(table_name="task_linear_equations", list_with_values=[("999x - 999 = 0", "[1]"), ("x - 999 = 1", "[1000]")])"""
+
+    #########For example: insert_data_from_admin(table_name="task_linear_equations", list_with_values=[("999x - 999 = 0", "[1]"), ("x - 999 = 1", "[1000]")])"""
 
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
-    c.executemany(f'''INSERT INTO {table_name}
-                      VALUES (NULL, {"?" + ", ?" * (len(list_with_values[0]) - 1)})''', list_with_values)
+    if task_type_is_exist is False:
+        c.execute('''INSERT INTO topic (topic_name)
+                         SELECT ?
+                         WHERE NOT EXISTS (SELECT 1 FROM topic WHERE topic_name = ?)
+                         ;''', (tasks_type, tasks_type))
+
+    if task_exercise_is_exist is False:
+        c.execute('''INSERT INTO exercise (exercise_name)
+                                 SELECT ?
+                                 WHERE NOT EXISTS (SELECT 1 FROM exercise WHERE exercise_name = ?)
+                                 ;''', (task_exercise, task_exercise))
+
+    c.executemany(f'''INSERT INTO task_and_exercise (topic_id, task, exercise_id, task_answer)
+                      VALUES ((SELECT topic_id FROM topic WHERE topic_name = ), {"?" + ", ?" * (len(list_with_values[0]) - 1)})
+                      ;''', list_with_values)
 
     db.commit()
     db.close()
@@ -355,15 +399,14 @@ def get_rows(treeview_name: str) -> List[Tuple[Any, ...]]:  # treeview_name is a
             list_rows.append(tuple(list(row[0:2]) + [for_data_base.short_topic[row[2]]] + list(row[3:])))
 
     elif treeview_name == "wrong_result_table":
-        all_rows3 = c.execute(f'''SELECT errors_and_wrong_id, score_id, name_student, topic_name, 
-                                  CASE WHEN topic_name = 'Линейные уравнения' THEN task_linear_equations.task  
-                                  WHEN topic_name = 'Квадратные уравнения' THEN task_quadratic_equations.task END AS task, 
+        all_rows3 = c.execute(f'''SELECT errors_and_wrong_id, score_id, name_student, topic_name, task, 
                                   student_answer, true_answer, comment 
                                   FROM topic JOIN score USING(topic_id)
                                   JOIN student USING(student_id)
                                   JOIN errors_and_wrong USING(score_id)
                                   JOIN task_linear_equations USING(task_id)
-                                  JOIN task_quadratic_equations USING(task_id);''').fetchall()
+                                  JOIN task_quadratic_equations USING(task_id)
+                                  WHERE score.topic_id = ;''').fetchall()
         # Shortening length name_topic
         for row in all_rows3:
             list_rows.append(tuple(list(row[0:3]) + [for_data_base.short_topic[row[3]]] + list(row[4:])))

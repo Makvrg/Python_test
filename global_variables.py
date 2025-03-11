@@ -34,9 +34,9 @@ context_test: Test = Test()
 
 class ForDataBase:
     def __init__(self):
-        self.database_abs_path: Path  # Example output 'C:\Users\Mi\PycharmProjects\Math_train\math_simulator_database.db'
-        self.db_names: Dict[str, str] = {"Линейные уравнения": "task_linear_equations",
-                    "Квадратные уравнения": "task_quadratic_equations"}
+        self.database_abs_path: Path | None = None  # Example output 'C:\Users\Mi\PycharmProjects\Math_train\math_simulator_database.db'
+        # self.db_names: Dict[str, str] = {"Линейные уравнения": "task_linear_equations",
+        #             "Квадратные уравнения": "task_quadratic_equations"}
         self.short_topic: Dict[str, str] = {"Линейные уравнения": "Лин-ые ур-я",
                                                "Квадратные уравнения": "Квад-ые ур-я"
                                             }

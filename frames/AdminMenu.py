@@ -35,7 +35,7 @@ class AdminMenu(ctk.CTkFrame):
                                                 font=("Fira Sans Bold", 40), hover_color="#007D00")
         self.all_results_button.grid(row=0, column=0, sticky="nw", padx=30, pady=[28, 28])
 
-        self.edit_button = ctk.CTkButton(self, command=self.go_to_edit, text="Редактировать задания и типы",
+        self.edit_button = ctk.CTkButton(self, command=self.go_to_editor, text="Редактировать задания и типы",
                                                 fg_color="#009900", height=60, width=330, border_width=3,
                                                 border_color="#006600", corner_radius=5, text_color="#FFF",
                                                 font=("Fira Sans Bold", 40), hover_color="#007D00")
@@ -59,11 +59,10 @@ class AdminMenu(ctk.CTkFrame):
                                                          border_width=15, border_color="#006600",
                                                          fg_color="#FFFFFF", corner_radius=30)
 
-    def go_to_edit(self) -> NoReturn:
+    def go_to_editor(self) -> NoReturn:
         self.destroy()
 
-        import frames.AdminAllResults
+        import frames.Editor
 
-        #all_results_frame = frames.AdminAllResults.AdminAllResults(self.window_attribute, self.columns_names,
-           #                                              border_width=15, border_color="#006600",
-           #                                              fg_color="#FFFFFF", corner_radius=30)
+        editor_frame = frames.Editor.Editor(self.window_attribute, self.columns_names, border_width=15, border_color="#006600",
+                                                         fg_color="#FFFFFF", corner_radius=30)

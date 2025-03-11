@@ -110,14 +110,14 @@ def answer_handler(frame_object: Any,
                 continue
             else:
                 frame_object.context_user.result.append(0)
-                dbh.errors_and_wrong_update(score_id=dbh.get_new_score_id(), task_id=of_task_dict[index][0],
+                dbh.errors_and_wrong_insert(score_id=dbh.get_new_score_id(), task_id=of_task_dict[index][0],
                                             student_answer=student_answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
                                             comment=er_wg_comment)
                 continue
         frame_object.context_user.result.append(0)
 
         # Add information about error or wrong answer
-        dbh.errors_and_wrong_update(score_id=dbh.get_new_score_id(), task_id=of_task_dict[index][0],
+        dbh.errors_and_wrong_insert(score_id=dbh.get_new_score_id(), task_id=of_task_dict[index][0],
                                     student_answer=student_answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
                                     comment=er_wg_comment)
 
