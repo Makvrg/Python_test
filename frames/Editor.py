@@ -155,6 +155,7 @@ class Editor(ctk.CTkFrame):
         self.delete_tasks_count += 1
         if self.delete_tasks_count >= 5:
             dbh.delete_tasks(self.task_table.get_selected_ids())
+            self.destroy()
 
             editor_frame = Editor(self.window_attribute, self.columns_names, self.choice_type,
                                                 border_width=15, border_color="#006600", fg_color="#FFFFFF",
