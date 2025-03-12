@@ -4,11 +4,12 @@ from pathlib import Path
 
 class User:
     def __init__(self):
-        self.name: str  # Example output "Максим"
-        self.tasks_type: str  # Example output "Квадратные уравнения"
-        self.count_tasks: int  # Example output 5
+        self.name: str = ""  # Example output "Максим"
+        self.tasks_type: str = ""  # Example output "Квадратные уравнения"
+        self.count_tasks: int = 1  # Example output 5
 
-        self.officer_task_dict: Dict[int, Tuple[int, str, Set[Any]]]  # Example output {1: (1, 'x + 1 = 1', {0}), 2: (3, '2x + 1 = 1', {0}), 3: (4, '4x - 1 = 1', {0.5}), 4: (5, 'x + 2 = -1', {-3}), 5: (7, 'x - 999 = 1', {1000})}
+        '''self.officer_task_dict = Dict[task_number, Tuple[task_and_exercise_id, task, exercise_id, task_answer]'''
+        self.officer_task_dict: Dict[int, Tuple[int, str, int, Set[Any]]] | None = None  # Example output {1: (289, 'x + 1 = 1', 1, {0}), 2: (299, '4x - 1 = 1', 1, {0.5}), 3: (300, 'x + 2 = -1', 1, {-3}), 4: (301, '9999x - 9999 = 0', 1, {1})}
         self.answer: Dict[int, str] = {}  # Example output {1: '0', 2: '56, 8', 3: '0, 1 4/5', 4: '-3', 5: '14'}
         self.result: List[int] = []  # Example output [1, 0, 1, 1, 1, 0]
         self.true_in_a_row: int = 0  # The number of correct responses in a row
@@ -20,13 +21,9 @@ context_user: User = User()
 
 class Test:
     def __init__(self):
-        # Constants
-        self.exercise: Dict[str, str] = {"Линейные уравнения": "Решите уравнение в действительных числах:",
-                                    "Квадратные уравнения": "Решите уравнение в действительных числах:"
-                                    }
+        self.exercise: Dict[int, str] = {}  # For example {1: 'Решите уравнение в действительных числах:'}; Dict[exercise_id, exercise]
         self.explanation: str = 'Записывайте по образцу: несколько ответов "12, -6", \nдесятичные дроби "1.21", обыкновенные дроби "5/4" и смешанные дроби "11 3/4"'
 
-        # Variables
         self.current_task: int = 1
 
 context_test: Test = Test()
@@ -48,6 +45,8 @@ class ColumnsNames:
         self.columns_all_result: Tuple[str, ...] = ("score_id", "name_student", "topic_name", "abs_and_all_quantity", "ratio", "in_a_row", "date")
         self.columns_max_result: Tuple[str, ...] = ("max_score_id", "name_student", "topic_name", "in_a_row", "date")
         self.columns_wrong_result: Tuple[str, ...] = ("errors_and_wrong_id", "score_id", "name_student", "topic_name", "task", "student_answer", "true_answer", "comment")
+        self.columns_topic: Tuple[str, ...] = ("topic_id", "topic_name")
+        self.columns_task: Tuple[str, ...] = ("task_and_exercise_id", "task", "exercise_name", "task_answer")
 
 columns_names: ColumnsNames = ColumnsNames()
 

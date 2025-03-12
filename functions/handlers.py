@@ -7,7 +7,7 @@ def finish(win: Any, frame_for_save: Any = None) -> NoReturn:
     if frame_for_save is None:  # Expected application closure
         win.destroy()
     else:  # Intercepting premature program closure
-        frame_for_save.context_user.answer[frame_for_save.context_test.current_task] = (frame_for_save.task_entry.get().strip())  # Save the last answer
+        frame_for_save.save_answer()   #context_user.answer[frame_for_save.context_test.current_task] = (frame_for_save.task_entry.get().strip())  # Save the last answer
 
         dbh.create_database()
 
@@ -28,12 +28,12 @@ def finish(win: Any, frame_for_save: Any = None) -> NoReturn:
 
 def answer_handler(frame_object: Any,
                    student_answer_dict: Dict[int, str],
-                   of_task_dict: Dict[int, Tuple[int, str, Set[Any]]]) -> NoReturn:
+                   of_task_dict: Dict[int, Tuple[int, str, int, Set[Any]]]) -> NoReturn:
 
     for index in range(1, frame_object.context_user.count_tasks + 1):
         answer = student_answer_dict[index].split(",")  # The answer to the task numbered index
         processed_answer = set()
-        true_answer = of_task_dict[index][2]
+        true_answer = of_task_dict[index][3]
         er_wg_comment: str = "Wrong answer or writing"
         for x in answer:  # Set of answer for task
             x = x.strip()

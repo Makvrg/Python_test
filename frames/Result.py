@@ -3,6 +3,7 @@ import global_variables as gv
 from tkinter import ttk
 from functions.handlers import finish
 from typing import Any, NoReturn
+import tables.ResultTable
 
 import frames.AllResults
 
@@ -54,40 +55,24 @@ class Result(ctk.CTkFrame):
         self.table_style.map("1.Treeview.Heading", background=[('active', '#5cd649')])
 
         # Treeview creating
-        self.result_table = ttk.Treeview(self, style="1.Treeview", columns=self.columns_names.columns_result,
+        self.result_table = tables.ResultTable.ResultTable(self, style="1.Treeview", columns=self.columns_names.columns_result,
                                          show="headings", selectmode="extended")
-        self.result_table_scrollbar = ctk.CTkScrollbar(self, border_spacing=6, minimum_pixel_length=100,
-                                                           bg_color="transparent", fg_color="#e4ffcf",
-                                                           button_color="#169c02",
-                                                           orientation="vertical", command=self.result_table.yview,
-                                                           width=25, hover=True, button_hover_color="#007D00")
-        self.result_table_scrollbar.grid(row=2, column=2, sticky="ns", padx=[0, 25], pady=(0, 19))
-        self.result_table.configure(yscrollcommand=self.result_table_scrollbar.set)
+        self.result_table.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=(30, 0), pady=(0, 25))
 
         # Tag create
         self.result_table.tag_configure("table_tag_true", font=("Fira Sans SemiBold", 23), background="#c5faac")
         self.result_table.tag_configure("table_tag_false", font=("Fira Sans SemiBold", 23), background="#fca4a4")
 
-        # Setting columns
-        self.result_table.heading(self.columns_names.columns_result[0], text="Задача", anchor="c")
-        self.result_table.heading(self.columns_names.columns_result[1], text="Ваш ответ", anchor="c")
-        self.result_table.heading(self.columns_names.columns_result[2], text="Правильный ответ", anchor="c")
-
-        self.result_table.column(column=self.columns_names.columns_result[0], width=100)
-        self.result_table.column(column=self.columns_names.columns_result[1], width=300)
-        self.result_table.column(column=self.columns_names.columns_result[2], width=300)
-
-        self.result_table.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=(30, 0), pady=(0, 25))
 
         # Insert rows
         for num in range(1, self.context_user.count_tasks + 1):
             if self.context_user.result[num - 1] == 1:  # True answer, so table row - green (use tags="table_tag_true")
                 self.result_table.insert("", "end",
-                                         values=(num, self.context_user.answer[num], ", ".join(map(str, sorted(list(self.context_user.officer_task_dict[num][2]))))),
+                                         values=(num, self.context_user.answer[num], ", ".join(map(str, sorted(list(self.context_user.officer_task_dict[num][3]))))),
                                          tags="table_tag_true")
             else:  # False answer, so table row - red (use tags="table_tag_false")
                 self.result_table.insert("", "end",
-                                         values=(num, self.context_user.answer[num], ", ".join(map(str, sorted(list(self.context_user.officer_task_dict[num][2]))))),
+                                         values=(num, self.context_user.answer[num], ", ".join(map(str, sorted(list(self.context_user.officer_task_dict[num][3]))))),
                                          tags="table_tag_false")
 
         # Label congratulations on new record

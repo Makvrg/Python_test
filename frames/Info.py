@@ -19,6 +19,9 @@ class Info(ctk.CTkFrame):
         # Create attribute with context_user
         self.context_user = gv.context_user
 
+        # Create attribute with context_test
+        self.context_test = gv.context_test
+
         # Grid configuration
         self.rowconfigure(index=0, weight=1)
         for i in range(1, 4):
@@ -142,12 +145,12 @@ class Info(ctk.CTkFrame):
         if self.name_entry.get() != "" and self.type_combobox.get() != "":
             self.context_user.tasks_type = self.type_combobox.get()
             self.context_user.count_tasks = int(self.count_slider.get())
-            self.context_user.officer_task_dict = dbh.get_random_tasks(self.context_user.tasks_type, self.context_user.count_tasks)
-            print(self.context_user.officer_task_dict)
+
+            self.context_user.officer_task_dict, self.context_test.exercise = dbh.get_random_tasks_and_exercises(self.context_user.tasks_type, self.context_user.count_tasks)
 
             self.destroy()
 
-            task_frame = frames.Task.Task(self.window_attribute, self.context_user, border_width=15,
+            task_frame = frames.Task.Task(self.window_attribute, self.context_user, self.context_test, border_width=15,
                                           border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
 
             self.window_attribute.protocol('WM_DELETE_WINDOW', lambda: finish(self.window_attribute, task_frame))  # Intercepting premature program closure

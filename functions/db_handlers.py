@@ -56,29 +56,39 @@ def get_list_task_id(tasks_type: str) -> List[int]:  # Need for random_tasks()
     return list_task_id
 
 
-def get_random_tasks(tasks_type: str, count_tasks: int) -> Dict[int, Tuple[int, str, Set[Any]]]:
+def get_random_tasks_and_exercises(tasks_type: str, count_tasks: int) -> Tuple[Dict[int, Tuple[int, str, int, Set[Any]]], Dict[int, str]]:
+    """ -> Tuple[Dict[task_number, Tuple[task_and_exercise_id, task, exercise_id, task_answer], Dict[exercise_id, exercise]] """
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
-    random_ids = random.sample(get_list_task_id(tasks_type), count_tasks)
+
+    random_ids: List[int] = random.sample(get_list_task_id(tasks_type), count_tasks)
 
     # Receipt random tasks given topic
-    c.execute(f'''SELECT * FROM task_and_exercise
-                  WHERE task_and_exercise.task_and_exercise_id IN ('{", ".join(map(str, random_ids))}')
-                  ;''')
+    c.execute(f'''SELECT task_and_exercise_id, task, exercise_id, task_answer, exercise_name 
+                  FROM task_and_exercise JOIN exercise USING (exercise_id)
+                  WHERE task_and_exercise_id IN ({", ".join(["?"] * len(random_ids))})
+                  ;''', tuple(random_ids))
+
+    output = c.fetchall()
+    random.shuffle(output)  # Extra random subsequence (very need for absolute random!)
 
     of_task_dict = {}
+    exercises_dict = {}
     number = 1
 
-    for row in c.fetchall():
-        print(row[2])
-        of_task_dict[number] = (row[0], row[1], set(json.loads(row[2])))
+    for row in output:
+        of_task_dict[number] = (row[0], row[1], row[2], set(json.loads(row[3])))
+
+        if row[2] not in exercises_dict:
+            exercises_dict[row[2]] = row[4]
+
         number += 1
 
     db.commit()
     db.close()
-    print(of_task_dict)
-    return of_task_dict
+
+    return of_task_dict, exercises_dict
 
 
 def errors_and_wrong_insert(*,
@@ -233,17 +243,17 @@ def check_database(c: sqlite3.Cursor) -> NoReturn:
                         AND task_answer = ?)
                         ;''', (l[0], l[1], l[0], l[1]))
 
-        for q in afq.task_quadratic_equations:
-            c.execute('''
-                            INSERT INTO task_and_exercise (topic_id, task, exercise_id, task_answer)
-                            SELECT (SELECT topic_id FROM topic WHERE topic_name = 'Квадратные уравнения'), ?, 
-                            (SELECT exercise_id FROM exercise WHERE exercise_name = 'Решите уравнение в действительных числах:'), 
-                            ?
-                            WHERE NOT EXISTS (SELECT 1 FROM task_and_exercise 
-                            WHERE topic_id = (SELECT topic_id FROM topic WHERE topic_name = 'Квадратные уравнения') AND task = ? AND 
-                            exercise_id = (SELECT exercise_id FROM exercise WHERE exercise_name = 'Решите уравнение в действительных числах:') 
-                            AND task_answer = ?)
-                            ;''', (q[0], q[1], q[0], q[1]))
+    for q in afq.task_quadratic_equations:
+        c.execute('''
+                        INSERT INTO task_and_exercise (topic_id, task, exercise_id, task_answer)
+                        SELECT (SELECT topic_id FROM topic WHERE topic_name = 'Квадратные уравнения'), ?, 
+                        (SELECT exercise_id FROM exercise WHERE exercise_name = 'Решите уравнение в действительных числах:'), 
+                        ?
+                        WHERE NOT EXISTS (SELECT 1 FROM task_and_exercise 
+                        WHERE topic_id = (SELECT topic_id FROM topic WHERE topic_name = 'Квадратные уравнения') AND task = ? AND 
+                        exercise_id = (SELECT exercise_id FROM exercise WHERE exercise_name = 'Решите уравнение в действительных числах:') 
+                        AND task_answer = ?)
+                        ;''', (q[0], q[1], q[0], q[1]))
 
 
 # Need comment
@@ -252,7 +262,7 @@ def insert_task_from_admin(*,
                            task_type_is_exist: bool = False,
                            task_exercise: str,
                            task_exercise_is_exist: bool = False,
-                           list_with_values: List[Tuple[str, ...]]) -> NoReturn:
+                           list_with_values: List[Tuple[str, str]] | List[Tuple[str, str, str, str]]) -> NoReturn:
     """Admin can add new tasks or topics, restore old tasks or old topics of test.
     Need to start program, because required get global_variable.database_abs_path
 
@@ -260,6 +270,12 @@ def insert_task_from_admin(*,
 
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
+
+    new_list_with_values = []
+    for i in range(len(list_with_values)):
+        new_list_with_values[i] = tuple([tasks_type] + [list_with_values[i][0]] + [task_exercise] + [list_with_values[i][1]])
+    list_with_values = new_list_with_values
+    print("list_with_values", list_with_values)
 
     if task_type_is_exist is False:
         c.execute('''INSERT INTO topic (topic_name)
@@ -274,8 +290,8 @@ def insert_task_from_admin(*,
                                  ;''', (task_exercise, task_exercise))
 
     c.executemany(f'''INSERT INTO task_and_exercise (topic_id, task, exercise_id, task_answer)
-                      VALUES ((SELECT topic_id FROM topic WHERE topic_name = '{tasks_type}'), ?, 
-                      (SELECT exercise_id FROM exercise WHERE exercise_name = '{task_exercise}'), ?)
+                      VALUES ((SELECT topic_id FROM topic WHERE topic_name = ?), ?, 
+                      (SELECT exercise_id FROM exercise WHERE exercise_name = ?), ?)
                       ;''', list_with_values)
 
     db.commit()
@@ -382,7 +398,7 @@ def print_table() -> NoReturn:  # For developer (can will using in Task.py)
     db.close()
 
 
-def get_rows(treeview_name: str) -> List[Tuple[Any, ...]]:  # treeview_name is an "all_result_table" or "max_result_table" or "wrong_result_table"
+def get_rows(treeview_name: str, topic_id: int | None = None) -> List[Tuple[Any, ...]]:  # treeview_name is an "all_result_table" or "max_result_table" or "wrong_result_table"
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
@@ -393,7 +409,10 @@ def get_rows(treeview_name: str) -> List[Tuple[Any, ...]]:  # treeview_name is a
                                 JOIN topic USING(topic_id);''').fetchall()
         # Union for column "Результат", conversion to percentage column "Качество", shortening length name_topic
         for row in all_rows1:
-            list_rows.append(tuple(list(row[0:2]) + [for_data_base.short_topic[row[2]]] + [f'{str(row[3])} / {str(row[4])}'] + [f'{round(row[5])}%'] + list(row[6:])))
+            if row[2] in for_data_base.short_topic:  # If standard type
+                list_rows.append(tuple(list(row[0:2]) + [for_data_base.short_topic[row[2]]] + [f'{str(row[3])} / {str(row[4])}'] + [f'{round(row[5])}%'] + list(row[6:])))
+            else:  # If admin type
+                list_rows.append(tuple(list(row[0:2]) + [row[2]] + [f'{str(row[3])} / {str(row[4])}'] + [f'{round(row[5])}%'] + list(row[6:])))
 
     elif treeview_name == "max_result_table":
         all_rows2 = c.execute('''SELECT max_score_id, name_student, topic_name, in_a_row, date 
@@ -401,7 +420,10 @@ def get_rows(treeview_name: str) -> List[Tuple[Any, ...]]:  # treeview_name is a
                                  JOIN topic USING(topic_id);''').fetchall()
         # Shortening length name_topic
         for row in all_rows2:
-            list_rows.append(tuple(list(row[0:2]) + [for_data_base.short_topic[row[2]]] + list(row[3:])))
+            if row[2] in for_data_base.short_topic:  # If standard type
+                list_rows.append(tuple(list(row[0:2]) + [for_data_base.short_topic[row[2]]] + list(row[3:])))
+            else:  # If admin type
+                list_rows.append(tuple(list(row[0:2]) + [row[2]] + list(row[3:])))
 
     elif treeview_name == "wrong_result_table":
         all_rows3 = c.execute(f'''SELECT errors_and_wrong_id, score_id, name_student, topic_name, task, 
@@ -413,9 +435,49 @@ def get_rows(treeview_name: str) -> List[Tuple[Any, ...]]:  # treeview_name is a
                                   ;''').fetchall()
         # Shortening length name_topic
         for row in all_rows3:
-            list_rows.append(tuple(list(row[0:3]) + [for_data_base.short_topic[row[3]]] + list(row[4:])))
+            if row[3] in for_data_base.short_topic:  # If standard type
+                list_rows.append(tuple(list(row[0:3]) + [for_data_base.short_topic[row[3]]] + list(row[4:])))
+            else:  # If admin type
+                list_rows.append(tuple(list(row[0:3]) + [row[3]] + list(row[4:])))
 
+    elif treeview_name == "topic_table":
+        all_rows4 = c.execute('''SELECT topic_id, topic_name
+                                 FROM topic;''').fetchall()
+
+        list_rows = all_rows4
+
+    elif treeview_name == "task_table":
+        all_rows5 = c.execute('''SELECT task_and_exercise_id, task, exercise_name, task_answer
+                                 FROM task_and_exercise
+                                 JOIN exercise USING(exercise_id)
+                                 WHERE topic_id = ?;''', (topic_id, )).fetchall()
+        # Parsing with json
+        for row in all_rows5:
+            list_rows.append(tuple(list(row[0:3]) + ["     " + ", ".join(map(str, json.loads(row[3])))]))
 
     db.commit()
     db.close()
+
     return list_rows
+
+
+def rename_topic(topic_id: int, new_name: str) -> NoReturn:
+    db = sqlite3.connect(for_data_base.database_abs_path)
+    c = db.cursor()
+
+    c.execute('''UPDATE topic SET topic_name = ?
+                 WHERE topic_id = ?''', (new_name, topic_id))
+
+    db.commit()
+    db.close()
+
+
+def delete_topic(topic_id: int) -> NoReturn:
+    db = sqlite3.connect(for_data_base.database_abs_path)
+    c = db.cursor()
+
+    c.execute('''DELETE FROM topic
+                     WHERE topic_id = ?''', (topic_id, ))
+
+    db.commit()
+    db.close()

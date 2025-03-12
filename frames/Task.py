@@ -1,5 +1,4 @@
 import customtkinter as ctk
-import global_variables as gv
 from functions import handlers as hd, image_initialization as ii
 from functions import db_handlers as dbh
 from typing import Any, NoReturn
@@ -9,7 +8,7 @@ import frames.Result
 
 
 class Task(ctk.CTkFrame):
-    def __init__(self, master: Any, context_user, **kwargs):
+    def __init__(self, master: Any, context_user, context_test, **kwargs):
         super().__init__(master, **kwargs)
         self.pack(anchor="center", expand=True, fill="both", padx=15, pady=10)
 
@@ -20,7 +19,7 @@ class Task(ctk.CTkFrame):
         self.context_user = context_user
 
         # Create attribute with context_test
-        self.context_test = gv.context_test
+        self.context_test = context_test
 
         for i in range(1, self.context_user.count_tasks + 1):
             self.context_user.answer[i] = ""
@@ -39,7 +38,9 @@ class Task(ctk.CTkFrame):
                                                 variable=self.progress_var)
         self.task_progress.grid(row=0, column=0, columnspan=2, sticky="ew", padx=25, pady=[23, 5])
 
-        self.exercise_label = ctk.CTkLabel(self, text=self.context_test.exercise[self.context_user.tasks_type], height=45,
+        self.exercise_label = ctk.CTkLabel(self,
+                text=self.context_test.exercise[self.context_user.officer_task_dict[self.context_test.current_task][2]],
+                                           height=45,
                                            width=390, font=("Fira Sans SemiBold", 35), text_color="#000000")
         self.exercise_label.grid(row=1, column=0, columnspan=2, sticky="nw", padx=28)
 
@@ -111,7 +112,10 @@ class Task(ctk.CTkFrame):
         self.previous_button.configure(state="normal")
 
         self.task_label.configure(text=self.context_user.officer_task_dict[self.context_test.current_task][1])
+        self.exercise_label.configure(
+            text = self.context_test.exercise[self.context_user.officer_task_dict[self.context_test.current_task][2]])
         self.task_entry.delete(0, "end")
+
         if self.context_user.answer[self.context_test.current_task] != "":
             self.task_entry.insert(0, self.context_user.answer[self.context_test.current_task])
             self.task_entry.configure(fg_color="#d9ffdf")
@@ -136,7 +140,10 @@ class Task(ctk.CTkFrame):
         self.progress_var.set(value=(self.context_test.current_task - 1) / self.context_user.count_tasks)
 
         self.task_label.configure(text=self.context_user.officer_task_dict[self.context_test.current_task][1])
+        self.exercise_label.configure(
+            text=self.context_test.exercise[self.context_user.officer_task_dict[self.context_test.current_task][2]])
         self.task_entry.delete(0, "end")
+
         if self.context_user.answer[self.context_test.current_task] != "":
             self.task_entry.insert(0, self.context_user.answer[self.context_test.current_task])
             self.task_entry.configure(fg_color="#d9ffdf")

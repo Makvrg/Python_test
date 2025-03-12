@@ -169,5 +169,5 @@ class AdminAllResults(ctk.CTkFrame):
 
         import frames.AdminMenu
 
-        result_frame = frames.AdminMenu.AdminMenu(self.window_attribute, border_width=15, border_color="#006600",
+        admin_frame = frames.AdminMenu.AdminMenu(self.window_attribute, border_width=15, border_color="#006600",
                                                        fg_color="#FFFFFF", corner_radius=30)
