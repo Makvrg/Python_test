@@ -27,9 +27,11 @@ class TopicTable(ttk.Treeview):
         self.column(column=master.columns_names.columns_topic[1], width=350)
 
     def get_selected_row(self):
-        selected_item = self.selection()
+        selected_item = self.selection()  # Ids
         if selected_item:
             item_data = self.item(selected_item[0])['values']
+
             return item_data
+
         else:
             pass

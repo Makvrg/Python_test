@@ -481,3 +481,15 @@ def delete_topic(topic_id: int) -> NoReturn:
 
     db.commit()
     db.close()
+
+
+def delete_tasks(list_with_ids: List[int]) -> NoReturn:
+    db = sqlite3.connect(for_data_base.database_abs_path)
+    c = db.cursor()
+
+    for ids in list_with_ids:
+        c.execute('''DELETE FROM task_and_exercise
+                         WHERE task_and_exercise_id = ?''', (ids, ))
+
+    db.commit()
+    db.close()

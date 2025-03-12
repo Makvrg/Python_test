@@ -1,3 +1,4 @@
+from time import sleep
 from tkinter import ttk
 import customtkinter as ctk
 from typing import Any
@@ -13,7 +14,7 @@ class TaskAndExerciseTable(ttk.Treeview):
                                                            button_color="#169c02",
                                                            orientation="vertical", command=self.yview,
                                                            width=25, hover=True, button_hover_color="#007D00")
-        self.task_table_scrollbar.grid(row=1, column=2, sticky="ns", padx=(0, 18), pady=(0, 8))
+        self.task_table_scrollbar.grid(row=1, column=3, sticky="ns", padx=(0, 18), pady=(0, 8))
         self.configure(yscrollcommand=self.task_table_scrollbar.set)
 
         # Setting columns
@@ -32,10 +33,14 @@ class TaskAndExerciseTable(ttk.Treeview):
         self.column(column=master.columns_names.columns_task[2], width=150)
         self.column(column=master.columns_names.columns_task[3], width=50)
 
-    def get_selected_row(self):
-        selected_item = self.selection()
+    def get_selected_ids(self):
+        selected_item = self.selection()  # Ids
         if selected_item:
-            item_data = self.item(selected_item[0])['values']
-            return item_data
+            sel_rows = []
+            for ids in selected_item:
+                db_id = self.item(ids)['values'][0]
+                sel_rows.append(db_id)
+
+            return sel_rows
         else:
             pass

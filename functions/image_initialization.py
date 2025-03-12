@@ -104,3 +104,19 @@ def get_wrong_error_image() -> ImageTk.PhotoImage:
     notebook_wrong_error_image = ImageTk.PhotoImage(notebook_wrong_error)
 
     return notebook_wrong_error_image
+
+# Editor
+def get_change_image() -> ctk.CTkImage:
+    try:
+        chg = Image.open("images/change.png")
+    except FileNotFoundError:
+        # Opening the resource as binary data
+        with importlib.resources.open_binary('images', 'change.png') as resource_file:
+            img_data = resource_file.read()
+
+        # Loading an image from bytes
+        chg = Image.open(BytesIO(img_data))
+
+    change_image = ctk.CTkImage(chg, size=(55, 55))
+
+    return change_image

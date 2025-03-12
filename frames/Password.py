@@ -69,7 +69,7 @@ class Password(ctk.CTkFrame):
 
 
     def go_admin(self) -> NoReturn:
-        if True:#ps.verify_password(self.password_entry.get()):
+        if ps.verify_password(self.password_entry.get()):
 
             dbh.create_database()  # Connect or create and check database
 

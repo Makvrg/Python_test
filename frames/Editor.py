@@ -26,9 +26,10 @@ class Editor(ctk.CTkFrame):
         self.rowconfigure(index=2, weight=2)
         self.columnconfigure(index=0, weight=1)
         self.columnconfigure(index=1, weight=2)
+        self.columnconfigure(index=2, weight=2)
 
         self.rename_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=90)
-        self.rename_frame.grid(row=0, column=0, columnspan=3, sticky="ew", padx=25, pady=[27, 10])
+        self.rename_frame.grid(row=0, column=0, columnspan=4, sticky="ew", padx=25, pady=[27, 10])
         self.rename_label = ctk.CTkLabel(self.rename_frame, text="Переименовать:",
                                        font=("Fira Sans SemiBold", 35), text_color="#000000")
         self.rename_label.grid(row=0, column=0, sticky="ne", padx=[15, 0], pady=[30, 5])
@@ -61,7 +62,7 @@ class Editor(ctk.CTkFrame):
         self.task_table = tables.TaskAndExerciseTable.TaskAndExerciseTable(self, style="3.Treeview",
                                                         columns=self.columns_names.columns_task,
                                                         show="headings", selectmode="extended")
-        self.task_table.grid(row=1, column=0, columnspan=2, sticky="nsew", padx=(22, 0), pady=(0, 10))
+        self.task_table.grid(row=1, column=0, columnspan=3, sticky="nsew", padx=(22, 0), pady=(0, 10))
 
         # Tag create
         self.task_table.tag_configure("task_table_tag_1", font=("Fira Sans SemiBold", 20))
@@ -83,23 +84,24 @@ class Editor(ctk.CTkFrame):
                                          font=("Fira Sans Bold", 37), border_width=3,
                                          border_color="#006600", corner_radius=5,
                                          hover_color="#007D00", text_color="#FFF")
-        self.back_button.grid(row=3, column=0, sticky="nw", padx=[30, 15], pady=[3, 30])
+        self.back_button.grid(row=3, column=0, sticky="nw", padx=[30, 5], pady=[3, 30])
 
         self.change_count = 0
         self.change_button = ctk.CTkButton(self, command=self.change, text="",
-                                          fg_color="#009900", height=65, width=65,
+                                          fg_color="#009900", height=60, width=60,
                                           border_width=3, border_color="#006600",
                                           corner_radius=5, hover_color="#007D00",
-                                          image=None)
-        self.back_button.grid(row=3, column=0, sticky="nw", padx=[30, 15], pady=[3, 30])
+                                          image=ii.get_change_image())
+        self.change_button.grid(row=3, column=1, sticky="n", pady=[3, 30])
 
-        self.delete_count = 0
-        self.delete_button = ctk.CTkButton(self, command=self.delete_type, text="Удалить тип (нажать 5 раз)",
-                                         fg_color="#d9000e", height=65, width=500,
+        self.delete_type_count = 0
+        self.delete_tasks_count = 0
+        self.functional_button = ctk.CTkButton(self, command=self.go_to_add_tasks, text="Добавить новые задачи",
+                                         fg_color="#009900", height=65, width=500,
                                          font=("Fira Sans Bold", 37), border_width=3,
-                                         border_color="#000", corner_radius=5,
-                                         hover_color="#c2000d", text_color="#FFF")
-        self.delete_button.grid(row=3, column=1, columnspan=2, sticky="ne", padx=[15, 30], pady=[3, 30])
+                                         border_color="#006600", corner_radius=5,
+                                         hover_color="#007D00", text_color="#FFF")
+        self.functional_button.grid(row=3, column=2, columnspan=2, sticky="ne", padx=[5, 30], pady=[3, 30])
 
 
     # Methods
@@ -111,19 +113,52 @@ class Editor(ctk.CTkFrame):
 
 
     def delete_type(self) -> NoReturn:
-        self.delete_count += 1
-        if self.delete_count >= 5:
+        self.delete_type_count += 1
+        if self.delete_type_count >= 5:
             dbh.delete_topic(self.choice_type[0])
             self.destroy()
 
             import frames.TopicList
 
-            topic_frame = frames.TopicList.TopicList(self.window_attribute, self.columns_names, border_width=15, border_color="#006600",
-                                                   fg_color="#FFFFFF", corner_radius=30)
+            topic_frame = frames.TopicList.TopicList(self.window_attribute, self.columns_names,
+                                border_width=15, border_color="#006600", fg_color="#FFFFFF", corner_radius=30)
 
     def change(self):
         self.change_count += 1
 
+        if self.change_count % 3 == 0:
+            # Add new tasks
+            self.functional_button.configure(text="Добавить новые задачи",
+                                             command=self.go_to_add_tasks, fg_color="#009900",
+                                             border_color="#006600", hover_color="#007D00")
+
+        elif self.change_count % 3 == 1:
+            # Delete tasks
+            self.functional_button.configure(text="Удалить задачи (наж. 5 раз)",
+                                             command=self.delete_selected_tasks, fg_color="#f74a56",
+                                             border_color="#000", hover_color="#d9303b")
+            self.delete_tasks_count = 0
+
+        elif self.change_count % 3 == 2:
+            # Delete types button
+            self.functional_button.configure(text="Удалить тип (нажать 5 раз)",
+                                             command=self.delete_type, fg_color="#d9000e",
+                                             border_color="#000", hover_color="#c2000d")
+            self.delete_type_count = 0
+
+
+    def go_to_add_tasks(self):
+        ...
+
+
+    def delete_selected_tasks(self):
+        self.delete_tasks_count += 1
+        if self.delete_tasks_count >= 5:
+            dbh.delete_tasks(self.task_table.get_selected_ids())
+
+            editor_frame = Editor(self.window_attribute, self.columns_names, self.choice_type,
+                                                border_width=15, border_color="#006600", fg_color="#FFFFFF",
+                                                corner_radius=30)
 
 
     def back_to_topic(self) -> NoReturn:
