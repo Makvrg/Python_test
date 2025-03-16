@@ -12,7 +12,9 @@
 
 
 
-
-
 main command
 python -m nuitka --windows-console-mode=force --follow-imports --onefile --standalone --jobs=4 --enable-plugin=tk-inter --include-package-data=images executor_file.py
+
+OR
+
+python -m nuitka --windows-console-mode=disable --follow-imports --onefile --standalone --jobs=4 --enable-plugin=tk-inter --include-package-data=images executor_file.py

@@ -261,8 +261,7 @@ def insert_task_from_admin(*,
                            tasks_type: str,
                            task_type_is_exist: bool = False,
                            task_exercise: str,
-                           task_exercise_is_exist: bool = False,
-                           list_with_values: List[Tuple[str, str]] | List[Tuple[str, str, str, str]]) -> NoReturn:
+                           list_with_values: Tuple[str, str] | Tuple[str, str, str, str]) -> NoReturn:
     """Admin can add new tasks or topics, restore old tasks or old topics of test.
     Need to start program, because required get global_variable.database_abs_path
 
@@ -271,9 +270,7 @@ def insert_task_from_admin(*,
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
-    new_list_with_values = []
-    for i in range(len(list_with_values)):
-        new_list_with_values[i] = tuple([tasks_type] + [list_with_values[i][0]] + [task_exercise] + [list_with_values[i][1]])
+    new_list_with_values = tuple([tasks_type] + [list_with_values[0]] + [task_exercise] + [list_with_values[1]])
     list_with_values = new_list_with_values
     print("list_with_values", list_with_values)
 
@@ -282,17 +279,16 @@ def insert_task_from_admin(*,
                          SELECT ?
                          WHERE NOT EXISTS (SELECT 1 FROM topic WHERE topic_name = ?)
                          ;''', (tasks_type, tasks_type))
-
-    if task_exercise_is_exist is False:
+    else:
         c.execute('''INSERT INTO exercise (exercise_name)
-                                 SELECT ?
-                                 WHERE NOT EXISTS (SELECT 1 FROM exercise WHERE exercise_name = ?)
-                                 ;''', (task_exercise, task_exercise))
+                         SELECT ?
+                         WHERE NOT EXISTS (SELECT 1 FROM exercise WHERE exercise_name = ?)
+                         ;''', (task_exercise, task_exercise))
 
-    c.executemany(f'''INSERT INTO task_and_exercise (topic_id, task, exercise_id, task_answer)
-                      VALUES ((SELECT topic_id FROM topic WHERE topic_name = ?), ?, 
-                      (SELECT exercise_id FROM exercise WHERE exercise_name = ?), ?)
-                      ;''', list_with_values)
+        c.execute(f'''INSERT INTO task_and_exercise (topic_id, task, exercise_id, task_answer)
+                          VALUES ((SELECT topic_id FROM topic WHERE topic_name = ?), ?, 
+                          (SELECT exercise_id FROM exercise WHERE exercise_name = ?), ?)
+                          ;''', list_with_values)
 
     db.commit()
     db.close()

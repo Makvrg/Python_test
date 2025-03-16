@@ -1,4 +1,3 @@
-from time import sleep
 from tkinter import ttk
 import customtkinter as ctk
 from typing import Any

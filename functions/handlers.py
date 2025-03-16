@@ -1,6 +1,7 @@
 import functions.db_handlers as dbh
 from typing import Tuple, Set, List, Dict, Any, NoReturn
 from datetime import datetime
+import json
 
 
 def finish(win: Any, frame_for_save: Any = None) -> NoReturn:
@@ -120,6 +121,42 @@ def answer_handler(frame_object: Any,
         dbh.errors_and_wrong_insert(score_id=dbh.get_new_score_id(), task_and_exercise_id=of_task_dict[index][0],
                                     student_answer=student_answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
                                     comment=er_wg_comment)
+
+
+def admin_answer(str_answer: str) -> str:  # Return serialize answer
+    try:
+        answer = str_answer.split(",")  # The answer to the task numbered index
+        processed_answer = []
+        for x in answer:
+            x = x.strip()
+            if x == "":
+                return ""
+
+            elif "/" in x and " " in x:  # Mixed fraction
+                x = x.split()
+                x[1] = x[1].split("/")
+                if int(x[0]) < 0:
+                    account = (-1) * (abs(int(x[0])) + int(x[1][0]) / int(x[1][1]))
+                else:
+                    account = int(x[0]) + int(x[1][0]) / int(x[1][1])
+                processed_answer.append(account)
+
+            elif "/" in x and " " not in x:  # Common fraction
+                x = x.split("/")
+                x = int(x[0]) / int(x[1])
+                processed_answer.append(x)
+
+            else:
+                processed_answer.append(x)
+
+        return json.dumps(processed_answer)
+
+    except ZeroDivisionError:
+        return ""
+    except ValueError:
+        return ""
+    except TypeError:
+        return ""
 
 
 def get_true_in_a_row(frame_object: Any,

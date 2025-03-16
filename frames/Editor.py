@@ -106,10 +106,11 @@ class Editor(ctk.CTkFrame):
 
     # Methods
     def rename(self) -> NoReturn:
-        new_name = self.rename_entry.get()
+        new_name = self.rename_entry.get().strip()
         if new_name != self.choice_type[1]:
             dbh.rename_topic(self.choice_type[0], new_name)
             self.choice_type = (self.choice_type[0], new_name)
+            self.rename_entry.configure(fg_color="#d9ffdf")
 
 
     def delete_type(self) -> NoReturn:
@@ -148,18 +149,26 @@ class Editor(ctk.CTkFrame):
 
 
     def go_to_add_tasks(self):
-        ...
+        self.destroy()
+
+        import frames.NewTasks
+
+        editor_frame = frames.NewTasks.NewTasks(self.window_attribute, self.columns_names, self.choice_type,
+                              border_width=15, border_color="#006600", fg_color="#FFFFFF",
+                              corner_radius=30)
 
 
     def delete_selected_tasks(self):
         self.delete_tasks_count += 1
         if self.delete_tasks_count >= 5:
-            dbh.delete_tasks(self.task_table.get_selected_ids())
-            self.destroy()
+            ids = self.task_table.get_selected_ids()
+            if not (ids is None):
+                dbh.delete_tasks(ids)
+                self.destroy()
 
-            editor_frame = Editor(self.window_attribute, self.columns_names, self.choice_type,
-                                                border_width=15, border_color="#006600", fg_color="#FFFFFF",
-                                                corner_radius=30)
+                editor_frame = Editor(self.window_attribute, self.columns_names, self.choice_type,
+                                                    border_width=15, border_color="#006600", fg_color="#FFFFFF",
+                                                    corner_radius=30)
 
 
     def back_to_topic(self) -> NoReturn:
