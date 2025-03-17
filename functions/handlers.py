@@ -41,7 +41,13 @@ def answer_handler(frame_object: Any,
             if x == "":
                 continue
 
-            if ("/" not in x) and ("." not in x) and (x.isdigit() or x[0] == "-" and x != "-" and x[1].isdigit()):  # Simple digits
+            elif isinstance(true_answer, str):  # True answer is string
+                if x != true_answer:
+                    er_wg_comment = "Wrong answer or writing"
+                    break
+                processed_answer.add(x)
+
+            elif ("/" not in x) and ("." not in x) and (x.isdigit() or (x[0] == "-" and x != "-" and x[1:].isdigit())):  # Simple digits
                 try:
                     x = int(x)
                     if x not in true_answer:
@@ -109,18 +115,38 @@ def answer_handler(frame_object: Any,
             if processed_answer == true_answer:
                 frame_object.context_user.result.append(1)
                 continue
+
+            # Add information about error or wrong answer
             else:
                 frame_object.context_user.result.append(0)
-                dbh.errors_and_wrong_insert(score_id=dbh.get_new_score_id(), task_and_exercise_id=of_task_dict[index][0],
-                                            student_answer=student_answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
-                                            comment=er_wg_comment)
+                if not frame_object.error_data.score_id:
+                    frame_object.error_data.score_id = dbh.get_new_score_id()
+                    frame_object.error_data.task_and_exercise_id_list = [of_task_dict[index][0]]
+                    frame_object.error_data.student_answer_list = [student_answer_dict[index]]
+                    frame_object.error_data.true_answer_list = [", ".join(map(str, list(true_answer)))]
+                    frame_object.error_data.comment_list=[er_wg_comment]
+                else:
+                    frame_object.error_data.task_and_exercise_id_list.append(of_task_dict[index][0])
+                    frame_object.error_data.student_answer_list.append(student_answer_dict[index])
+                    frame_object.error_data.true_answer_list.append(", ".join(map(str, list(true_answer))))
+                    frame_object.error_data.comment_list.append(er_wg_comment)
+
                 continue
+
         frame_object.context_user.result.append(0)
 
         # Add information about error or wrong answer
-        dbh.errors_and_wrong_insert(score_id=dbh.get_new_score_id(), task_and_exercise_id=of_task_dict[index][0],
-                                    student_answer=student_answer_dict[index], true_answer=", ".join(map(str, list(true_answer))),
-                                    comment=er_wg_comment)
+        if not frame_object.error_data.score_id:
+            frame_object.error_data.score_id = dbh.get_new_score_id()
+            frame_object.error_data.task_and_exercise_id_list = [of_task_dict[index][0]]
+            frame_object.error_data.student_answer_list = [student_answer_dict[index]]
+            frame_object.error_data.true_answer_list = [", ".join(map(str, list(true_answer)))]
+            frame_object.error_data.comment_list = [er_wg_comment]
+        else:
+            frame_object.error_data.task_and_exercise_id_list.append(of_task_dict[index][0])
+            frame_object.error_data.student_answer_list.append(student_answer_dict[index])
+            frame_object.error_data.true_answer_list.append(", ".join(map(str, list(true_answer))))
+            frame_object.error_data.comment_list.append(er_wg_comment)
 
 
 def admin_answer(str_answer: str) -> str:  # Return serialize answer
@@ -131,6 +157,9 @@ def admin_answer(str_answer: str) -> str:  # Return serialize answer
             x = x.strip()
             if x == "":
                 return ""
+
+            elif not all((sml.isdigit() or sml in "/ .-") for sml in x):  # Not digits (is string)
+                processed_answer.append(x)
 
             elif "/" in x and " " in x:  # Mixed fraction
                 x = x.split()

@@ -1,7 +1,6 @@
 import customtkinter as ctk
 import global_variables as gv
 from typing import Any, NoReturn
-import admin_files.topics as aft
 import functions.db_handlers as dbh
 from functions.handlers import finish
 
@@ -61,7 +60,7 @@ class Info(ctk.CTkFrame):
                                              dropdown_fg_color="#FFF",
                                              dropdown_font=("Tahoma", 17), dropdown_hover_color="#dee3de",
                                              dropdown_text_color="#212121", state="readonly",
-                                             values=[tp[0] for tp in aft.topics],
+                                             values=dbh.get_topics(),
                                              command=self.combobox_selected)
         self.type_combobox.pack(side="left", anchor="nw", padx=10)
         #self.type_combobox.set(value="Линейные уравнения")

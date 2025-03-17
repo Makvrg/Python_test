@@ -3,6 +3,7 @@ from functions import handlers as hd, image_initialization as ii
 from functions import db_handlers as dbh
 from typing import Any, NoReturn
 from datetime import datetime
+import global_variables as gv
 
 import frames.Result
 
@@ -20,6 +21,9 @@ class Task(ctk.CTkFrame):
 
         # Create attribute with context_test
         self.context_test = context_test
+
+        # Create attribute with error_data
+        self.error_data = gv.error_data
 
         for i in range(1, self.context_user.count_tasks + 1):
             self.context_user.answer[i] = ""
@@ -169,6 +173,11 @@ class Task(ctk.CTkFrame):
                             abs_quantity=sum(self.context_user.result), all_quantity=self.context_user.count_tasks,
                             ratio=round(sum(self.context_user.result) / self.context_user.count_tasks * 100, 2),
                             in_a_row=self.context_user.true_in_a_row, date=datetime.now().strftime('%d-%m-%Y %H:%M:%S'))
+        dbh.errors_and_wrong_insert(score_id=self.error_data.score_id,
+                                    task_and_exercise_id_list=self.error_data.task_and_exercise_id_list,
+                                    student_answer_list=self.error_data.student_answer_list,
+                                    true_answer_list=self.error_data.true_answer_list,
+                                    comment_list=self.error_data.comment_list)
 
         self.window_attribute.protocol('WM_DELETE_WINDOW', lambda: hd.finish(self.window_attribute))  # Regular closing of program
 

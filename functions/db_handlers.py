@@ -5,9 +5,25 @@ import json
 import random
 
 
+def get_topics() -> List[str]:
+    db = sqlite3.connect(for_data_base.database_abs_path)
+    c = db.cursor()
+
+    c.execute('PRAGMA foreign_keys = ON;')
+
+    topics = c.execute('SELECT topic_name FROM topic;').fetchall()
+
+    db.commit()
+    db.close()
+
+    return [topic[0] for topic in topics]
+
+
 def get_new_score_id() -> int:
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
+
+    c.execute('PRAGMA foreign_keys = ON;')
 
     new_score_id = c.execute('''SELECT seq FROM sqlite_sequence
                                 WHERE name = 'score';''').fetchone()
@@ -26,6 +42,8 @@ def get_amount_tasks(tasks_type: str) -> int:
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
+    c.execute('PRAGMA foreign_keys = ON;')
+
     amount_tasks = c.execute(f'''SELECT COUNT(*) 
                                  FROM task_and_exercise 
                                  JOIN topic USING (topic_id)
@@ -41,6 +59,8 @@ def get_amount_tasks(tasks_type: str) -> int:
 def get_list_task_id(tasks_type: str) -> List[int]:  # Need for random_tasks()
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
+
+    c.execute('PRAGMA foreign_keys = ON;')
 
     list_task_id = c.execute(f'''SELECT task_and_exercise_id 
                                  FROM task_and_exercise 
@@ -61,6 +81,7 @@ def get_random_tasks_and_exercises(tasks_type: str, count_tasks: int) -> Tuple[D
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
+    c.execute('PRAGMA foreign_keys = ON;')
 
     random_ids: List[int] = random.sample(get_list_task_id(tasks_type), count_tasks)
 
@@ -93,17 +114,20 @@ def get_random_tasks_and_exercises(tasks_type: str, count_tasks: int) -> Tuple[D
 
 def errors_and_wrong_insert(*,
                             score_id: int,
-                            task_and_exercise_id: int,
-                            student_answer: str,
-                            true_answer: str,
-                            comment: str) -> NoReturn:
+                            task_and_exercise_id_list: List[int],
+                            student_answer_list: List[str],
+                            true_answer_list: List[str],
+                            comment_list: List[str]) -> NoReturn:
 
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
-    c.execute('''INSERT INTO errors_and_wrong (score_id, task_and_exercise_id, student_answer, true_answer, comment)
-    VALUES (?, ?, ?, ?, ?)
-        ;''', (score_id, task_and_exercise_id, student_answer, true_answer, comment))
+    c.execute('PRAGMA foreign_keys = ON;')
+
+    for i in range(len(task_and_exercise_id_list)):
+        c.execute('''INSERT INTO errors_and_wrong (score_id, task_and_exercise_id, student_answer, true_answer, comment)
+        VALUES (?, ?, ?, ?, ?)
+            ;''', (score_id, task_and_exercise_id_list[i], student_answer_list[i], true_answer_list[i], comment_list[i]))
 
     db.commit()
     db.close()
@@ -270,6 +294,8 @@ def insert_task_from_admin(*,
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
+    c.execute('PRAGMA foreign_keys = ON;')
+
     new_list_with_values = tuple([tasks_type] + [list_with_values[0]] + [task_exercise] + [list_with_values[1]])
     list_with_values = new_list_with_values
     print("list_with_values", list_with_values)
@@ -306,6 +332,8 @@ def database_insert(frame_object: Any,
 
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
+
+    c.execute('PRAGMA foreign_keys = ON;')
 
     if name_student in map(lambda x: x[0], c.execute('SELECT name_student FROM student;')):
         c.execute('''INSERT INTO score (student_id, topic_id, abs_quantity, all_quantity, ratio, in_a_row, date)
@@ -368,6 +396,8 @@ def get_topic_id(name_type: str) -> int:
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
+    c.execute('PRAGMA foreign_keys = ON;')
+
     return c.execute('''SELECT topic_id FROM topic WHERE topic_name = ?;''', (name_type, )).fetchone()[0]
 
     db.commit()
@@ -377,6 +407,8 @@ def get_topic_id(name_type: str) -> int:
 def print_table() -> NoReturn:  # For developer (can will using in Task.py)
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
+
+    c.execute('PRAGMA foreign_keys = ON;')
 
     print("\nПроверка базы данных\n")
     for t_name in c.execute('''SELECT name FROM sqlite_master;''').fetchall():
@@ -397,6 +429,8 @@ def print_table() -> NoReturn:  # For developer (can will using in Task.py)
 def get_rows(treeview_name: str, topic_id: int | None = None) -> List[Tuple[Any, ...]]:  # treeview_name is an "all_result_table" or "max_result_table" or "wrong_result_table"
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
+
+    c.execute('PRAGMA foreign_keys = ON;')
 
     list_rows: List[Tuple[Any, ...]] = []
     if treeview_name == "all_result_table":
@@ -461,6 +495,8 @@ def rename_topic(topic_id: int, new_name: str) -> NoReturn:
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
+    c.execute('PRAGMA foreign_keys = ON;')
+
     c.execute('''UPDATE topic SET topic_name = ?
                  WHERE topic_id = ?''', (new_name, topic_id))
 
@@ -472,6 +508,8 @@ def delete_topic(topic_id: int) -> NoReturn:
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
 
+    c.execute('PRAGMA foreign_keys = ON;')
+
     c.execute('''DELETE FROM topic
                      WHERE topic_id = ?''', (topic_id, ))
 
@@ -482,6 +520,8 @@ def delete_topic(topic_id: int) -> NoReturn:
 def delete_tasks(list_with_ids: List[int]) -> NoReturn:
     db = sqlite3.connect(for_data_base.database_abs_path)
     c = db.cursor()
+
+    c.execute('PRAGMA foreign_keys = ON;')
 
     for ids in list_with_ids:
         c.execute('''DELETE FROM task_and_exercise

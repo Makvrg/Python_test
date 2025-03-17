@@ -29,6 +29,17 @@ class Test:
 context_test: Test = Test()
 
 
+class ErrorData:
+    def __init__(self):
+        self.score_id: int = 0
+        self.task_and_exercise_id_list: List[int] = []
+        self.student_answer_list: List[str] = []
+        self.true_answer_list: List[str] = []
+        self.comment_list: List[str] = []
+
+error_data: ErrorData = ErrorData()
+
+
 class ForDataBase:
     def __init__(self):
         self.database_abs_path: Path | None = None  # Example output 'C:\Users\Mi\PycharmProjects\Math_train\math_simulator_database.db'
