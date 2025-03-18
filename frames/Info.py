@@ -118,10 +118,16 @@ class Info(ctk.CTkFrame):
 
         amount_tasks_this_topic = dbh.get_amount_tasks(self.type_combobox.get())
 
-        self.count_slider.configure(state="normal", to=amount_tasks_this_topic,
-                                    number_of_steps=amount_tasks_this_topic - 1)
-        self.var.set(value=1)
-        self.count_slider.unbind("<Button-1>")
+        if amount_tasks_this_topic <= 1:
+            self.count_slider.configure(state="disable")
+            self.type_combobox.configure(fg_color="#ffc9c9")
+            self.type_error.configure(text="Мало заданий этого типа\nПожалуйста, выберите другой тип")
+
+        else:
+            self.count_slider.configure(state="normal", to=amount_tasks_this_topic,
+                                        number_of_steps=amount_tasks_this_topic - 1)
+            self.var.set(value=1)
+            self.count_slider.unbind("<Button-1>")
 
     def disabled_count_slider(self, event: Any) -> NoReturn:
         self.type_error.configure(text="Сначала надо выбрать тип задач\nПожалуйста, выберите его здесь")

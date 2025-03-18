@@ -529,3 +529,16 @@ def delete_tasks(list_with_ids: List[int]) -> NoReturn:
 
     db.commit()
     db.close()
+
+
+def create_new_topic(new_topic_name: str) -> NoReturn:
+    db = sqlite3.connect(for_data_base.database_abs_path)
+    c = db.cursor()
+
+    c.execute('PRAGMA foreign_keys = ON;')
+
+    c.execute('''INSERT INTO topic (topic_name)
+                 VALUES (?)''', (new_topic_name, ))
+
+    db.commit()
+    db.close()

@@ -44,16 +44,15 @@ class Task(ctk.CTkFrame):
 
         self.exercise_label = ctk.CTkLabel(self,
                 text=self.context_test.exercise[self.context_user.officer_task_dict[self.context_test.current_task][2]],
-                                           height=45,
-                                           width=390, font=("Fira Sans SemiBold", 35), text_color="#000000")
+                height=45, font=("Fira Sans SemiBold", 35), text_color="#000000")
         self.exercise_label.grid(row=1, column=0, columnspan=2, sticky="nw", padx=28)
 
         self.task_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=300)
         self.task_frame.grid(row=2, column=0, columnspan=2, sticky="nsew", padx=30)
 
-        self.number_entry = ctk.CTkEntry(self.task_frame, font=("Fira Sans", 35),
+        self.number_entry = ctk.CTkEntry(self.task_frame, font=("Fira Sans", 34),
                                          fg_color="#FFFFFF", text_color="#212121",
-                                         border_color="#818c81", width=100,
+                                         border_color="#818c81", width=200,
                                          justify="center")
         self.number_entry.insert(0, "1 / " + str(self.context_user.count_tasks))
         self.number_entry.configure(state="disabled")

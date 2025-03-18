@@ -105,7 +105,13 @@ class TopicList(ctk.CTkFrame):
 
 
     def my_topic(self) -> NoReturn:
-        ...
+        self.destroy()
+
+        import frames.NewTopic
+
+        new_t_frame = frames.NewTopic.NewTopic(self.window_attribute, border_width=15,
+                                                border_color="#006600", fg_color="#FFFFFF",
+                                                corner_radius=30)
 
 
     def back_to_admin_menu(self) -> NoReturn:
