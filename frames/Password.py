@@ -22,7 +22,7 @@ class Password(ctk.CTkFrame):
         self.info_label_1 = ctk.CTkLabel(self, text="Этот раздел предназначен только для учителя",
                                          font=("Fira Sans SemiBold", 37), fg_color="#65bf65", text_color="#000000",
                                          height=50, corner_radius=10, width=380)
-        self.info_label_1.grid(row=0, column=0, columnspan=2, sticky="nw", padx=30, pady=28)
+        self.info_label_1.grid(row=0, column=0, columnspan=2, sticky="nw", padx=28, pady=28)
 
         # Frame and Entry
         self.password_frame = ctk.CTkFrame(self, border_width=1, border_color="#000000", fg_color="#ecffe3", height=120)
@@ -69,7 +69,7 @@ class Password(ctk.CTkFrame):
 
 
     def go_admin(self) -> NoReturn:
-        if True:#ps.verify_password(self.password_entry.get()):
+        if ps.verify_password(self.password_entry.get()):
 
             dbh.create_database()  # Connect or create and check database
 

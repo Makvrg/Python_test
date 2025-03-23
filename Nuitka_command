@@ -17,4 +17,4 @@ python -m nuitka --windows-console-mode=force --follow-imports --onefile --stand
 
 OR
 
-python -m nuitka --windows-console-mode=disable --follow-imports --onefile --standalone --jobs=4 --enable-plugin=tk-inter --include-package-data=images executor_file.py
+python -m nuitka --output-filename="On The Platform - тренажер" --windows-console-mode=disable --follow-imports --onefile --standalone --jobs=4 --enable-plugin=tk-inter --include-package-data=images --windows-icon-from-ico=images/main_icon.ico executor_file.py

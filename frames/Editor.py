@@ -107,7 +107,7 @@ class Editor(ctk.CTkFrame):
     # Methods
     def rename(self) -> NoReturn:
         new_name = self.rename_entry.get().strip()
-        if new_name != self.choice_type[1]:
+        if new_name != self.choice_type[1] and new_name != "":
             dbh.rename_topic(self.choice_type[0], new_name)
             self.choice_type = (self.choice_type[0], new_name)
             self.rename_entry.configure(fg_color="#d9ffdf")
@@ -136,15 +136,15 @@ class Editor(ctk.CTkFrame):
         elif self.change_count % 3 == 1:
             # Delete tasks
             self.functional_button.configure(text="Удалить задачи (наж. 5 раз)",
-                                             command=self.delete_selected_tasks, fg_color="#f74a56",
-                                             border_color="#000", hover_color="#d9303b")
+                                             command=self.delete_selected_tasks, fg_color="#f01120",
+                                             border_color="#000", hover_color="#d11320")
             self.delete_tasks_count = 0
 
         elif self.change_count % 3 == 2:
             # Delete types button
             self.functional_button.configure(text="Удалить тип (нажать 5 раз)",
-                                             command=self.delete_type, fg_color="#d9000e",
-                                             border_color="#000", hover_color="#c2000d")
+                                             command=self.delete_type, fg_color="#bd0f1b",
+                                             border_color="#000", hover_color="#9e020c")
             self.delete_type_count = 0
 
 

@@ -1,11 +1,13 @@
 import customtkinter as ctk
+import functions.image_initialization as ii
+
 import frames.First
 
 class AppWindow(ctk.CTk):
     def __init__(self):
         super().__init__()
-        self.title("Математический тренажер")
-        #self.iconbitmap("")
+        self.title("On The Platform")
+        #self.iconphoto(False, ii.get_main_icon_image())
         self.geometry("1000x700+360+150")
         self.resizable(False, False)
         self.configure(fg_color="#CCFFCC")

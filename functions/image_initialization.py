@@ -4,6 +4,25 @@ import importlib.resources
 from io import BytesIO
 
 
+# Main icon
+# def get_main_icon_image() -> ImageTk.PhotoImage:
+#     try:
+#         main_icon = Image.open("images/main_icon.ico")
+#         main_icon.thumbnail(size=(256, 256))
+#     except FileNotFoundError:
+#         # Opening the resource as binary data
+#         with importlib.resources.open_binary('images', 'main_icon.ico') as resource_file:
+#             img_data = resource_file.read()
+#
+#         # Loading an image from bytes
+#         main_icon = Image.open(BytesIO(img_data))
+#         main_icon.thumbnail(size=(256, 256))
+#
+#     main_icon_image = ImageTk.PhotoImage(main_icon)
+#
+#     return main_icon_image
+
+
 # App (First display)
 def get_first_display_image() -> ctk.CTkImage:
     try:
